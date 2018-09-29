@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\ui">
+      <UniqueIdentifier>{63800e27-0e0f-4170-88c6-26f48038e49c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\mode">
+      <UniqueIdentifier>{d68755c6-b9f3-4ca2-a9fd-1a17b3943a2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ocv">
+      <UniqueIdentifier>{eb5193c3-8f70-4d7c-86d1-1d0b6baab495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -25,6 +34,15 @@
     </ClCompile>
     <ClCompile Include="ocv_test.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="mode\src\mode_main.cpp">
+      <Filter>ソース ファイル\mode</Filter>
+    </ClCompile>
+    <ClCompile Include="ocv\src\ocv_main.cpp">
+      <Filter>ソース ファイル\ocv</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\src\ui_main.cpp">
+      <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
