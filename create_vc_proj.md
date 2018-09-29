@@ -64,6 +64,8 @@ Visual Studioを起動したら、[ファイル] -> [新規作成] -> [プロジ
 
   ```cpp
   #include "pch.h" // 各ソース先頭は必ずこの行で始める事
+  
+  #include <opencv2/opencv.hpp>
   #include <cassert>
   
   using namespace cv;
