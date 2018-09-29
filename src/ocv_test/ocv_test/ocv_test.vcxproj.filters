@@ -27,6 +27,15 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="mode\include\mode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ocv\include\ocv.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\include\ui.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -42,6 +51,9 @@
       <Filter>ソース ファイル\ocv</Filter>
     </ClCompile>
     <ClCompile Include="UI\src\ui_main.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\src\ui_menu.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
   </ItemGroup>
