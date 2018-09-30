@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "ui.h"
 
-void ui_main( void )
+#include "UI.h"
+
+void UI_main( void )
 {
 }

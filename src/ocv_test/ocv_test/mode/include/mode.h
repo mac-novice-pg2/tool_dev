@@ -1,3 +1,3 @@
 #pragma once
 
-void mode_main( void );
+void MODE_main( void );
