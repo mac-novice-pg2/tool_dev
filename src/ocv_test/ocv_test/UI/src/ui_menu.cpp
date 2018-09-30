@@ -1,136 +1,254 @@
 ﻿#include "pch.h"
 
-#include "ui_input_result.h"
+#include "UI_input_result.h"
 
 #include <cstdio>
 #include <cstring>
 #include <ctype.h>
 
-#define dbg() printf( "[%d]%s()\n", __LINE__, __func__ )
 const char *input_err_msg = "入力の読み取りに失敗しました。もう一度入力して下さい";
 
 /**
     ファイル操作系メニュー
  */
 // eMENU_FILE_OPEN
-static void
+static bool
 menu_file_open( eMenuParam *menu_param )
 {
-    dbg();
+    static eMENU_INPUT_RESULT_FILE_OPEN input_result;
     menu_param->menu_id = eMENU_FILE_OPEN;
 
-    auto *param = ( eMENU_INPUT_RESULT_FILE_OPEN*  )( menu_param->input_result );
-}
+    printf( "処理対象の画像ファイル名を入力して下さい\n" );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        // @@@ TODO ファイルの存在をチェックする
+        strcpy_s( input_result.filename, input_buf );
+        menu_param->input_result = &input_result;
+    }
+    return true;
+} // menu_file_open()
 
 // eMENU_FILE_CLOSE
-static void
+static bool
 menu_file_close( eMenuParam *menu_param )
 {
-    dbg();
-    menu_param->menu_id = eMENU_FILE_CLOSE;
+    printf( "%s() not implemented\n", __func__ );
 
-    auto *param = ( eMENU_INPUT_RESULT_FILE_CLOSE* )( menu_param->input_result );
-}
+    static eMENU_INPUT_RESULT_FILE_CLOSE input_result;
+    menu_param->menu_id = eMENU_FILE_CLOSE;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_file_close()
 
 // eMENU_FILE_SAVE
-static void
+static bool
 menu_file_save( eMenuParam *menu_param )
 {
-    dbg();
+    static eMENU_INPUT_RESULT_FILE_SAVE input_result;
     menu_param->menu_id = eMENU_FILE_SAVE;
 
-    auto *param = ( eMENU_INPUT_RESULT_FILE_SAVE* )( menu_param->input_result );
-}
+    printf( "保存ファイル名を入力して下さい\n" );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        // @@@ TODO ファイルの存在をチェックする
+        strcpy_s( input_result.filename, input_buf );
+        menu_param->input_result = &input_result;
+    }
+    return true;
+} // menu_file_save()
 
 /**
     色操作系メニュー
  */
 // eMENU_COLOR_CHG_MONO
-static void
+static bool
 menu_color_chg_mono( eMenuParam *menu_param )
 {
-    dbg();
-    menu_param->menu_id = eMENU_COLOR_CHG_MONO;
+    printf( "%s() not implemented\n", __func__ );
 
-    auto *param = ( eMENU_INPUT_RESULT_COLOR_CHG_MONO* )( menu_param->input_result );
-}
+    static eMENU_INPUT_RESULT_COLOR_CHG_MONO input_result;
+    menu_param->menu_id = eMENU_COLOR_CHG_MONO;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_color_chg_mono()
 
 // eMENU_COLOR_CHG_SEPIA
-static void
+static bool
 menu_color_chg_sepia( eMenuParam *menu_param )
 {
-    dbg();
-    menu_param->menu_id = eMENU_COLOR_CHG_SEPIA;
+    printf( "%s() not implemented\n", __func__ );
 
-    auto *param = ( eMENU_INPUT_RESULT_COLOR_CHG_SEPIA* )( menu_param->input_result );
-}
+    static eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_result;
+    menu_param->menu_id = eMENU_COLOR_CHG_SEPIA;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_color_chg_sepia()
 
 /**
     回転系メニュー
  */
 // eMENU_ROTATE_L
-static void
+static bool
 menu_rotate_left( eMenuParam *menu_param )
 {
-    dbg();
-    menu_param->menu_id = eMENU_ROTATE_L;
+    printf( "%s() not implemented\n", __func__ );
 
-    auto *param = ( eMENU_INPUT_RESULT_ROTATE_L* )( menu_param->input_result );
-}
+    static eMENU_INPUT_RESULT_ROTATE_L input_result;
+    menu_param->menu_id = eMENU_ROTATE_L;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_rotate_left()
 
 // eMENU_ROTATE_R
-static void
+static bool
 menu_rotate_right( eMenuParam *menu_param )
 {
-    dbg();
-    menu_param->menu_id = eMENU_ROTATE_R;
+    printf( "%s() not implemented\n", __func__ );
 
-    auto *param = ( eMENU_INPUT_RESULT_ROTATE_R* )( menu_param->input_result );
-}
+    static eMENU_INPUT_RESULT_ROTATE_R input_result;
+    menu_param->menu_id = eMENU_ROTATE_R;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_rotate_right()
 
 /**
     変形系メニュー
  */
 // eMENU_ZOOM_UP
-static void
+static bool
 menu_zoom_up( eMenuParam *menu_param )
 {
-    dbg();
+    static eMENU_INPUT_RESULT_ZOOM_UP input_result;
     menu_param->menu_id = eMENU_ZOOM_UP;
 
-    auto *param = ( eMENU_INPUT_RESULT_ZOOM_UP* )( menu_param->input_result );
-}
+    printf(
+        "画像の幅/高さの拡大倍率を入力して下さい\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [幅の拡大倍率] [高さの拡大倍率]\n"
+        "(入力例)       input > 3.0 2.5\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        if( sscanf_s( input_buf, "%f %f",
+            &( input_result.zoom_up_ratio_width ),
+            &( input_result.zoom_up_ratio_width ) ) != 2 )
+        {
+            return false;
+        }
+        menu_param->input_result = &input_result;
+    }
+
+    return true;
+} // menu_zoom_up()
 
 // eMENU_ZOOM_DOWN
-static void
+static bool
 menu_zoom_down( eMenuParam *menu_param )
 {
-    dbg();
+    static eMENU_INPUT_RESULT_ZOOM_DOWN input_result;
     menu_param->menu_id = eMENU_ZOOM_DOWN;
 
-    auto *param = ( eMENU_INPUT_RESULT_ZOOM_DOWN* )( menu_param->input_result );
-}
+    printf(
+        "画像の幅/高さの縮小倍率を入力して下さい\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [幅の縮小倍率] [高さの縮小倍率]\n"
+        "(入力例)       input > 3.0 2.5\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        if( sscanf_s( input_buf, "%f %f",
+            &( input_result.zoom_down_ratio_width ),
+            &( input_result.zoom_down_ratio_width ) ) != 2 )
+        {
+            return false;
+        }
+        menu_param->input_result = &input_result;
+    }
+
+    return true;
+} // menu_zoom_down()
 
 // eMENU_RESIZE
-static void
+static bool
 menu_resize( eMenuParam *menu_param )
 {
-    dbg();
+    static eMENU_INPUT_RESULT_RESIZE input_result;
     menu_param->menu_id = eMENU_RESIZE;
 
-    auto *param = ( eMENU_INPUT_RESULT_RESIZE* )( menu_param->input_result );
-}
+    printf(
+        "変更後の画像の幅/高さを入力して下さい\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [変更後の幅] [変更後の高さ]\n"
+        "(入力例)       input > 640 480\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        if( sscanf_s( input_buf, "%d %d",
+            &( input_result.width ),
+            &( input_result.height) ) != 2 )
+        {
+            return false;
+        }
+        menu_param->input_result = &input_result;
+    }
+
+    return true;
+} // menu_resize()
+
+// eMENU_ROTATE_R
+static bool
+menu_demo( eMenuParam *menu_param )
+{
+    static eMENU_INPUT_RESULT_ input_result;
+    menu_param->menu_id = eMENU_ID_DEMO;
+    menu_param->input_result = &input_result;
+
+    return true;
+} // menu_dmeo()
 
 /**
     メニュー関数
 */
-typedef void( *func_t )( eMenuParam *menu_param );
-func_t menu_func_file_ctrl[] = {
-    menu_file_open,
-    menu_file_close,
-    menu_file_save
-};
-
+typedef bool ( *func_t )( eMenuParam *menu_param );
 func_t menu_func_color_chg[] = {
     menu_color_chg_mono,
     menu_color_chg_sepia,
@@ -147,11 +265,8 @@ func_t menu_func_resize[] = {
     menu_resize
 };
 
-/**
-    メニュー処理メイン
- */
-void
-UI_menu_main( eMenuParam *menu_param )
+static void
+print_menu( void)
 {
     printf(
         "メニューから行いたい操作を入力し、Enterキーを押して下さい\n"
@@ -182,27 +297,40 @@ UI_menu_main( eMenuParam *menu_param )
         "\n"
 
         "[その他]\n"
+        " デモ表示         : D\n"
         " 終了             : Q\n"
     );
+}
 
-    const int buf_size = 256;
+/**
+    メニュー処理メイン
+ */
+void
+UI_menu_main( eMenuParam *menu_param )
+{
+    const int BUFFER_SIZE = 256;
 
+    bool menu_result = false;
+    bool input_end = false;
     char input_char;
-    char buf[ buf_size ];
-    for( ;; )
+    char buf[ BUFFER_SIZE ];
+    while( menu_result == false )
     {
+        print_menu();
         printf( "input> " );
-        if( gets_s( buf, buf_size ) == NULL )
+        if( gets_s( buf, BUFFER_SIZE ) == NULL )
         {
             puts( input_err_msg );
             continue;
         }
 
+        menu_result = false;
         input_char = toupper( buf[ 0 ] );
         if( input_char == 'Q' )
         {
             printf( "アプリケーションを終了します\n" );
             menu_param->menu_id = eMENU_ID_END;
+            menu_result = true;
             break;
         }
         else if( isalpha( input_char ) )
@@ -210,17 +338,19 @@ UI_menu_main( eMenuParam *menu_param )
             switch( input_char )
             {
             case 'O':
-                menu_file_open( menu_param );
+                menu_result = menu_file_open( menu_param );
                 break;
             case 'C':
-                menu_file_close( menu_param );
+                menu_result = menu_file_close( menu_param );
                 break;
             case 'S':
-                menu_file_save( menu_param );
+                menu_result = menu_file_save( menu_param );
+                break;
+            case 'D':
+                menu_result = menu_demo( menu_param );
                 break;
             default:
                 puts( input_err_msg );
-                break;
             }
         }
         else
@@ -229,15 +359,15 @@ UI_menu_main( eMenuParam *menu_param )
             sscanf_s( buf, "%d", &menu_id );
             if( ( menu_id >= 1000 ) && ( menu_id <= 1999 ) )
             {
-                menu_func_color_chg[ menu_id - 1000 ]( menu_param );
+                menu_result = menu_func_color_chg[ menu_id - 1000 ]( menu_param );
             }
             else if( ( menu_id >= 2000 ) && ( menu_id <= 2999 ) )
             {
-                menu_func_rotate[ menu_id - 2000 ]( menu_param );
+                menu_result = menu_func_rotate[ menu_id - 2000 ]( menu_param );
             }
             else if( ( menu_id >= 3000 ) && ( menu_id <= 3999 ) )
             {
-                menu_func_resize[ menu_id - 3000 ]( menu_param );
+                menu_result = menu_func_resize[ menu_id - 3000 ]( menu_param );
             }
             else
             {

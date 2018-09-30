@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
-#include "ocv.h"
-#include "ui_input_result.h"
+#include "OCV.h"
+#include "UI_input_result.h"
 
 #include <cassert>
 
@@ -36,7 +36,7 @@ ocv_file_save( eMenuParam *param,
 {
     auto p = ( eMENU_INPUT_RESULT_FILE_SAVE* )param->input_result;
 
-    imwrite( p->save_filename, *img );
+    imwrite( p->filename, *img );
 }
 
 /**
@@ -96,8 +96,8 @@ ocv_zoom_up( eMenuParam *param,
     auto p = ( eMENU_INPUT_RESULT_ZOOM_UP* )param->input_result;
 
     Mat img_aft;
-    int calc_width = img->size().width * p->zoom_up_ratio;
-    int calc_height = img->size().height * p->zoom_up_ratio;
+    int calc_width = ( int )( img->size().width * p->zoom_up_ratio_width );
+    int calc_height = ( int )( img->size().height * p->zoom_up_ratio_height );
     resize( *img, img_aft, Size( calc_width, calc_height ) );
     imshow( img_name, img_aft );
     *img = img_aft;
@@ -111,8 +111,8 @@ ocv_zoom_down( eMenuParam *param,
     auto p = ( eMENU_INPUT_RESULT_ZOOM_DOWN* )param->input_result;
 
     Mat img_aft;
-    int calc_width = img->size().width * p->zoom_down_ratio;
-    int calc_height = img->size().height * p->zoom_down_ratio;
+    int calc_width = ( int )( img->size().width * p->zoom_down_ratio_width );
+    int calc_height = ( int )( img->size().height * p->zoom_down_ratio_height );
     resize( *img, img_aft, Size( calc_width, calc_height ) );
     imshow( img_name, img_aft );
     *img = img_aft;
@@ -143,6 +143,28 @@ ocv_trim( eMenuParam *param,
     imshow( img_name, dst );
     *img_trim = dst;
 }
+
+static void
+OCV_Demo( void )
+{
+    IplImage *img_ptr = cvLoadImage( "red-panda-731987_960_720.jpg", CV_LOAD_IMAGE_COLOR );
+    if( img_ptr == nullptr )
+    {
+        printf( "画像ファイルが見つかりません\n" );
+        assert( 0 );
+    }
+
+    const char* window_name = "pic_windows";
+    cvNamedWindow( window_name );
+    cvShowImage( window_name, img_ptr );
+    cvWaitKey();
+    cvDestroyAllWindows();
+
+    if( img_ptr )
+    {
+        cvReleaseImage( &img_ptr );
+    }
+} // OCV_Demo()
 
 void OCV_main( eMenuParam *param )
 {
@@ -195,31 +217,12 @@ void OCV_main( eMenuParam *param )
         ocv_trim( param, &mat, &mat_aft, img_name2 );
         break;
 
+    case eMENU_ID_DEMO:
+        OCV_Demo();
+        break;
+
     default:
         printf( "定義されていない機能です\n" );
         assert( 0 );
-    }
-}
-
-
-
-void OCV_Demo( void )
-{
-    IplImage *img_ptr = cvLoadImage( "red-panda-731987_960_720.jpg", CV_LOAD_IMAGE_COLOR );
-    if( img_ptr == nullptr )
-    {
-        printf( "画像ファイルが見つかりません\n" );
-        assert( 0 );
-    }
-
-    const char* window_name = "pic_windows";
-    cvNamedWindow( window_name );
-    cvShowImage( window_name, img_ptr );
-    cvWaitKey();
-    cvDestroyAllWindows();
-
-    if( img_ptr )
-    {
-        cvReleaseImage( &img_ptr );
     }
 }
