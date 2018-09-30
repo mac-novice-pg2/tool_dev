@@ -18,6 +18,16 @@ typedef enum{
     eMENU_ZOOM_UP,         // 拡大
     eMENU_ZOOM_DOWN,       // 縮小
     eMENU_RESIZE,          // リサイズ
+    eMENU_FLIP,            // 反転
+
+    // 画像加工
+    eMENU_TRIM,            // トリミング
+    eMENU_BLUR,            // ぼかし
+    eMENU_GAUSSIAN_BLUR,   // ガウシアンフィルタ
+
+    // 特徴抽出
+    eMENU_DETECT_EDGE,     // エッジ抽出
+    eMENU_DETECT_OUTLINE,  // 輪郭抽出
 
     eMENU_ID_END,
 }eMenuID;
@@ -36,6 +46,7 @@ typedef struct{ // eMENU_FILE_CLOSE
 
 typedef struct{ // eMENU_FILE_SAVE
     int result;
+    const char* save_filename;
 }eMENU_INPUT_RESULT_FILE_SAVE;
 
 /**
@@ -80,6 +91,15 @@ typedef struct{ // eMENU_RESIZE
     int width;
     int height;
 }eMENU_INPUT_RESULT_RESIZE;
+
+/**
+    トリミング
+ */
+typedef struct{ // eMENU_RESIZE
+    int result;
+    int x_start, x_end;
+    int y_start, y_end;
+}eMENU_INPUT_RESULT_TRIM;
 
 // テンプレート
 typedef struct{
