@@ -27,16 +27,16 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mode\include\mode.h">
+    <ClInclude Include="mode\include\MODE.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ocv\include\ocv.h">
+    <ClInclude Include="ocv\include\OCV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ui\include\ui.h">
+    <ClInclude Include="ui\include\UI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="UI\include\ui_input_result.h">
+    <ClInclude Include="UI\include\UI_input_result.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,16 +47,16 @@
     <ClCompile Include="ocv_test.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="mode\src\mode_main.cpp">
+    <ClCompile Include="mode\src\MODE_main.cpp">
       <Filter>ソース ファイル\mode</Filter>
     </ClCompile>
-    <ClCompile Include="ocv\src\ocv_main.cpp">
+    <ClCompile Include="ocv\src\OCV_main.cpp">
       <Filter>ソース ファイル\ocv</Filter>
     </ClCompile>
-    <ClCompile Include="UI\src\ui_main.cpp">
+    <ClCompile Include="UI\src\UI_main.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\src\ui_menu.cpp">
+    <ClCompile Include="ui\src\UI_menu.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
   </ItemGroup>

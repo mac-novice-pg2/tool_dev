@@ -1,7 +1,9 @@
 #include "pch.h"
-#include "mode.h"
 
-void mode_main( void )
+#include "MODE.h"
+#include <cstdio>
+
+void MODE_main( void )
 {
     printf( "" );
 }

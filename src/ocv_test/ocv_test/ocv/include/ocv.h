@@ -1,3 +1,3 @@
 #pragma once
 
-void ocv_main( void );
+void OCV_main( void );
