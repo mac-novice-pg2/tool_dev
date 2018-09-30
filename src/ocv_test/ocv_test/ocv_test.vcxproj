@@ -92,6 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +111,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +132,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +155,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,6 +171,7 @@
     <ClInclude Include="ocv\include\ocv.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ui\include\ui.h" />
+    <ClInclude Include="UI\include\ui_input_result.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mode\src\mode_main.cpp" />
