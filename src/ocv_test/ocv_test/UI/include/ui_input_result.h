@@ -111,6 +111,8 @@ typedef struct{
 typedef struct{
     cv::Mat mat;
     cv::Mat mat_aft;
+    IplImage *img;
+    IplImage *img_aft;
     const char *img_name;
     const char *img_name2;
 }ocv_param;
