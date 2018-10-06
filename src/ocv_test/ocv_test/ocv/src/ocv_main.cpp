@@ -15,8 +15,15 @@ ocv_file_open( eMenuParam *param )
 {
     auto p = ( eMENU_INPUT_RESULT_FILE_OPEN* )param->input_param;
 
-    param->ocv_param.mat = imread( p->filename );
+    param->ocv_param.mat = imread( p->filename, CV_LOAD_IMAGE_COLOR );
+    if( param->ocv_param.mat.data == 0 )
+    {
+        printf( "%sの読み込みに失敗しました。ファイルの有無を確認して下さい\n", p->filename );
+        return;
+    }
+    namedWindow( param->ocv_param.img_name, CV_WINDOW_AUTOSIZE );
     imshow( param->ocv_param.img_name, param->ocv_param.mat );
+    waitKey( 1 ); // 再描画を促す
 }
 
 static void
@@ -46,6 +53,7 @@ ocv_color_change_mono( eMenuParam *param )
     Mat img_aft;
     cvtColor( param->ocv_param.mat, img_aft, COLOR_RGB2GRAY );
     imshow( param->ocv_param.img_name, img_aft );
+    waitKey( 1 ); // 再描画を促す
     param->ocv_param.mat = img_aft;
 }
 
@@ -89,6 +97,7 @@ ocv_zoom_up( eMenuParam *param )
     int calc_height = ( int )( param->ocv_param.mat.size().height * p->zoom_up_ratio_height );
     resize( param->ocv_param.mat, img_aft, Size( calc_width, calc_height ) );
     imshow( param->ocv_param.img_name, img_aft );
+    waitKey( 1 ); // 再描画を促す
     param->ocv_param.mat = img_aft;
 }
 
@@ -102,6 +111,7 @@ ocv_zoom_down( eMenuParam *param )
     int calc_height = ( int )( param->ocv_param.mat.size().height * p->zoom_down_ratio_height );
     resize( param->ocv_param.mat, img_aft, Size( calc_width, calc_height ) );
     imshow( param->ocv_param.img_name, img_aft );
+    waitKey( 1 ); // 再描画を促す
     param->ocv_param.mat = img_aft;
 }
 
@@ -113,6 +123,7 @@ ocv_resize( eMenuParam *param )
     Mat img_aft;
     resize( param->ocv_param.mat, img_aft, Size( p->width, p->height ) );
     imshow( param->ocv_param.img_name, img_aft );
+    waitKey( 1 ); // 再描画を促す
     param->ocv_param.mat = img_aft;
 }
 
@@ -123,6 +134,7 @@ ocv_trim( eMenuParam *param )
 
     Mat dst( param->ocv_param.mat, Rect( p->x_start, p->y_start, p->x_end, p->y_end ) );
     imshow( param->ocv_param.img_name, dst );
+    waitKey( 1 ); // 再描画を促す
     param->ocv_param.mat_aft = dst;
 }
 
