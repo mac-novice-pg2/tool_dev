@@ -15,7 +15,7 @@ const char *input_err_msg = "入力の読み取りに失敗しました。もう
 static bool
 menu_file_open( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_FILE_OPEN input_result;
+    static eMENU_INPUT_RESULT_FILE_OPEN input_param;
     menu_param->menu_id = eMENU_FILE_OPEN;
 
     printf( "処理対象の画像ファイル名を入力して下さい\n" );
@@ -27,8 +27,8 @@ menu_file_open( eMenuParam *menu_param )
     else
     {
         // @@@ TODO ファイルの存在をチェックする
-        strcpy_s( input_result.filename, input_buf );
-        menu_param->input_result = &input_result;
+        strcpy_s( input_param.filename, input_buf );
+        menu_param->input_param = &input_param;
     }
     return true;
 } // menu_file_open()
@@ -39,9 +39,9 @@ menu_file_close( eMenuParam *menu_param )
 {
     printf( "%s() not implemented\n", __func__ );
 
-    static eMENU_INPUT_RESULT_FILE_CLOSE input_result;
+    static eMENU_INPUT_RESULT_FILE_CLOSE input_param;
     menu_param->menu_id = eMENU_FILE_CLOSE;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_file_close()
@@ -50,7 +50,7 @@ menu_file_close( eMenuParam *menu_param )
 static bool
 menu_file_save( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_FILE_SAVE input_result;
+    static eMENU_INPUT_RESULT_FILE_SAVE input_param;
     menu_param->menu_id = eMENU_FILE_SAVE;
 
     printf( "保存ファイル名を入力して下さい\n" );
@@ -62,8 +62,8 @@ menu_file_save( eMenuParam *menu_param )
     else
     {
         // @@@ TODO ファイルの存在をチェックする
-        strcpy_s( input_result.filename, input_buf );
-        menu_param->input_result = &input_result;
+        strcpy_s( input_param.filename, input_buf );
+        menu_param->input_param = &input_param;
     }
     return true;
 } // menu_file_save()
@@ -77,9 +77,9 @@ menu_color_chg_mono( eMenuParam *menu_param )
 {
     printf( "%s() not implemented\n", __func__ );
 
-    static eMENU_INPUT_RESULT_COLOR_CHG_MONO input_result;
+    static eMENU_INPUT_RESULT_COLOR_CHG_MONO input_param;
     menu_param->menu_id = eMENU_COLOR_CHG_MONO;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_color_chg_mono()
@@ -90,9 +90,9 @@ menu_color_chg_sepia( eMenuParam *menu_param )
 {
     printf( "%s() not implemented\n", __func__ );
 
-    static eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_result;
+    static eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_param;
     menu_param->menu_id = eMENU_COLOR_CHG_SEPIA;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_color_chg_sepia()
@@ -106,9 +106,9 @@ menu_rotate_left( eMenuParam *menu_param )
 {
     printf( "%s() not implemented\n", __func__ );
 
-    static eMENU_INPUT_RESULT_ROTATE_L input_result;
+    static eMENU_INPUT_RESULT_ROTATE_L input_param;
     menu_param->menu_id = eMENU_ROTATE_L;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_rotate_left()
@@ -119,9 +119,9 @@ menu_rotate_right( eMenuParam *menu_param )
 {
     printf( "%s() not implemented\n", __func__ );
 
-    static eMENU_INPUT_RESULT_ROTATE_R input_result;
+    static eMENU_INPUT_RESULT_ROTATE_R input_param;
     menu_param->menu_id = eMENU_ROTATE_R;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_rotate_right()
@@ -133,7 +133,7 @@ menu_rotate_right( eMenuParam *menu_param )
 static bool
 menu_zoom_up( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_ZOOM_UP input_result;
+    static eMENU_INPUT_RESULT_ZOOM_UP input_param;
     menu_param->menu_id = eMENU_ZOOM_UP;
 
     printf(
@@ -153,12 +153,12 @@ menu_zoom_up( eMenuParam *menu_param )
     else
     {
         if( sscanf_s( input_buf, "%f %f",
-            &( input_result.zoom_up_ratio_width ),
-            &( input_result.zoom_up_ratio_width ) ) != 2 )
+            &( input_param.zoom_up_ratio_width ),
+            &( input_param.zoom_up_ratio_width ) ) != 2 )
         {
             return false;
         }
-        menu_param->input_result = &input_result;
+        menu_param->input_param = &input_param;
     }
 
     return true;
@@ -168,7 +168,7 @@ menu_zoom_up( eMenuParam *menu_param )
 static bool
 menu_zoom_down( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_ZOOM_DOWN input_result;
+    static eMENU_INPUT_RESULT_ZOOM_DOWN input_param;
     menu_param->menu_id = eMENU_ZOOM_DOWN;
 
     printf(
@@ -188,12 +188,12 @@ menu_zoom_down( eMenuParam *menu_param )
     else
     {
         if( sscanf_s( input_buf, "%f %f",
-            &( input_result.zoom_down_ratio_width ),
-            &( input_result.zoom_down_ratio_width ) ) != 2 )
+            &( input_param.zoom_down_ratio_width ),
+            &( input_param.zoom_down_ratio_width ) ) != 2 )
         {
             return false;
         }
-        menu_param->input_result = &input_result;
+        menu_param->input_param = &input_param;
     }
 
     return true;
@@ -203,7 +203,7 @@ menu_zoom_down( eMenuParam *menu_param )
 static bool
 menu_resize( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_RESIZE input_result;
+    static eMENU_INPUT_RESULT_RESIZE input_param;
     menu_param->menu_id = eMENU_RESIZE;
 
     printf(
@@ -223,12 +223,12 @@ menu_resize( eMenuParam *menu_param )
     else
     {
         if( sscanf_s( input_buf, "%d %d",
-            &( input_result.width ),
-            &( input_result.height) ) != 2 )
+            &( input_param.width ),
+            &( input_param.height) ) != 2 )
         {
             return false;
         }
-        menu_param->input_result = &input_result;
+        menu_param->input_param = &input_param;
     }
 
     return true;
@@ -238,9 +238,9 @@ menu_resize( eMenuParam *menu_param )
 static bool
 menu_demo( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_ input_result;
+    static eMENU_INPUT_RESULT_ input_param;
     menu_param->menu_id = eMENU_ID_DEMO;
-    menu_param->input_result = &input_result;
+    menu_param->input_param = &input_param;
 
     return true;
 } // menu_dmeo()

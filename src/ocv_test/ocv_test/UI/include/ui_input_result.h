@@ -3,10 +3,11 @@
 const int BUFFER_SIZE = 256;
 
 typedef enum{
+    eMENU_START = 0,
     // ファイル操作
-    eMENU_FILE_OPEN,    // ファイルオープン
-    eMENU_FILE_CLOSE,   // ファイルクローズ
-    eMENU_FILE_SAVE,    // ファイル保存
+    eMENU_FILE_OPEN = eMENU_START,// ファイルオープン
+    eMENU_FILE_CLOSE,             // ファイルクローズ
+    eMENU_FILE_SAVE,              // ファイル保存
 
     // 色操作
     eMENU_COLOR_CHG_MONO,  // モノクロ変換
@@ -106,7 +107,16 @@ typedef struct{
 }eMENU_INPUT_RESULT_;
 
 // 外部I/F用パラメータ
+
+typedef struct{
+    cv::Mat mat;
+    cv::Mat mat_aft;
+    const char *img_name;
+    const char *img_name2;
+}ocv_param;
+
 typedef struct{
     eMenuID  menu_id;
-    void    *input_result;
+    void    *input_param;
+    ocv_param ocv_param;
 }eMenuParam;
