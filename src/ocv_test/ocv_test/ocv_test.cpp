@@ -9,6 +9,8 @@ int main()
 {
     eMenuParam param;
 
+    param.ocv_param.img_name = "test_img";
+    param.ocv_param.img_name2 = "test_img2";
     for( ;; )
     {
         param.menu_id = eMENU_ID_END;
