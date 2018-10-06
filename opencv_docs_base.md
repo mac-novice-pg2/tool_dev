@@ -31,3 +31,7 @@ TODO及びバグ管理は、可能な限りIssue登録する方向で
 - 項目別にページを用意しています
   - [VC++2017 プロジェクト作成](create_vc_proj.md)
   - [基本構成の検討](basic_design.md)
+
+## トラブルシューティング
+
+[こちら](./troubleshooting.md)をどうぞ
