@@ -12,5 +12,7 @@
 // TODO: ここでプリコンパイルするヘッダーを追加します
 // OpenCV
 #include <opencv2/opencv.hpp>
+#include <cstdio>
+#include <cstdlib>
 
 #endif //PCH_H

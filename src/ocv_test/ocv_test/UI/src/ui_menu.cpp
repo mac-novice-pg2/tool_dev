@@ -75,8 +75,6 @@ menu_file_save( eMenuParam *menu_param )
 static bool
 menu_color_chg_mono( eMenuParam *menu_param )
 {
-    printf( "%s() not implemented\n", __func__ );
-
     static eMENU_INPUT_RESULT_COLOR_CHG_MONO input_param;
     menu_param->menu_id = eMENU_COLOR_CHG_MONO;
     menu_param->input_param = &input_param;
@@ -285,15 +283,15 @@ print_menu( void)
 
         "[回転]\n"
         " - 操作 -         : - 入力値 -\n"
-        " 右回転           : 2001\n"
-        " 左回転           : 2002\n"
+        " 右回転           : 2000\n"
+        " 左回転           : 2001\n"
         "\n"
 
         "[変形]\n"
         " - 操作 -         : - 入力値 -\n"
-        " 拡大             : 3001\n"
-        " 縮小             : 3002\n"
-        " リサイズ         : 3003\n"
+        " 拡大             : 3000\n"
+        " 縮小             : 3001\n"
+        " リサイズ         : 3002\n"
         "\n"
 
         "[その他]\n"
@@ -308,11 +306,8 @@ print_menu( void)
 void
 UI_menu_main( eMenuParam *menu_param )
 {
-    const int BUFFER_SIZE = 256;
-
     bool menu_result = false;
-    bool input_end = false;
-    char input_char;
+    int input_char;
     char buf[ BUFFER_SIZE ];
     while( menu_result == false )
     {
