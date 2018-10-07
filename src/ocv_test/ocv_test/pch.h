@@ -15,4 +15,6 @@
 #include <cstdio>
 #include <cstdlib>
 
+#pragma warning( disable : 4189 )
+
 #endif //PCH_H
