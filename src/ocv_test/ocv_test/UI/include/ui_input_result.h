@@ -14,12 +14,10 @@ typedef enum{
     eMENU_COLOR_CHG_SEPIA, // セピア変換
 
     // 回転
-    eMENU_ROTATE_L,        // 反時計回り/CCW
-    eMENU_ROTATE_R,        // 時計回り/CW
+    eMENU_ROTATE,          // 回転
 
     // 変形
-    eMENU_ZOOM_UP,         // 拡大
-    eMENU_ZOOM_DOWN,       // 縮小
+    eMENU_ZOOM,            // 拡大/縮小
     eMENU_RESIZE,          // リサイズ
     eMENU_FLIP,            // 反転
 
@@ -65,26 +63,17 @@ typedef struct{ // eMENU_COLOR_CHG_SEPIA
 /**
     回転
  */
-typedef struct{ // eMENU_ROTATE_L
-    int angle_L;
-}eMENU_INPUT_RESULT_ROTATE_L;
-
-typedef struct{ // eMENU_ROTATE_R
-    int angle_R;
-}eMENU_INPUT_RESULT_ROTATE_R;
+typedef struct{ // eMENU_ROTATE
+    int angle;
+}eMENU_INPUT_RESULT_ROTATE;
 
 /**
     変形
  */
 typedef struct{ // eMENU_ZOOM_UP
-    float zoom_up_ratio_width;
-    float zoom_up_ratio_height;
-}eMENU_INPUT_RESULT_ZOOM_UP;
-
-typedef struct{ // eMENU_ZOOM_DOWN
-    float zoom_down_ratio_width;
-    float zoom_down_ratio_height;
-}eMENU_INPUT_RESULT_ZOOM_DOWN;
+    float zoom_ratio_width;
+    float zoom_ratio_height;
+}eMENU_INPUT_RESULT_ZOOM;
 
 typedef struct{ // eMENU_RESIZE
     int width;
@@ -109,10 +98,18 @@ typedef struct{
 // 外部I/F用パラメータ
 
 typedef struct{
-    cv::Mat mat;
-    cv::Mat mat_aft;
+    bool is_open;
     IplImage *img;
-    IplImage *img_aft;
+}img_handler_t;
+
+typedef struct{
+    bool is_open;
+    cv::Mat *mat;
+}mat_handler_t;
+
+typedef struct{
+    mat_handler_t mat_handler;
+    img_handler_t img_handler;
     const char *img_name;
     const char *img_name2;
 }ocv_param;
