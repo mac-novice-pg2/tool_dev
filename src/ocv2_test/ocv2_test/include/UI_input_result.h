@@ -104,7 +104,7 @@ typedef struct{
 
 typedef struct{
     bool is_open;
-    cv::Mat *mat;
+    cv::Mat mat;
 }mat_handler_t;
 
 typedef struct{

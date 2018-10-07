@@ -187,7 +187,7 @@ menu_zoom_down( eMenuParam *menu_param )
     {
         if( sscanf_s( input_buf, "%f %f",
             &( input_param.zoom_down_ratio_width ),
-            &( input_param.zoom_down_ratio_width ) ) != 2 )
+            &( input_param.zoom_down_ratio_height ) ) != 2 )
         {
             return false;
         }
