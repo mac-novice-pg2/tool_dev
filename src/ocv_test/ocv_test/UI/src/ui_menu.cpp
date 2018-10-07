@@ -37,8 +37,6 @@ menu_file_open( eMenuParam *menu_param )
 static bool
 menu_file_close( eMenuParam *menu_param )
 {
-    printf( "%s() not implemented\n", __func__ );
-
     static eMENU_INPUT_RESULT_FILE_CLOSE input_param;
     menu_param->menu_id = eMENU_FILE_CLOSE;
     menu_param->input_param = &input_param;
@@ -86,8 +84,6 @@ menu_color_chg_mono( eMenuParam *menu_param )
 static bool
 menu_color_chg_sepia( eMenuParam *menu_param )
 {
-    printf( "%s() not implemented\n", __func__ );
-
     static eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_param;
     menu_param->menu_id = eMENU_COLOR_CHG_SEPIA;
     menu_param->input_param = &input_param;
@@ -100,45 +96,51 @@ menu_color_chg_sepia( eMenuParam *menu_param )
  */
 // eMENU_ROTATE_L
 static bool
-menu_rotate_left( eMenuParam *menu_param )
+menu_rotate( eMenuParam *menu_param )
 {
-    printf( "%s() not implemented\n", __func__ );
+    static eMENU_INPUT_RESULT_ROTATE input_param;
+    menu_param->menu_id = eMENU_ROTATE;
 
-    static eMENU_INPUT_RESULT_ROTATE_L input_param;
-    menu_param->menu_id = eMENU_ROTATE_L;
-    menu_param->input_param = &input_param;
-
+    printf(
+        "画像の回転角度を入力して下さい(反時計を正とする)\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [角度]\n"
+        "(入力例)       input > 60\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        if( sscanf_s( input_buf, "%d", &( input_param.angle ) ) != 1 )
+        {
+            return false;
+        }
+        menu_param->input_param = &input_param;
+    }
     return true;
-} // menu_rotate_left()
+} // menu_rotate()
 
-// eMENU_ROTATE_R
-static bool
-menu_rotate_right( eMenuParam *menu_param )
-{
-    printf( "%s() not implemented\n", __func__ );
-
-    static eMENU_INPUT_RESULT_ROTATE_R input_param;
-    menu_param->menu_id = eMENU_ROTATE_R;
-    menu_param->input_param = &input_param;
-
-    return true;
-} // menu_rotate_right()
-
-/**
+  /**
     変形系メニュー
  */
-// eMENU_ZOOM_UP
+// eMENU_ZOOM
 static bool
-menu_zoom_up( eMenuParam *menu_param )
+menu_zoom( eMenuParam *menu_param )
 {
-    static eMENU_INPUT_RESULT_ZOOM_UP input_param;
-    menu_param->menu_id = eMENU_ZOOM_UP;
+    static eMENU_INPUT_RESULT_ZOOM input_param;
+    menu_param->menu_id = eMENU_ZOOM;
 
     printf(
-        "画像の幅/高さの拡大倍率を入力して下さい\n"
+        "画像の幅/高さの倍率を入力して下さい\n"
         "\n"
         "=== 入力方法 ===\n"
-        "(フォーマット) input > [幅の拡大倍率] [高さの拡大倍率]\n"
+        "(フォーマット) input > [幅の倍率] [高さの倍率]\n"
         "(入力例)       input > 3.0 2.5\n"
         "\n"
         "input > "
@@ -151,8 +153,8 @@ menu_zoom_up( eMenuParam *menu_param )
     else
     {
         if( sscanf_s( input_buf, "%f %f",
-            &( input_param.zoom_up_ratio_width ),
-            &( input_param.zoom_up_ratio_width ) ) != 2 )
+            &( input_param.zoom_ratio_width ),
+            &( input_param.zoom_ratio_width ) ) != 2 )
         {
             return false;
         }
@@ -160,42 +162,7 @@ menu_zoom_up( eMenuParam *menu_param )
     }
 
     return true;
-} // menu_zoom_up()
-
-// eMENU_ZOOM_DOWN
-static bool
-menu_zoom_down( eMenuParam *menu_param )
-{
-    static eMENU_INPUT_RESULT_ZOOM_DOWN input_param;
-    menu_param->menu_id = eMENU_ZOOM_DOWN;
-
-    printf(
-        "画像の幅/高さの縮小倍率を入力して下さい\n"
-        "\n"
-        "=== 入力方法 ===\n"
-        "(フォーマット) input > [幅の縮小倍率] [高さの縮小倍率]\n"
-        "(入力例)       input > 3.0 2.5\n"
-        "\n"
-        "input > "
-    );
-    char input_buf[ BUFFER_SIZE ];
-    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
-    {
-        return false;
-    }
-    else
-    {
-        if( sscanf_s( input_buf, "%f %f",
-            &( input_param.zoom_down_ratio_width ),
-            &( input_param.zoom_down_ratio_width ) ) != 2 )
-        {
-            return false;
-        }
-        menu_param->input_param = &input_param;
-    }
-
-    return true;
-} // menu_zoom_down()
+} // menu_zoom()
 
 // eMENU_RESIZE
 static bool
@@ -253,13 +220,11 @@ func_t menu_func_color_chg[] = {
 };
 
 func_t menu_func_rotate[] = {
-    menu_rotate_left,
-    menu_rotate_right,
+    menu_rotate,
 };
 
 func_t menu_func_resize[] = {
-    menu_zoom_up,
-    menu_zoom_down,
+    menu_zoom,
     menu_resize
 };
 
@@ -283,15 +248,13 @@ print_menu( void)
 
         "[回転]\n"
         " - 操作 -         : - 入力値 -\n"
-        " 右回転           : 2000\n"
-        " 左回転           : 2001\n"
+        " 回転             : 2000\n"
         "\n"
 
         "[変形]\n"
         " - 操作 -         : - 入力値 -\n"
-        " 拡大             : 3000\n"
-        " 縮小             : 3001\n"
-        " リサイズ         : 3002\n"
+        " 拡大/縮小        : 3000\n"
+        " リサイズ         : 3001\n"
         "\n"
 
         "[その他]\n"
