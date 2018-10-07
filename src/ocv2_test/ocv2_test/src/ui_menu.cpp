@@ -154,7 +154,7 @@ menu_zoom( eMenuParam *menu_param )
     {
         if( sscanf_s( input_buf, "%f %f",
             &( input_param.zoom_ratio_width ),
-            &( input_param.zoom_ratio_width ) ) != 2 )
+            &( input_param.zoom_ratio_height ) ) != 2 )
         {
             return false;
         }
@@ -237,7 +237,6 @@ print_menu( void)
         " - 操作 -         : - 入力値 -\n"
         " ファイルオープン : O\n"
         " ファイル保存     : S\n"
-        " ファイルクローズ : C\n"
         "\n"
 
         "[色操作]\n"
