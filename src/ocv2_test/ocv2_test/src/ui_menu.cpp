@@ -11,7 +11,7 @@ const char *input_err_msg = "入力の読み取りに失敗しました。もう
 /**
     ファイル操作系メニュー
  */
-// eMENU_FILE_OPEN
+ // eMENU_FILE_OPEN
 static bool
 menu_file_open( eMenuParam *menu_param )
 {
@@ -69,7 +69,7 @@ menu_file_save( eMenuParam *menu_param )
 /**
     色操作系メニュー
  */
-// eMENU_COLOR_CHG_MONO
+ // eMENU_COLOR_CHG_MONO
 static bool
 menu_color_chg_mono( eMenuParam *menu_param )
 {
@@ -94,7 +94,7 @@ menu_color_chg_sepia( eMenuParam *menu_param )
 /**
     回転系メニュー
  */
-// eMENU_ROTATE_L
+ // eMENU_ROTATE_L
 static bool
 menu_rotate( eMenuParam *menu_param )
 {
@@ -129,7 +129,7 @@ menu_rotate( eMenuParam *menu_param )
   /**
     変形系メニュー
  */
-// eMENU_ZOOM
+ // eMENU_ZOOM
 static bool
 menu_zoom( eMenuParam *menu_param )
 {
@@ -189,7 +189,7 @@ menu_resize( eMenuParam *menu_param )
     {
         if( sscanf_s( input_buf, "%d %d",
             &( input_param.width ),
-            &( input_param.height) ) != 2 )
+            &( input_param.height ) ) != 2 )
         {
             return false;
         }
@@ -213,7 +213,7 @@ menu_demo( eMenuParam *menu_param )
 /**
     メニュー関数
 */
-typedef bool ( *func_t )( eMenuParam *menu_param );
+typedef bool( *func_t )( eMenuParam *menu_param );
 func_t menu_func_color_chg[] = {
     menu_color_chg_mono,
     menu_color_chg_sepia,
@@ -229,7 +229,7 @@ func_t menu_func_resize[] = {
 };
 
 static void
-print_menu( void)
+print_menu( void )
 {
     printf(
         "メニューから行いたい操作を入力し、Enterキーを押して下さい\n"
