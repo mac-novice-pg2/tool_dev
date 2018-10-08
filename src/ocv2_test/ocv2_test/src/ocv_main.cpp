@@ -10,58 +10,57 @@ using namespace cv;
 /**
     ファイル操作
  */
-static void
-ocv_file_open( eMenuParam *param )
+void
+OCV_file_open( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_FILE_OPEN *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_FILE_OPEN* )param->input_param;
-
-    auto img = imread( p->filename, CV_LOAD_IMAGE_COLOR );
+    auto img = imread( menu_input->filename, CV_LOAD_IMAGE_COLOR );
     if( img.empty() )
     {
-        printf( "%sの読み込みに失敗しました。ファイルの有無を確認して下さい\n", p->filename );
+        printf( "%sの読み込みに失敗しました。ファイルの有無を確認して下さい\n", menu_input->filename );
         return;
     }
-    param->ocv_param.mat_handler.mat = img;
-    param->ocv_param.mat_handler.is_open = true;
+    ocv_param->mat_handler.mat = img;
+    ocv_param->mat_handler.is_open = true;
 
-    imshow( param->ocv_param.img_name, param->ocv_param.mat_handler.mat );
+    imshow( ocv_param->img_name, ocv_param->mat_handler.mat );
     waitKey( 1 ); // 再描画を促す
 }
 
-static void
-ocv_file_save( eMenuParam *param )
+void
+OCV_file_close( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_FILE_CLOSE *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_FILE_SAVE* )param->input_param;
-    auto save_img = param->ocv_param.mat_handler.mat;
+    ocv_param;
+    menu_input;
+}
 
-    imwrite( p->filename, save_img );
-    printf( "%sとして保存しました\n", p->filename );
+void
+OCV_file_save( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_FILE_SAVE *menu_input )
+{
+    auto save_img = ocv_param->mat_handler.mat;
+
+    imwrite( menu_input->filename, save_img );
+    printf( "%sとして保存しました\n", menu_input->filename );
 }
 
 /**
     色変換
  */
-static void
-ocv_color_change_mono( eMenuParam *param )
+void
+OCV_color_change_mono( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_MONO *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_COLOR_CHG_MONO* )param->input_param;
-    auto my_img = param->ocv_param.mat_handler.mat;
+    auto my_img = ocv_param->mat_handler.mat;
     Mat dst;
 
     cvtColor( my_img, dst, COLOR_RGB2GRAY );
-    imshow( param->ocv_param.img_name, dst );
+    imshow( ocv_param->img_name, dst );
     waitKey( 1 ); // 再描画を促す
     my_img = dst;
 }
 
-static void
-ocv_color_change_sepia( eMenuParam *param )
+void
+OCV_color_change_sepia( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_SEPIA *menu_input )
 {
-    const int sepia_hue = 22;
-    const int sepia_sat = 90;
-
-    auto p = ( eMENU_INPUT_RESULT_COLOR_CHG_SEPIA* )param->input_param;
-    auto my_img = param->ocv_param.mat_handler.mat;
+    auto my_img = ocv_param->mat_handler.mat;
 
     //	画像を生成する
     Size img_size = my_img.size();
@@ -72,6 +71,8 @@ ocv_color_change_sepia( eMenuParam *param )
     std::vector< Mat > vec_hsv( 3 );
     split( img_HSV, vec_hsv );
 
+    const int sepia_hue = 22;
+    const int sepia_sat = 90;
     Scalar hue( sepia_hue );
     Scalar sat( sepia_sat );
     vec_hsv[ 0 ] = hue; // Hueの値をセピア用の値へ
@@ -84,7 +85,7 @@ ocv_color_change_sepia( eMenuParam *param )
     //	HSVからBGRに変換する
     Mat img_aft( img_size, CV_8UC3 );
     cvtColor( img_merge, img_aft, CV_HSV2BGR );
-    imshow( param->ocv_param.img_name, img_aft );
+    imshow( ocv_param->img_name, img_aft );
     cvWaitKey( 1 );
     my_img = img_merge;
 }
@@ -92,18 +93,16 @@ ocv_color_change_sepia( eMenuParam *param )
 /**
     回転
  */
-static void
-ocv_rotate( eMenuParam *param )
+void
+OCV_rotate( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ROTATE *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_ROTATE* )param->input_param;
-    auto my_img = param->ocv_param.mat_handler.mat;
-    Point2f center( my_img.cols * 0.5, my_img.rows * 0.5 );
-
-    auto rotate_matrix = getRotationMatrix2D( center, p->angle, 1 );
+    auto my_img = ocv_param->mat_handler.mat;
+    Point2f center( ( float )( my_img.cols * 0.5 ), ( float )( my_img.rows * 0.5 ) );
+    auto rotate_matrix = getRotationMatrix2D( center, menu_input->angle, 1 );
 
     Mat img_aft;
     warpAffine( my_img, img_aft, rotate_matrix, my_img.size() );
-    imshow( param->ocv_param.img_name, img_aft );
+    imshow( ocv_param->img_name, img_aft );
     cvWaitKey( 1 );
     my_img = img_aft;
 }
@@ -111,49 +110,47 @@ ocv_rotate( eMenuParam *param )
 /**
     変形
  */
-static void
-ocv_zoom( eMenuParam *param )
+void
+OCV_zoom( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ZOOM *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_ZOOM* )param->input_param;
-    auto my_img = param->ocv_param.mat_handler.mat;
+    auto my_img = ocv_param->mat_handler.mat;
     Mat img_aft;
 
-    resize( my_img, img_aft, Size(), p->zoom_ratio_width, p->zoom_ratio_height );
-    imshow( param->ocv_param.img_name, img_aft );
+    resize( my_img, img_aft, Size(), menu_input->zoom_ratio_width, menu_input->zoom_ratio_height );
+    imshow( ocv_param->img_name, img_aft );
     waitKey( 1 ); // 再描画を促す
     my_img = img_aft;
 }
 
-static void
-ocv_resize( eMenuParam *param )
+void
+OCV_resize( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_RESIZE *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_RESIZE* )param->input_param;
-    auto my_img = param->ocv_param.mat_handler.mat;
-    Mat img_aft( p->width, p->height, my_img.type() );
+    auto my_img = ocv_param->mat_handler.mat;
+    Mat img_aft( menu_input->width, menu_input->height, my_img.type() );
 
     resize( my_img, img_aft, img_aft.size(), INTER_CUBIC );
-    imshow( param->ocv_param.img_name, img_aft );
+    imshow( ocv_param->img_name, img_aft );
     waitKey( 1 ); // 再描画を促す
     my_img = img_aft;
 }
 
-static void
-ocv_trim( eMenuParam *param )
+void
+OCV_trim( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_TRIM *menu_input )
 {
-    auto p = ( eMENU_INPUT_RESULT_TRIM* )param->input_param;
-
     Mat dst(
-        param->ocv_param.mat_handler.mat,
-        Rect( p->x_start, p->y_start, p->x_end, p->y_end ) );
-    imshow( param->ocv_param.img_name, dst );
+        ocv_param->mat_handler.mat,
+        Rect( menu_input->x_start, menu_input->y_start, menu_input->x_end, menu_input->y_end ) );
+    imshow( ocv_param->img_name, dst );
     waitKey( 1 ); // 再描画を促す
-    param->ocv_param.mat_handler.mat = dst;
+    ocv_param->mat_handler.mat = dst;
 }
 
-static void
-OCV_Demo( eMenuParam *param )
+void
+OCV_Demo( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
 {
-    param; // warning C4100対策の有名なテクニック( 引数は関数の本体部で参照されません )
+    // warning C4100対策の有名なテクニック( 引数は関数の本体部で参照されません )
+    ocv_param;
+    menu_input;
     IplImage *img_ptr = cvLoadImage( "red-panda-731987_960_720.jpg", CV_LOAD_IMAGE_COLOR );
     if( img_ptr == nullptr )
     {
@@ -173,46 +170,11 @@ OCV_Demo( eMenuParam *param )
     }
 } // OCV_Demo()
 
-static void
-OCV_Unknown( eMenuParam *param )
+void
+OCV_Unknown( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
 {
-    param; // warning C4100対策の有名なテクニック( 引数は関数の本体部で参照されません )
+    // warning C4100対策の有名なテクニック( 引数は関数の本体部で参照されません )
+    ocv_param;
+    menu_input;
     assert( 0 );
-}
-
-/*
- OpenCV処理関数テーブル
-*/
-typedef void( *funt_t )( eMenuParam *param );
-typedef struct
-{
-    eMenuID menu_id;
-    funt_t func;
-}ocv_func_tbl_t;
-ocv_func_tbl_t ocv_func_tbl[] = {
-    { eMENU_FILE_OPEN, ocv_file_open },
-    { eMENU_FILE_SAVE, ocv_file_save },
-    { eMENU_COLOR_CHG_MONO, ocv_color_change_mono },
-    { eMENU_COLOR_CHG_SEPIA, ocv_color_change_sepia },
-    { eMENU_ROTATE, ocv_rotate },
-    { eMENU_ZOOM, ocv_zoom },
-    { eMENU_RESIZE, ocv_resize },
-    { eMENU_TRIM, ocv_trim },
-    { eMENU_ID_DEMO, OCV_Demo },
-    { eMENU_ID_END, OCV_Unknown },
-};
-
-void OCV_main( eMenuParam *param )
-{
-    int idx = ( int )eMENU_START;
-    // 呼び出すOpenCV処理関数を探す
-    while( idx != eMENU_ID_END )
-    {
-        if( param->menu_id == ocv_func_tbl[ idx ].menu_id )
-        {
-            ocv_func_tbl[ idx ].func( param );
-            break;
-        }
-        idx++;
-    }
 }

@@ -135,11 +135,4 @@ typedef struct
     img_handler_t img_handler;
     const char *img_name;
     const char *img_name2;
-}ocv_param;
-
-typedef struct
-{
-    eMenuID  menu_id;
-    void    *input_param;
-    ocv_param ocv_param;
-}eMenuParam;
+}OCV_Param_T;
