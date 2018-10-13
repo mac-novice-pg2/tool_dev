@@ -12,7 +12,7 @@ const char *input_err_msg = "入力の読み取りに失敗しました。もう
 /**
     ファイル操作系メニュー
  */
- // eMENU_FILE_OPEN
+// eMENU_FILE_OPEN
 static bool
 menu_file_open( OCV_Param_T *ocv_param )
 {

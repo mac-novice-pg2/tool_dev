@@ -91,14 +91,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341.lib;C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,14 +110,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341.lib;C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -140,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341.lib;C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,7 +154,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\ui\include;$(ProjectDir)\mode\include;$(ProjectDir)\ocv\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\devel\library\open_cv\3.4.1\build\include;$(ProjectDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,19 +163,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341.lib;C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="mode\include\MODE.h" />
-    <ClInclude Include="ocv\include\OCV.h" />
+    <ClInclude Include="include\OCV_func.h" />
+    <ClInclude Include="include\UI_input_result.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ui\include\UI.h" />
-    <ClInclude Include="UI\include\UI_input_result.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mode\src\MODE_main.cpp" />
-    <ClCompile Include="ocv\src\OCV_main.cpp" />
     <ClCompile Include="ocv_test.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -183,8 +179,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UI\src\UI_main.cpp" />
-    <ClCompile Include="ui\src\UI_menu.cpp" />
+    <ClCompile Include="src\OCV_main.cpp" />
+    <ClCompile Include="src\UI_menu.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

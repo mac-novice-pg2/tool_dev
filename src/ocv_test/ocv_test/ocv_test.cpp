@@ -2,27 +2,18 @@
 
 #include "UI_input_result.h"
 
-void UI_menu_main( eMenuParam *menu_param );
-void OCV_main( eMenuParam *menu_param );
+bool UI_menu_main( OCV_Param_T *ocv_param );
 
 int main()
 {
-    eMenuParam param;
+    bool apl_end = false;
+    OCV_Param_T ocv_param;
 
-    param.ocv_param.img_name = "test_img";
-    param.ocv_param.img_name2 = "test_img2";
-    for( ;; )
+    ocv_param.img_name = "test_img";
+    ocv_param.img_name2 = "test_img2";
+    do
     {
-        param.menu_id = eMENU_ID_END;
-        UI_menu_main( &param );
-        if( param.menu_id == eMENU_ID_END )
-        {
-            printf( "アプリケーションを終了します\n" );
-            break;
-        }
-        else
-        {
-            OCV_main( &param );
-        }
-    }
+        apl_end = UI_menu_main( &ocv_param );
+    } while( apl_end == false );
+    printf( "アプリケーションを終了します\n" );
 }
