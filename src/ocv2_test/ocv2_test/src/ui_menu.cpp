@@ -12,7 +12,7 @@ const char *input_err_msg = "入力の読み取りに失敗しました。もう
 /**
     ファイル操作系メニュー
  */
- // eMENU_FILE_OPEN
+// eMENU_FILE_OPEN
 static bool
 menu_file_open( OCV_Param_T *ocv_param )
 {
@@ -190,6 +190,39 @@ menu_resize( OCV_Param_T *ocv_param )
     return true;
 } // menu_resize()
 
+// eMENU_RESIZE
+static bool
+menu_trim( OCV_Param_T *ocv_param )
+{
+    printf(
+        "トリミング座標を指定して下さい\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [開始x座標] [開始y座標] [終了x座標] [終了y座標]\n"
+        "(入力例)       input > 200 200 400 400\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        eMENU_INPUT_RESULT_TRIM input_param;
+        if( sscanf_s( input_buf, "%d %d %d %d",
+            &( input_param.x_start ), &( input_param.y_start ),
+            &( input_param.x_end ), &( input_param.y_end ) ) != 4 )
+        {
+            return false;
+        }
+        OCV_trim( ocv_param, &input_param );
+    }
+
+    return true;
+} // menu_trim()
+
 // eMENU_ROTATE_R
 static bool
 menu_demo( OCV_Param_T *ocv_param )
@@ -215,7 +248,8 @@ func_t menu_func_rotate[] = {
 
 func_t menu_func_resize[] = {
     menu_zoom,
-    menu_resize
+    menu_resize,
+    menu_trim
 };
 
 static void
@@ -244,6 +278,7 @@ print_menu( void )
         " - 操作 -         : - 入力値 -\n"
         " 拡大/縮小        : 3000\n"
         " リサイズ         : 3001\n"
+        " トリミング       : 3002\n"
         "\n"
 
         "[その他]\n"

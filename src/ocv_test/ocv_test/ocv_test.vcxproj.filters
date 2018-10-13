@@ -13,30 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\ui">
-      <UniqueIdentifier>{63800e27-0e0f-4170-88c6-26f48038e49c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\mode">
-      <UniqueIdentifier>{d68755c6-b9f3-4ca2-a9fd-1a17b3943a2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\ocv">
-      <UniqueIdentifier>{eb5193c3-8f70-4d7c-86d1-1d0b6baab495}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mode\include\MODE.h">
+    <ClInclude Include="include\OCV_func.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ocv\include\OCV.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\include\UI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\include\UI_input_result.h">
+    <ClInclude Include="include\UI_input_result.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,17 +32,11 @@
     <ClCompile Include="ocv_test.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="mode\src\MODE_main.cpp">
-      <Filter>ソース ファイル\mode</Filter>
+    <ClCompile Include="src\OCV_main.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ocv\src\OCV_main.cpp">
-      <Filter>ソース ファイル\ocv</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\src\UI_main.cpp">
-      <Filter>ソース ファイル\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\src\UI_menu.cpp">
-      <Filter>ソース ファイル\ui</Filter>
+    <ClCompile Include="src\UI_menu.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 #include "UI_input_result.h"
+#include "OCV_func.h"
 
 #include <cstdio>
 #include <cstring>
@@ -13,11 +14,8 @@ const char *input_err_msg = "入力の読み取りに失敗しました。もう
  */
 // eMENU_FILE_OPEN
 static bool
-menu_file_open( eMenuParam *menu_param )
+menu_file_open( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_FILE_OPEN input_param;
-    menu_param->menu_id = eMENU_FILE_OPEN;
-
     printf( "処理対象の画像ファイル名を入力して下さい\n" );
     char input_buf[ BUFFER_SIZE ];
     if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
@@ -26,31 +24,29 @@ menu_file_open( eMenuParam *menu_param )
     }
     else
     {
+        eMENU_INPUT_RESULT_FILE_OPEN input_param;
         // @@@ TODO ファイルの存在をチェックする
         strcpy_s( input_param.filename, input_buf );
-        menu_param->input_param = &input_param;
+        OCV_file_open( ocv_param, &input_param );
     }
     return true;
 } // menu_file_open()
 
 // eMENU_FILE_CLOSE
 static bool
-menu_file_close( eMenuParam *menu_param )
+menu_file_close( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_FILE_CLOSE input_param;
-    menu_param->menu_id = eMENU_FILE_CLOSE;
-    menu_param->input_param = &input_param;
+    eMENU_INPUT_RESULT_FILE_CLOSE input_param;
+
+    OCV_file_close( ocv_param, &input_param );
 
     return true;
 } // menu_file_close()
 
 // eMENU_FILE_SAVE
 static bool
-menu_file_save( eMenuParam *menu_param )
+menu_file_save( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_FILE_SAVE input_param;
-    menu_param->menu_id = eMENU_FILE_SAVE;
-
     printf( "保存ファイル名を入力して下さい\n" );
     char input_buf[ BUFFER_SIZE ];
     if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
@@ -59,9 +55,11 @@ menu_file_save( eMenuParam *menu_param )
     }
     else
     {
+        eMENU_INPUT_RESULT_FILE_SAVE input_param;
+
         // @@@ TODO ファイルの存在をチェックする
         strcpy_s( input_param.filename, input_buf );
-        menu_param->input_param = &input_param;
+        OCV_file_save( ocv_param, &input_param );
     }
     return true;
 } // menu_file_save()
@@ -69,24 +67,22 @@ menu_file_save( eMenuParam *menu_param )
 /**
     色操作系メニュー
  */
-// eMENU_COLOR_CHG_MONO
+ // eMENU_COLOR_CHG_MONO
 static bool
-menu_color_chg_mono( eMenuParam *menu_param )
+menu_color_chg_mono( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_COLOR_CHG_MONO input_param;
-    menu_param->menu_id = eMENU_COLOR_CHG_MONO;
-    menu_param->input_param = &input_param;
+    eMENU_INPUT_RESULT_COLOR_CHG_MONO input_param;
+    OCV_color_change_mono( ocv_param, &input_param );
 
     return true;
 } // menu_color_chg_mono()
 
 // eMENU_COLOR_CHG_SEPIA
 static bool
-menu_color_chg_sepia( eMenuParam *menu_param )
+menu_color_chg_sepia( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_param;
-    menu_param->menu_id = eMENU_COLOR_CHG_SEPIA;
-    menu_param->input_param = &input_param;
+    eMENU_INPUT_RESULT_COLOR_CHG_SEPIA input_param;
+    OCV_color_change_sepia( ocv_param, &input_param );
 
     return true;
 } // menu_color_chg_sepia()
@@ -94,13 +90,10 @@ menu_color_chg_sepia( eMenuParam *menu_param )
 /**
     回転系メニュー
  */
-// eMENU_ROTATE_L
+ // eMENU_ROTATE_L
 static bool
-menu_rotate( eMenuParam *menu_param )
+menu_rotate( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_ROTATE input_param;
-    menu_param->menu_id = eMENU_ROTATE;
-
     printf(
         "画像の回転角度を入力して下さい(反時計を正とする)\n"
         "\n"
@@ -117,11 +110,13 @@ menu_rotate( eMenuParam *menu_param )
     }
     else
     {
+        eMENU_INPUT_RESULT_ROTATE input_param;
+
         if( sscanf_s( input_buf, "%d", &( input_param.angle ) ) != 1 )
         {
             return false;
         }
-        menu_param->input_param = &input_param;
+        OCV_rotate( ocv_param, &input_param );
     }
     return true;
 } // menu_rotate()
@@ -129,13 +124,10 @@ menu_rotate( eMenuParam *menu_param )
   /**
     変形系メニュー
  */
-// eMENU_ZOOM
+ // eMENU_ZOOM
 static bool
-menu_zoom( eMenuParam *menu_param )
+menu_zoom( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_ZOOM input_param;
-    menu_param->menu_id = eMENU_ZOOM;
-
     printf(
         "画像の幅/高さの倍率を入力して下さい\n"
         "\n"
@@ -152,13 +144,14 @@ menu_zoom( eMenuParam *menu_param )
     }
     else
     {
+        eMENU_INPUT_RESULT_ZOOM input_param;
         if( sscanf_s( input_buf, "%f %f",
-            &( input_param.zoom_down_ratio_width ),
-            &( input_param.zoom_down_ratio_height ) ) != 2 )
+            &( input_param.zoom_ratio_width ),
+            &( input_param.zoom_ratio_height ) ) != 2 )
         {
             return false;
         }
-        menu_param->input_param = &input_param;
+        OCV_zoom( ocv_param, &input_param );
     }
 
     return true;
@@ -166,11 +159,8 @@ menu_zoom( eMenuParam *menu_param )
 
 // eMENU_RESIZE
 static bool
-menu_resize( eMenuParam *menu_param )
+menu_resize( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_RESIZE input_param;
-    menu_param->menu_id = eMENU_RESIZE;
-
     printf(
         "変更後の画像の幅/高さを入力して下さい\n"
         "\n"
@@ -187,25 +177,58 @@ menu_resize( eMenuParam *menu_param )
     }
     else
     {
+        eMENU_INPUT_RESULT_RESIZE input_param;
         if( sscanf_s( input_buf, "%d %d",
             &( input_param.width ),
-            &( input_param.height) ) != 2 )
+            &( input_param.height ) ) != 2 )
         {
             return false;
         }
-        menu_param->input_param = &input_param;
+        OCV_resize( ocv_param, &input_param );
     }
 
     return true;
 } // menu_resize()
 
+// eMENU_RESIZE
+static bool
+menu_trim( OCV_Param_T *ocv_param )
+{
+    printf(
+        "トリミング座標を指定して下さい\n"
+        "\n"
+        "=== 入力方法 ===\n"
+        "(フォーマット) input > [開始x座標] [開始y座標] [終了x座標] [終了y座標]\n"
+        "(入力例)       input > 200 200 400 400\n"
+        "\n"
+        "input > "
+    );
+    char input_buf[ BUFFER_SIZE ];
+    if( gets_s( input_buf, BUFFER_SIZE ) == NULL )
+    {
+        return false;
+    }
+    else
+    {
+        eMENU_INPUT_RESULT_TRIM input_param;
+        if( sscanf_s( input_buf, "%d %d %d %d",
+            &( input_param.x_start ), &( input_param.y_start ),
+            &( input_param.x_end ), &( input_param.y_end ) ) != 4 )
+        {
+            return false;
+        }
+        OCV_trim( ocv_param, &input_param );
+    }
+
+    return true;
+} // menu_trim()
+
 // eMENU_ROTATE_R
 static bool
-menu_demo( eMenuParam *menu_param )
+menu_demo( OCV_Param_T *ocv_param )
 {
-    static eMENU_INPUT_RESULT_ input_param;
-    menu_param->menu_id = eMENU_ID_DEMO;
-    menu_param->input_param = &input_param;
+    eMENU_INPUT_RESULT_ input_param;
+    OCV_Demo( ocv_param, &input_param );
 
     return true;
 } // menu_dmeo()
@@ -213,7 +236,7 @@ menu_demo( eMenuParam *menu_param )
 /**
     メニュー関数
 */
-typedef bool ( *func_t )( eMenuParam *menu_param );
+typedef bool( *func_t )( OCV_Param_T *ocv_param );
 func_t menu_func_color_chg[] = {
     menu_color_chg_mono,
     menu_color_chg_sepia,
@@ -225,11 +248,12 @@ func_t menu_func_rotate[] = {
 
 func_t menu_func_resize[] = {
     menu_zoom,
-    menu_resize
+    menu_resize,
+    menu_trim
 };
 
 static void
-print_menu( void)
+print_menu( void )
 {
     printf(
         "メニューから行いたい操作を入力し、Enterキーを押して下さい\n"
@@ -237,7 +261,6 @@ print_menu( void)
         " - 操作 -         : - 入力値 -\n"
         " ファイルオープン : O\n"
         " ファイル保存     : S\n"
-        " ファイルクローズ : C\n"
         "\n"
 
         "[色操作]\n"
@@ -255,6 +278,7 @@ print_menu( void)
         " - 操作 -         : - 入力値 -\n"
         " 拡大/縮小        : 3000\n"
         " リサイズ         : 3001\n"
+        " トリミング       : 3002\n"
         "\n"
 
         "[その他]\n"
@@ -266,29 +290,28 @@ print_menu( void)
 /**
     メニュー処理メイン
  */
-void
-UI_menu_main( eMenuParam *menu_param )
+bool
+UI_menu_main( OCV_Param_T *ocv_param )
 {
-    bool menu_result = false;
+    bool input_result;
     int input_char;
     char buf[ BUFFER_SIZE ];
-    while( menu_result == false )
+    for( ;; )
     {
         print_menu();
         printf( "input> " );
         if( gets_s( buf, BUFFER_SIZE ) == NULL )
         {
+            printf( "入力読み取りに失敗しました。もう一度入力して下さい\n" );
             puts( input_err_msg );
             continue;
         }
 
-        menu_result = false;
+        input_result = true;
         input_char = toupper( buf[ 0 ] );
         if( input_char == 'Q' )
         {
             printf( "アプリケーションを終了します\n" );
-            menu_param->menu_id = eMENU_ID_END;
-            menu_result = true;
             break;
         }
         else if( isalpha( input_char ) )
@@ -296,16 +319,16 @@ UI_menu_main( eMenuParam *menu_param )
             switch( input_char )
             {
             case 'O':
-                menu_result = menu_file_open( menu_param );
+                input_result = menu_file_open( ocv_param );
                 break;
             case 'C':
-                menu_result = menu_file_close( menu_param );
+                input_result = menu_file_close( ocv_param );
                 break;
             case 'S':
-                menu_result = menu_file_save( menu_param );
+                input_result = menu_file_save( ocv_param );
                 break;
             case 'D':
-                menu_result = menu_demo( menu_param );
+                input_result = menu_demo( ocv_param );
                 break;
             default:
                 puts( input_err_msg );
@@ -317,15 +340,15 @@ UI_menu_main( eMenuParam *menu_param )
             sscanf_s( buf, "%d", &menu_id );
             if( ( menu_id >= 1000 ) && ( menu_id <= 1999 ) )
             {
-                menu_result = menu_func_color_chg[ menu_id - 1000 ]( menu_param );
+                input_result = menu_func_color_chg[ menu_id - 1000 ]( ocv_param );
             }
             else if( ( menu_id >= 2000 ) && ( menu_id <= 2999 ) )
             {
-                menu_result = menu_func_rotate[ menu_id - 2000 ]( menu_param );
+                input_result = menu_func_rotate[ menu_id - 2000 ]( ocv_param );
             }
             else if( ( menu_id >= 3000 ) && ( menu_id <= 3999 ) )
             {
-                menu_result = menu_func_resize[ menu_id - 3000 ]( menu_param );
+                input_result = menu_func_resize[ menu_id - 3000 ]( ocv_param );
             }
             else
             {
@@ -333,4 +356,6 @@ UI_menu_main( eMenuParam *menu_param )
             }
         }
     }
+
+    return true;
 }

@@ -2,7 +2,8 @@
 
 const int BUFFER_SIZE = 256;
 
-typedef enum{
+typedef enum
+{
     eMENU_START = 0,
     // ファイル操作
     eMENU_FILE_OPEN = eMENU_START,// ファイルオープン
@@ -37,45 +38,61 @@ typedef enum{
 /**
     ファイル操作系メニュー
  */
-typedef struct{ // eMENU_FILE_OPEN
+ // eMENU_FILE_OPEN
+typedef struct
+{
     char filename[ BUFFER_SIZE ];
 }eMENU_INPUT_RESULT_FILE_OPEN;
 
-typedef struct{ // eMENU_FILE_CLOSE
+// eMENU_FILE_CLOSE
+typedef struct
+{
     int reserved;
 }eMENU_INPUT_RESULT_FILE_CLOSE;
 
-typedef struct{ // eMENU_FILE_SAVE
+// eMENU_FILE_SAVE
+typedef struct
+{
     char filename[ BUFFER_SIZE ];
 }eMENU_INPUT_RESULT_FILE_SAVE;
 
 /**
     色変換
  */
-typedef struct{ // eMENU_COLOR_CHG_MONO
+ // eMENU_COLOR_CHG_MONO
+typedef struct
+{
     int reserved;
 }eMENU_INPUT_RESULT_COLOR_CHG_MONO;
 
-typedef struct{ // eMENU_COLOR_CHG_SEPIA
+// eMENU_COLOR_CHG_SEPIA
+typedef struct
+{ 
     int reserved;
 }eMENU_INPUT_RESULT_COLOR_CHG_SEPIA;
 
 /**
     回転
  */
-typedef struct{ // eMENU_ROTATE
+ // eMENU_ROTATE
+typedef struct
+{
     int angle;
 }eMENU_INPUT_RESULT_ROTATE;
 
 /**
     変形
  */
-typedef struct{ // eMENU_ZOOM_UP
+// eMENU_ZOOM_UP
+typedef struct
+{
     float zoom_ratio_width;
     float zoom_ratio_height;
 }eMENU_INPUT_RESULT_ZOOM;
 
-typedef struct{ // eMENU_RESIZE
+// eMENU_RESIZE
+typedef struct
+{
     int width;
     int height;
 }eMENU_INPUT_RESULT_RESIZE;
@@ -83,7 +100,9 @@ typedef struct{ // eMENU_RESIZE
 /**
     トリミング
  */
-typedef struct{ // eMENU_RESIZE
+ // eMENU_RESIZE
+typedef struct
+{
     int x_start;
     int x_end;
     int y_start;
@@ -91,31 +110,29 @@ typedef struct{ // eMENU_RESIZE
 }eMENU_INPUT_RESULT_TRIM;
 
 // テンプレート
-typedef struct{
+typedef struct
+{
     int reserved;
 }eMENU_INPUT_RESULT_;
 
 // 外部I/F用パラメータ
 
-typedef struct{
+typedef struct
+{
     bool is_open;
     IplImage *img;
 }img_handler_t;
 
-typedef struct{
+typedef struct
+{
     bool is_open;
-    cv::Mat *mat;
+    cv::Mat mat;
 }mat_handler_t;
 
-typedef struct{
+typedef struct
+{
     mat_handler_t mat_handler;
     img_handler_t img_handler;
     const char *img_name;
     const char *img_name2;
-}ocv_param;
-
-typedef struct{
-    eMenuID  menu_id;
-    void    *input_param;
-    ocv_param ocv_param;
-}eMenuParam;
+}OCV_Param_T;
