@@ -6,6 +6,7 @@
 #include <cassert>
 
 using namespace cv;
+const int wait_time_def = 1000;
 
 /**
     ファイル操作
@@ -23,7 +24,7 @@ OCV_file_open( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_FILE_OPEN *menu_input 
     ocv_param->mat_handler.is_open = true;
 
     imshow( ocv_param->img_name, ocv_param->mat_handler.mat );
-    waitKey( 1 ); // 再描画を促す
+    waitKey( wait_time_def ); // 再描画を促す
 } // OCV_file_open()
 
 void
@@ -52,7 +53,7 @@ OCV_color_change_mono( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_MONO
     cvtColor( my_img, img_aft, COLOR_RGB2GRAY );
 
     imshow( ocv_param->img_name, img_aft );
-    waitKey( 1 ); // 再描画を促す
+    waitKey( wait_time_def ); // 再描画を促す
 
     my_img = img_aft.clone();
 } // OCV_color_change_mono()
@@ -88,7 +89,7 @@ OCV_color_change_sepia( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_SEP
     cvtColor( img_merge, img_aft, CV_HSV2BGR );
 
     imshow( ocv_param->img_name, img_aft );
-    cvWaitKey( 1 );
+    cvWaitKey( wait_time_def );
 
     my_img = img_aft.clone();
 } // OCV_color_change_sepia()
@@ -107,7 +108,7 @@ OCV_rotate( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ROTATE *menu_input )
     warpAffine( my_img, img_aft, rotate_matrix, my_img.size() );
 
     imshow( ocv_param->img_name, img_aft );
-    cvWaitKey( 1 );
+    cvWaitKey( wait_time_def );
 
     my_img = img_aft.clone();
 } // OCV_rotate()
@@ -124,7 +125,7 @@ OCV_zoom( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ZOOM *menu_input )
     resize( my_img, img_aft, Size(), menu_input->zoom_ratio_width, menu_input->zoom_ratio_height );
 
     imshow( ocv_param->img_name, img_aft );
-    waitKey( 1 ); // 再描画を促す
+    waitKey( wait_time_def ); // 再描画を促す
 
     my_img = img_aft.clone();
 } // OCV_zoom()
@@ -138,7 +139,7 @@ OCV_resize( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_RESIZE *menu_input )
     resize( my_img, img_aft, img_aft.size(), INTER_CUBIC );
 
     imshow( ocv_param->img_name, img_aft );
-    waitKey( 1 ); // 再描画を促す
+    waitKey( wait_time_def ); // 再描画を促す
 
     my_img = img_aft.clone();
 } // OCV_resize()
@@ -150,7 +151,7 @@ OCV_trim( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_TRIM *menu_input )
 
     Mat img_aft( my_img, Rect( menu_input->x_start, menu_input->y_start, menu_input->x_end, menu_input->y_end ) );
     imshow( ocv_param->img_name, img_aft );
-    waitKey( 1 ); // 再描画を促す
+    waitKey( wait_time_def ); // 再描画を促す
 
     my_img = img_aft.clone();
 } // OCV_trim()
@@ -168,7 +169,7 @@ OCV_Demo( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
     const char* window_name = "pic_windows";
     cvNamedWindow( window_name );
     cvShowImage( window_name, img_ptr );
-    cvWaitKey();
+    cvWaitKey( wait_time_def );
     cvDestroyAllWindows();
 
     if( img_ptr )
