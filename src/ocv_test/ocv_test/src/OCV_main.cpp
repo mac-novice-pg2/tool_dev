@@ -2,8 +2,6 @@
 
 #include "UI_input_result.h"
 
-#include <cassert>
-
 using namespace cv;
 
 const int wait_time_def = 1000;
@@ -14,18 +12,20 @@ const int wait_time_def = 1000;
 void
 OCV_file_open( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_FILE_OPEN *menu_input )
 {
-    IplImage *img = cvLoadImage( menu_input->filename, CV_LOAD_IMAGE_COLOR );
-    if( img == NULL )
+    IplImage *my_img = cvLoadImage( menu_input->filename, CV_LOAD_IMAGE_COLOR );
+    if( my_img == NULL )
     {
         printf( "%sの読み込みに失敗しました。ファイルの有無を確認して下さい\n", menu_input->filename );
         return;
     }
-    ocv_param->img_handler.img = img;
-    ocv_param->img_handler.is_open = true;
 
+    // 画面描画
     cvNamedWindow( ocv_param->img_name, CV_WINDOW_AUTOSIZE );
-    cvShowImage( ocv_param->img_name, ocv_param->img_handler.img );
+    cvShowImage( ocv_param->img_name, my_img );
     waitKey( wait_time_def ); // 再描画を促す
+
+    ocv_param->img_handler.is_open = true;
+    ocv_param->img_handler.img = my_img;
 } // OCV_file_open()
 
 void
@@ -55,14 +55,14 @@ OCV_color_change_mono( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_MONO
 
     IplImage *img_gray = cvCreateImage( cvGetSize( my_img ), IPL_DEPTH_8U, 1 );
     IplImage *img_aft = cvCreateImage( cvGetSize( my_img ), IPL_DEPTH_8U, 3 );
-    cvCvtColor( ocv_param->img_handler.img, img_gray, CV_BGR2GRAY );
+    cvCvtColor( my_img, img_gray, CV_BGR2GRAY );
     cvMerge( img_gray, img_gray, img_gray, NULL, img_aft );
     cvReleaseImage( &img_gray );
 
     cvShowImage( ocv_param->img_name, img_aft );
     waitKey( wait_time_def ); // 再描画を促す
     cvReleaseImage( &my_img );
-    my_img = img_aft;
+    ocv_param->img_handler.img = img_aft;
 } // OCV_color_change_mono()
 
 void
@@ -108,7 +108,8 @@ OCV_color_change_sepia( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_COLOR_CHG_SEP
     cvReleaseImage( &img_merge );
     cvShowImage( ocv_param->img_name, img_aft );
     cvWaitKey( wait_time_def );
-    my_img = img_aft;
+    cvReleaseImage( &my_img );
+    ocv_param->img_handler.img = img_aft;
 } // OCV_color_change_sepia()
 
 /**
@@ -134,7 +135,7 @@ OCV_rotate( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ROTATE *menu_input )
     cvShowImage( ocv_param->img_name, img_aft );
     cvWaitKey( wait_time_def );
     cvReleaseImage( &my_img );
-    my_img = img_aft;
+    ocv_param->img_handler.img = img_aft;
 } // OCV_rotate()
 
 /**
@@ -151,11 +152,12 @@ OCV_zoom( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ZOOM *menu_input )
         ( int )( my_img->height * menu_input->zoom_ratio_height ) ),
         IPL_DEPTH_8U, 3 );
     cvResize( my_img, img_aft, CV_INTER_LINEAR );
-    cvReleaseImage( &my_img );
 
     cvShowImage( ocv_param->img_name, img_aft );
     waitKey( wait_time_def ); // 再描画を促す
-    my_img = img_aft;
+
+    cvReleaseImage( &my_img );
+    ocv_param->img_handler.img = img_aft;
 } // OCV_zoom()
 
 void
@@ -166,22 +168,35 @@ OCV_resize( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_RESIZE *menu_input )
     // ズーム後のサイズに合わせたイメージを作成する
     IplImage *img_aft = cvCreateImage( cvSize( menu_input->width, menu_input->height ), IPL_DEPTH_8U, 3 );
     cvResize( my_img, img_aft, CV_INTER_LINEAR );
-    cvReleaseImage( &my_img );
+
     cvShowImage( ocv_param->img_name, img_aft );
     waitKey( wait_time_def ); // 再描画を促す
-    my_img = img_aft;
+
+    cvReleaseImage( &my_img );
+    ocv_param->img_handler.img = img_aft;
 } // OCV_resize()
 
 void
 OCV_trim( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_TRIM *menu_input )
 {
-    printf( "not implemented\n" );
-#if 0
-    Mat dst( ocv_param->mat, Rect( p->x_start, p->y_start, p->x_end, p->y_end ) );
-    imshow( ocv_param->img_name, dst );
+    IplImage *my_img = ocv_param->img_handler.img;
+
+    // トリミング用領域確保
+    int calc_width = menu_input->x_end - menu_input->x_start;
+    int calc_height = menu_input->y_end - menu_input->y_start;
+    IplImage *img_aft = cvCreateImage( cvSize( calc_width, calc_height ), IPL_DEPTH_8U, 3 );
+
+    // トリミング領域の中心点算出
+    CvPoint2D32f center;
+    center.x = ( menu_input->x_start + menu_input->x_end ) / 2;
+    center.y = ( menu_input->y_start + menu_input->y_end ) / 2;
+    cvGetRectSubPix( my_img, img_aft, center );
+
+    cvShowImage( ocv_param->img_name, img_aft );
     waitKey( wait_time_def ); // 再描画を促す
-    ocv_param->mat_aft = dst;
-#endif
+
+    cvReleaseImage( &my_img );
+    ocv_param->img_handler.img = img_aft;
 } // OCV_trim()
 
 void
@@ -191,7 +206,7 @@ OCV_Demo( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
     if( img_ptr == nullptr )
     {
         printf( "画像ファイルが見つかりません\n" );
-        assert( 0 );
+        CV_Assert( 0 );
     }
 
     const char* window_name = "pic_windows";
@@ -209,5 +224,5 @@ OCV_Demo( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
 void
 OCV_Unknown( OCV_Param_T *ocv_param, eMENU_INPUT_RESULT_ *menu_input )
 {
-    assert( 0 );
+    CV_Assert( 0 );
 } // OCV_Unknown()
