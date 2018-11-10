@@ -6,7 +6,7 @@ Visual Studioでは、プロジェクトという単位でソースコードや�
 
 ### 32bit環境について
 
-大変申し訳ございませんが、手元にWindows10 64bitの環境しかない為、特に32bit環境については確認不十分です。一応の配慮をしたつもりですが、不十分な点が含まれる可能性がある事をご了承願います
+手元にWindows10 64bitの環境しかない為、32bit環境の説明は割愛します
 
 ## 開発用プロジェクト作成
 
@@ -21,40 +21,26 @@ Visual Studioを起動したら、[ファイル] -> [新規作成] -> [プロジ
 
 ## OpenCVセットアップ
 
-セットアップ説明ページでも触れましたが、OpenCVをプロジェクトのインクルード/ライブラリとして登録する必要があります。OpenCVは**C:\devel\library\open_cv\3.4.1**に置いてあるものとします
+セットアップ説明ページでも触れましたが、OpenCVをプロジェクトのインクルード/ライブラリとして登録する必要があります。OpenCVは**C:\devel\lib\opencv**にインストールされているものとします
 
 - ocv_testプロジェクトを開く
   - 画面右端の[ソリューションエクスプローラー]をクリック
-  - ocv_testを選んで右クリックして[プロパティ]を選択
-    - 左ペインの[構成プロパティ] -> [デバッグ]を選択
-
-      - 右ペイン(中央辺りの)[環境]の欄に以下の文字列を入力する
-        - PATH=C:\devel\library\open_cv\3.4.1\build\x64\vc15\bin;%PATH%
-
     - 左ペインの[構成プロパティ] -> [C/C+] -> [全般]を選択
 
       - 右ペインの[追加のインクルードディレクトリ]に以下の文字列を入力
-        - C:\devel\library\open_cv\3.4.1\build\include
-
+        - C:\devel\lib\opencv\build\include
     - 左ペインの[構成プロパティ] -> [リンカ] -> [全般]を選択 
       - 右ペイン(中央辺りの)[追加のライブラリディレクトリ]に以下の文字列を入力
-        - (32bit版Windowsの場合) : C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib
-        - (64bit版Windowsの場合) : C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib
-
+        - C:\devel\lib\opencv\build\x64\vc15\lib
     - 左ペインの[構成プロパティ] -> [リンカ] -> [入力]を選択
-
+      - **opencv_worldXYZ**の部分はインストールしたOpenCVのバージョンによって変化します
+        - OpenCV 3.4.3では**opencv_world343d.lib**となります
       - [追加の依存ファイル]に以下の文字列を入力する
+        - 左上の[構成]を[Debug]にしてから
 
-        - (32bit版Windowsの場合) 
-
-          - C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341.lib
-
-            C:\devel\library\open_cv\3.4.1\build\x86\vc15\lib\opencv_world341d.lib
-
-        - (64bit版Windowsの場合) 
-
-          - C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341.lib
-          - C:\devel\library\open_cv\3.4.1\build\x64\vc15\lib\opencv_world341d.lib
+          - C:\devel\lib\opencv\build\x64\vc15\lib\opencv_world343d.lib
+        - 左上の[構成]を[Debug]にしてから
+          - C:\devel\lib\opencv\build\x64\vc15\lib\opencv_world343.lib
 
   ### OpenCVを使って画像表示
 
@@ -101,6 +87,6 @@ Visual Studioを起動したら、[ファイル] -> [新規作成] -> [プロジ
     - [追加のインクルードディレクトリ]は正しく設定されていますか？
   - (リンクエラー)定義されていない参照/未解決の外部シンボルxxxがある
     - ライブラリパス及びライブラリファイルが正しく追加されていますか？
-  - 実行するとopencv_world3.4.1.dllが無いと言われる
+  - 実行するとopencv_worldX.X.X.dllが無いと言われる
     - [構成プロパティ] -> [デバッグ] -> [環境]の設定は合っていますか？
       - PATH環境変数にOpenCVアプリケーションを動作させるのに必要な動的ライブラリパスを追加するものなので、追加先に上記dllファイルがあるか確認して下さい

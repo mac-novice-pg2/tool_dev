@@ -4,6 +4,7 @@
 
 - ### バージョン管理
 
+  - 手元に32bit環境が無い為、下記説明は全て64bit版のものとします
   - Git( GitHubにリポジトリを用意 )
   - SourceTree
 
@@ -33,10 +34,15 @@
       - captchaで画像認識と格闘
 2. HPからSourceTreeのセットアップファイル入手
 3. インストーラ起動
-   - アカウント選択画面でAtlassianアカウントを選択。以下の情報を入力
+   - アカウント選択画面でAtlassianアカウント**(2018/11/11更新)**(注1)を選択。以下の情報を入力
      - Emailアドレス
      - パスワード
    - あとはデフォルトのまま進めればOK
+     - 注1)SourceTreeインストール時にBitBucketアカウントが必要になった模様
+       - インストール後のGitHub切り替えは可能なので、一旦BitBucket登録を行います
+         1. 下記Atlassianアカウントの部分をBitBucket(Serverじゃない方)を選択
+         2. その先からBitBucketアカウントを登録(といっても、Atlassianアカウントと紐付くだけ)
+         3. 改めてBitBucketアカウントでインストールを進める
 
 ### OpenCV
 
@@ -45,23 +51,21 @@
   - ダウンロード後、適当なディレクトリに置く
 - インストール
   - OpenCVインストール先ディレクトリを用意します。ここでは、以下のようなディレクトリにしました
-    - ディレクトリ：C:\devel\library\open_cv
-  - インストール先ディレクトリへ、ダウンロードしたOpenCVのファイルを置く
-  - ファイルをダブルクリックすると、圧縮ファイルが展開される
+    - ディレクトリ：C:\devel\lib
+  - ファイルをダブルクリックすると、圧縮ファイルが展開されるので、上記ディレクトリを選択します
+    - c:\devel\lib\opencvとしてインストール(ただの解凍)されます
   - [マイコンピュータ]を右クリックして、[プロパティ]を選択します([Win] + [Pause/Break]でも可)
     - [システムの詳細設定]をクリックします([システムのプロパティ]ダイアログが表示される)
     - [詳細設定]タブを選び、[環境変数]を選択します
     - ユーザー環境変数にPATHに以下の文字列を追加します
-      - (32bit版)C:\devel\library\open_cv\3.4.1\build\x86\vc15\bin
-      - (64bit版)C:\devel\library\open_cv\3.4.1\build\x64\vc15\bin
+      - C:\devel\lib\opencv\build\x64\vc15\bin
       - Win10では(入力画面が違うので)そのまま追加出来ますが、Win7の場合は**既存の文字列の末尾に区切り文字となるセミコロン';'を入力してから**追加して下さい
     - 環境変数PATHが存在しない場合は[新規]を選んで以下のように追加して下さい
       - 名前：PATH
-      - 値(32bit版)：%PATH%;C:\devel\library\open_cv\3.4.1\build\x86\vc15\bin
-      - 値(64bit版)：%PATH%;C:\devel\library\open_cv\3.4.1\build\x64\vc15\bin
+      - %PATH%;C:\devel\lib\opencv\build\x64\vc15\bin
 - 使い方
   - Visual Studio等にインクルード/ライブラリパスを設定すると使えるようになります
-    - Visual Studioプロジェクト作成の所でやり方を説明します
+    - [Visual Studioプロジェクト作成](create_vc_proj.md)で詳しく説明します
 
 # GitHubリポジトリ情報
 
