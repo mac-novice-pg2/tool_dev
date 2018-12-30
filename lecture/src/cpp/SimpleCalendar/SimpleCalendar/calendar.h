@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // 曜日を示す列挙型
 typedef enum

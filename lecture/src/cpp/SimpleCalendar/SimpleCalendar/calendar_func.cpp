@@ -1,5 +1,7 @@
-#include "pch.h"
+﻿#include "pch.h"
+
 #include <cstdio>
+#include <cassert>
 
 #include "calendar.h"
 
@@ -47,6 +49,8 @@ weekday2string( eWeekday weekday )
         return "金";
     case eSat:
         return "土";
+    default:
+        assert( 0 );
     }
 } // weekday2string()
 

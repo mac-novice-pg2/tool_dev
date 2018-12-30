@@ -1,13 +1,21 @@
-// SimpleCalendar.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
+﻿// SimpleCalendar.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
 //
 
 #include "pch.h"
+
+#include <ctime>
 #include <cstdio>
+
 
 #include "calendar.h"
 
 int main()
 {
+    time_t timer;
+
+    time( &timer );
+    struct tm *date = localtime( &timer );
+    printf( "Today:%s\n", asctime( date ) );
     print_calener( 12 );
 }
 

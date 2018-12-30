@@ -11,4 +11,6 @@
 
 // TODO: ここでプリコンパイルするヘッダーを追加します
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #endif //PCH_H
