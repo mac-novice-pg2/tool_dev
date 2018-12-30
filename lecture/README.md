@@ -1,7 +1,7 @@
 # プログラミング入門？講座
 
 - [プログラミングに触れてみよう](intro.md)
-- [基本設計編](basic_degisn.md)
+- [基本設計編](basic_design.md)
 - プログラミング編
   - [基本からToday機能まで](prog_today.md)
   - [カレンダーを作る(いちねんカレンダー)](prog_year_cal.md)
