@@ -1,13 +1,20 @@
 ﻿#include "pch.h"
 
 #include <cstdio>
+#include <ctime>
 #include <cassert>
 
 #include "calendar.h"
 
 // 外部参照
-extern Month_Info_t month_info_2019[];
+extern MonthInfo month_info_2019[];
+extern EventInfo event_info_2019[][ 8 ];
 
+/*
+  ------------------------------------------
+   static関数
+  ------------------------------------------
+*/
 static eWeekday
 next_weekday( eWeekday current )
 {
@@ -54,10 +61,44 @@ weekday2string( eWeekday weekday )
     }
 } // weekday2string()
 
-void
-print_calener( int month )
+static void
+judge_event( int month, int today )
 {
-    Month_Info_t *pInfo = &( month_info_2019[ month - 1 ] );
+    EventInfo *event;
+    for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
+    {
+        event = &( event_info_2019[ month - 1 ][ idx ] );
+        if( ( event->day == EVENT_END ) &&
+            ( event->event_name == nullptr ) )
+        {
+            break;
+        }
+        if( event->day == today )
+        {
+            printf( "%2d月%2dは%sです\n", month, today, event->event_name );
+        }
+    }
+} // judge_event()
+
+/*
+  ------------------------------------------
+   API関数
+  ------------------------------------------
+*/
+void
+PrintToday( void )
+{
+    time_t timer;
+
+    time( &timer );
+    struct tm *date = localtime( &timer );
+    printf( "Today:%s\n", asctime( date ) );
+} // print_today()
+
+void
+PrintCalendar( int month )
+{
+    MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
 
     // 月の部分を出力
     printf( "%2d月のカレンダー\n\n", month );
@@ -87,4 +128,25 @@ print_calener( int month )
         printf( "%2d ", today );
     }
 	printf( "\n" );
-} // print_calener()
+} // PrintCalendar()
+
+void
+EventAlert( int month )
+{
+    MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
+
+    printf( "\n"
+        "=======================================\n"
+        " イベント情報 \n"
+        "=======================================\n"
+    );
+    // 日部分を出力する
+    int bef_workday;
+    eWeekday cur_weekday = pInfo->weekday;
+    for( int today = 1; today <= pInfo->last; today++ )
+    {
+        judge_event( month, today );
+        cur_weekday = next_weekday( cur_weekday );
+    }
+    printf( "\n" );
+} // EventAlert()

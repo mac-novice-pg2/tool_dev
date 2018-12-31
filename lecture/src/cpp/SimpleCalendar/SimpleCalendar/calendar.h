@@ -18,7 +18,17 @@ typedef struct
 {
     int      last;    // 月末
     eWeekday weekday; // 開始曜日
-}Month_Info_t;
+}MonthInfo;
 
-// 関数軍のプロとライプ宣言
-void print_calener( int month );
+#define EVENT_ITEM_MAX ( 8 )
+#define EVENT_END      ( 0xFFFFFFFFU )
+typedef struct
+{
+    int day;
+    const char *event_name;
+}EventInfo;
+
+// APIプロトタイプ宣言
+void PrintToday( void );
+void PrintCalendar( int month );
+void EventAlert( int month );
