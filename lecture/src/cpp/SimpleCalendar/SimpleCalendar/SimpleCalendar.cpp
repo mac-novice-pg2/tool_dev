@@ -3,20 +3,13 @@
 
 #include "pch.h"
 
-#include <ctime>
-#include <cstdio>
-
-
 #include "calendar.h"
 
 int main()
 {
-    time_t timer;
-
-    time( &timer );
-    struct tm *date = localtime( &timer );
-    printf( "Today:%s\n", asctime( date ) );
-    print_calener( 12 );
+    PrintToday();
+    PrintCalendar( 1 );
+    EventAlert( 1 );
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー
