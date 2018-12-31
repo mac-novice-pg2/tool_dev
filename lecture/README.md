@@ -3,6 +3,6 @@
 - [プログラミングに触れてみよう](intro.md)
 - [基本設計編](basic_design.md)
 - プログラミング編
-  - [基本からToday機能まで](prog_today.md)
-  - [カレンダーを作る(いちねんカレンダー)](prog_year_cal.md)
-  - [イベントを知らせる(イベントお知らせ )]
+  - [Today機能](prog_today.md)
+  - [いちねんカレンダー機能](prog_year_cal.md)
+  - [イベントお知らせ機能](prog_event_alert.md)
