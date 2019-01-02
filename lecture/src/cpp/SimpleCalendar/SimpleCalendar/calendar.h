@@ -5,6 +5,8 @@
    マクロ定義
   ------------------------------------------
 */
+#define SALARY_DAY     ( 25 )
+#define NOT_FOUND      ( 0xFFFFFFFF )
 #define EVENT_ITEM_MAX ( 8 )
 #define EVENT_END      ( 0xFFFFFFFFU )
 
@@ -29,7 +31,7 @@ typedef enum
 // カレンダー作成用情報
 typedef struct
 {
-    int      last;    // 月末
+    int      eom;    // 月末( end of month )
     eWeekday weekday; // 開始曜日
 }MonthInfo;
 
@@ -51,5 +53,5 @@ typedef struct
 
 // APIプロトタイプ宣言
 void PrintToday( void );
-void PrintCalendar( int month );
-void EventAlert( int month );
+void PrintCalendar( int year, int month );
+void PrintEventAlert( int year, int month );

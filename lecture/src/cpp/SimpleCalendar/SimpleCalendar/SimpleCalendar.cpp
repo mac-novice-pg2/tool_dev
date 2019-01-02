@@ -3,13 +3,20 @@
 
 #include "pch.h"
 
+#include <cstdio>
 #include "calendar.h"
 
-int main()
+int
+main( int argc, const char* argv[] )
 {
+    int year;
+    int month;
+
+    sscanf( argv[ 1 ], "%d", &year );
+    sscanf( argv[ 2 ], "%d", &month );
     PrintToday();
-    PrintCalendar( 1 );
-    EventAlert( 1 );
+    PrintCalendar( year, month );
+    PrintEventAlert( year, month );
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー

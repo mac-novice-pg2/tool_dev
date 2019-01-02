@@ -36,11 +36,12 @@ next_weekday( eWeekday current )
         return eSun;
     default:
         assert( 0 );
+        return eWeekEnd;
     }
 } // next_weekday()
 
 static const char*
-weekday2string( eWeekday weekday )
+weekday_to_string( eWeekday weekday )
 {
     switch( weekday )
     {
@@ -66,7 +67,7 @@ weekday2string( eWeekday weekday )
 // TodayInfo型データを一日進める関数
 // 引数のeomはend of monthで月末の意
 static void
-StepTodayInfo( TodayInfo *today_info, int eom )
+step_today_info( TodayInfo *today_info, int eom )
 {
     if( today_info->day != eom ) // 月末の場合、月を一つ進める
     {
@@ -86,23 +87,119 @@ StepTodayInfo( TodayInfo *today_info, int eom )
     // 曜日を進める
     today_info->weekday = next_weekday( today_info->weekday );
 } // StepTodayInfo()
-static void
-judge_event( int month, int today )
+
+static EventInfo*
+check_event_info( const TodayInfo *today )
 {
-    EventInfo *event;
+    EventInfo *event = nullptr;
     for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
     {
-        event = &( event_info_2019[ month - 1 ][ idx ] );
+        event = &( event_info_2019[ today->month - 1 ][ idx ] );
         if( ( event->day == EVENT_END ) &&
             ( event->event_name == nullptr ) )
         {
+            event = nullptr;
             break;
         }
-        if( event->day == today )
+        else if( event->day == today->day )
         {
-            printf( "%2d月%2dは%sです\n", month, today, event->event_name );
+            break;
         }
     }
+
+    return event;
+} // check_event()
+
+static bool
+is_holiday( const TodayInfo *today )
+{
+    bool judgement = false;
+
+    // 土日判定
+    if( ( today->weekday == eSat ) &&
+        ( today->weekday == eSun ) )
+    {
+        judgement = true;
+    }
+   
+    // 祝日判定
+    EventInfo *event = check_event_info( today );
+    if( event != nullptr ) // 該当イベントが見つかった？
+    {
+        if( event->holiday )
+        {
+            judgement = true;
+        }
+    }
+
+    return judgement;
+} // is_holiday()
+
+static void
+print_no_overtime( const TodayInfo *start, int eom )
+{
+    TodayInfo today = *start;
+
+    int bef_bussiness_day = today.day;
+    bool isHolidays = false; // 連休中判定
+    int cont_holidays = 0; // 連続休暇数
+    int last_friday = NOT_FOUND;
+    printf( "★定時退社日★\n" );
+    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    {
+        if( is_holiday( &today ) ) // 本日は休日？
+        {
+            isHolidays = true; // 休暇中フラグOn
+            if( today.day == SALARY_DAY ) // 給料日？
+            {
+                printf( "%2d日\n", bef_bussiness_day );
+            }
+        }
+        else // 平日
+        {
+            // 3連休判定(連休終了時に直前の出勤日を出力する)
+            if( isHolidays )
+            {
+                if( cont_holidays >= 3 )
+                {
+                    printf( "%2d日\n", bef_bussiness_day );
+                }
+            }
+            if( today.day == SALARY_DAY )
+            {
+                printf( "%2d日\n", today.day );
+            }
+            // プレミアムフライデー判定
+            if( today.weekday == eFri )
+            {
+                last_friday = today.day;
+            }
+            isHolidays = false; // 休暇中フラグOff
+            bef_bussiness_day = today.day; // 直近の営業日を更新する
+        }
+        step_today_info( &today, eom ); // 1日進める
+    }
+    if( last_friday != NOT_FOUND )
+    {
+        printf( "%2d日\n", last_friday );
+    }
+} // print_no_overtime()
+
+static void
+print_event_alert( const TodayInfo *start, int eom )
+{
+    EventInfo *event;
+    TodayInfo today = *start;
+    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    {
+        event = check_event_info( &today );
+        if( event != nullptr ) // 該当イベントが見つかった？
+        {
+            printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
+        }
+        step_today_info( &today, eom ); // 1日進める
+    }
+    printf( "\n" );
 } // judge_event()
 
 /*
@@ -121,19 +218,16 @@ PrintToday( void )
 } // print_today()
 
 void
-PrintCalendar( int month )
+PrintCalendar( int year, int month )
 {
+    printf(
+        "%4d年%2d月のカレンダー\n"
+        "\n"
+        "日 月 火 水 木 金 土\n",
+        year, month );
+    
+    // カレンダー情報テーブルから、指定年月のテーブルを引く
     MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
-
-    // 月の部分を出力
-    printf( "%2d月のカレンダー\n\n", month );
-
-    // 曜日部分を出力する
-    for( int idx = 0; idx < eWeekEnd; idx++ )
-    {
-        printf( "%s ", weekday2string( ( eWeekday )idx ) );
-    }
-    printf( "\n" );
 
     // 日部分の出力位置合わせ
     for( int idx = 0; idx < ( int )pInfo->weekday; idx++ )
@@ -142,12 +236,8 @@ PrintCalendar( int month )
     }
 
     // 日部分を出力する
-    TodayInfo today;
-    today.year = 2019;
-    today.month = month;
-    today.day = 1;
-    today.weekday = pInfo->weekday;
-    for( int loop_count = 0; loop_count < pInfo->last; loop_count++ )
+    TodayInfo today = { year, month, 1, pInfo->weekday };
+    for( int loop_count = 0; loop_count < pInfo->eom; loop_count++ )
     {
         printf( "%2d ", today.day );
         // 土曜日まで出力したら、改行して折り返す
@@ -155,28 +245,27 @@ PrintCalendar( int month )
         {
             printf( "\n" );
         }
-        StepTodayInfo( &today, pInfo->last ); // 1日進める
+        step_today_info( &today, pInfo->eom ); // 1日進める
     }
 	printf( "\n" );
 } // PrintCalendar()
 
 void
-EventAlert( int month )
+PrintEventAlert( int year, int month )
 {
-    MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
-
     printf( "\n"
         "=======================================\n"
         " イベント情報 \n"
         "=======================================\n"
     );
-    // 日部分を出力する
-    int bef_workday;
-    eWeekday cur_weekday = pInfo->weekday;
-    for( int today = 1; today <= pInfo->last; today++ )
-    {
-        judge_event( month, today );
-        cur_weekday = next_weekday( cur_weekday );
-    }
-    printf( "\n" );
+
+    // カレンダー/イベント情報初期化
+    MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
+    TodayInfo today = { year, month, 1, pInfo->weekday };
+
+    // 定時退社日チェック
+    print_no_overtime( &today, pInfo->eom );
+
+    // イベントお知らせ出力
+    print_event_alert( &today, pInfo->eom );
 } // EventAlert()
