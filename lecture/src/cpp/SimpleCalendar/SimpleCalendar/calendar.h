@@ -46,9 +46,9 @@ typedef struct
 
 typedef struct
 {
-    int day;
-    const char *event_name;
-    bool holiday;
+    int day; // イベント日
+    const char *event_name; // イベント名
+    bool is_holiday; // true:休日 false:平日
 }EventInfo;
 
 // APIプロトタイプ宣言

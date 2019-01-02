@@ -4,6 +4,8 @@
 #include "pch.h"
 
 #include <cstdio>
+#include <cstdlib>
+
 #include "calendar.h"
 
 int
@@ -11,6 +13,12 @@ main( int argc, const char* argv[] )
 {
     int year;
     int month;
+
+    if( argc < 2 )
+    {
+        printf( "usage) SimpleCalendar.exe [year] [moth]\n" );
+        exit( 1 );
+    }
 
     sscanf( argv[ 1 ], "%d", &year );
     sscanf( argv[ 2 ], "%d", &month );

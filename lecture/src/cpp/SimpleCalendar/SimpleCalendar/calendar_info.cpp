@@ -2,7 +2,8 @@
 
 #include "calendar.h"
 
-MonthInfo month_info_2019[] = {
+MonthInfo
+month_info_2019[] = {
     { 31, eTue }, // 2019/01
     { 28, eFri }, // 2019/02
     { 31, eFri }, // 2019/03
@@ -17,7 +18,8 @@ MonthInfo month_info_2019[] = {
     { 31, eSun }, // 2019/12
 };
 
-EventInfo event_info_2019[][ EVENT_ITEM_MAX ] = {
+EventInfo
+event_info_2019[][ EVENT_ITEM_MAX ] = {
     { // 2019/1
         { 1, "元旦", true },
         { 7, "七草の日", false },

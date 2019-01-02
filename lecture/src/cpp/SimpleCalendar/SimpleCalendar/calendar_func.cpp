@@ -40,30 +40,6 @@ next_weekday( eWeekday current )
     }
 } // next_weekday()
 
-static const char*
-weekday_to_string( eWeekday weekday )
-{
-    switch( weekday )
-    {
-    case eSun:
-        return "日";
-    case eMon:
-        return "月";
-    case eTue:
-        return "火";
-    case eWed:
-        return "水";
-    case eThu:
-        return "木";
-    case eFri:
-        return "金";
-    case eSat:
-        return "土";
-    default:
-        assert( 0 );
-    }
-} // weekday2string()
-
 // TodayInfo型データを一日進める関数
 // 引数のeomはend of monthで月末の意
 static void
@@ -89,29 +65,31 @@ step_today_info( TodayInfo *today_info, int eom )
 } // StepTodayInfo()
 
 static EventInfo*
-check_event_info( const TodayInfo *today )
+check_event_day( const TodayInfo *today )
 {
     EventInfo *event = nullptr;
     for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
     {
         event = &( event_info_2019[ today->month - 1 ][ idx ] );
+        // イベント終端判定( 構造体メンバ全てが無効値を終端として扱う)
         if( ( event->day == EVENT_END ) &&
-            ( event->event_name == nullptr ) )
+            ( event->event_name == nullptr ) &&
+            ( event->is_holiday == false ) )
         {
-            event = nullptr;
+            event = nullptr; // 上位へ該当なしを示す無効ポインタを返す
             break;
         }
-        else if( event->day == today->day )
+        else if( event->day == today->day ) // イベントリストに指定日あり
         {
-            break;
+            break; // 現在のイベント情報を上位へ返す
         }
     }
 
     return event;
-} // check_event()
+} // check_event_day()
 
 static bool
-is_holiday( const TodayInfo *today )
+check_holiday( const TodayInfo *today )
 {
     bool judgement = false;
 
@@ -123,17 +101,17 @@ is_holiday( const TodayInfo *today )
     }
    
     // 祝日判定
-    EventInfo *event = check_event_info( today );
+    EventInfo *event = check_event_day( today );
     if( event != nullptr ) // 該当イベントが見つかった？
     {
-        if( event->holiday )
+        if( event->is_holiday )
         {
             judgement = true;
         }
     }
 
     return judgement;
-} // is_holiday()
+} // check_holiday()
 
 static void
 print_no_overtime( const TodayInfo *start, int eom )
@@ -141,44 +119,46 @@ print_no_overtime( const TodayInfo *start, int eom )
     TodayInfo today = *start;
 
     int bef_bussiness_day = today.day;
-    bool isHolidays = false; // 連休中判定
+    bool is_cont_holidays = false; // 連休中判定
+    bool is_holiday = false; // 連休中判定
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
     printf( "★定時退社日★\n" );
     for( int loop_count = 0; loop_count < eom; loop_count++ )
     {
-        if( is_holiday( &today ) ) // 本日は休日？
+        is_holiday = check_holiday( &today ); // 本日の休日判定
+        if( is_holiday ) // 本日は休日？
         {
-            isHolidays = true; // 休暇中フラグOn
-            if( today.day == SALARY_DAY ) // 給料日？
-            {
-                printf( "%2d日\n", bef_bussiness_day );
-            }
+            is_cont_holidays = true; // 休暇中フラグOn
         }
-        else // 平日
+        else // !is_holiday( =平日 )
         {
             // 3連休判定(連休終了時に直前の出勤日を出力する)
-            if( isHolidays )
+            if( is_cont_holidays )
             {
                 if( cont_holidays >= 3 )
                 {
                     printf( "%2d日\n", bef_bussiness_day );
                 }
             }
+            // 給料日での定時退社出力
             if( today.day == SALARY_DAY )
             {
                 printf( "%2d日\n", today.day );
             }
-            // プレミアムフライデー判定
+            // プレミアムフライデー判定用に最終金曜日を保存しておく
             if( today.weekday == eFri )
             {
                 last_friday = today.day;
             }
-            isHolidays = false; // 休暇中フラグOff
+            is_cont_holidays = false; // 休暇中フラグOff
             bef_bussiness_day = today.day; // 直近の営業日を更新する
         }
+
         step_today_info( &today, eom ); // 1日進める
     }
+
+    // プレミアムフライデー出力
     if( last_friday != NOT_FOUND )
     {
         printf( "%2d日\n", last_friday );
@@ -192,7 +172,7 @@ print_event_alert( const TodayInfo *start, int eom )
     TodayInfo today = *start;
     for( int loop_count = 0; loop_count < eom; loop_count++ )
     {
-        event = check_event_info( &today );
+        event = check_event_day( &today );
         if( event != nullptr ) // 該当イベントが見つかった？
         {
             printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
@@ -200,7 +180,7 @@ print_event_alert( const TodayInfo *start, int eom )
         step_today_info( &today, eom ); // 1日進める
     }
     printf( "\n" );
-} // judge_event()
+} // print_event_alert()
 
 /*
   ------------------------------------------
@@ -263,9 +243,9 @@ PrintEventAlert( int year, int month )
     MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
     TodayInfo today = { year, month, 1, pInfo->weekday };
 
-    // 定時退社日チェック
-    print_no_overtime( &today, pInfo->eom );
-
     // イベントお知らせ出力
     print_event_alert( &today, pInfo->eom );
+
+    // 定時退社日チェック
+    print_no_overtime( &today, pInfo->eom );
 } // EventAlert()
