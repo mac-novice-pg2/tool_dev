@@ -1,5 +1,18 @@
 ﻿#pragma once
 
+/*
+  ------------------------------------------
+   マクロ定義
+  ------------------------------------------
+*/
+#define EVENT_ITEM_MAX ( 8 )
+#define EVENT_END      ( 0xFFFFFFFFU )
+
+/*
+  ------------------------------------------
+   型定義
+  ------------------------------------------
+*/
 // 曜日を示す列挙型
 typedef enum
 {
@@ -20,12 +33,20 @@ typedef struct
     eWeekday weekday; // 開始曜日
 }MonthInfo;
 
-#define EVENT_ITEM_MAX ( 8 )
-#define EVENT_END      ( 0xFFFFFFFFU )
+// 今日の年月日情報
+typedef struct
+{
+    int year;
+    int month;
+    int day;
+    eWeekday weekday;
+}TodayInfo;
+
 typedef struct
 {
     int day;
     const char *event_name;
+    bool holiday;
 }EventInfo;
 
 // APIプロトタイプ宣言
