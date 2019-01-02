@@ -34,6 +34,8 @@ next_weekday( eWeekday current )
         return eSat;
     case eSat:
         return eSun;
+    default:
+        assert( 0 );
     }
 } // next_weekday()
 
@@ -61,6 +63,29 @@ weekday2string( eWeekday weekday )
     }
 } // weekday2string()
 
+// TodayInfo型データを一日進める関数
+// 引数のeomはend of monthで月末の意
+static void
+StepTodayInfo( TodayInfo *today_info, int eom )
+{
+    if( today_info->day != eom ) // 月末の場合、月を一つ進める
+    {
+        ( today_info->day )++;
+    }
+    else
+    {
+        today_info->day = 1; // 1日に戻す
+        ( today_info->month )++; // 月を1つ進める
+        if( today_info->month == 13 ) // 年末の場合は更に年を進める
+        {
+            ( today_info->year )++;
+            today_info->month = 1; // 1月に戻す
+        }
+    }
+
+    // 曜日を進める
+    today_info->weekday = next_weekday( today_info->weekday );
+} // StepTodayInfo()
 static void
 judge_event( int month, int today )
 {
@@ -111,21 +136,26 @@ PrintCalendar( int month )
     printf( "\n" );
 
     // 日部分の出力位置合わせ
-    eWeekday cur_weekday = pInfo->weekday;
-    int pos = ( int )cur_weekday;
-    for( int idx = 0; idx < pos; idx++ )
+    for( int idx = 0; idx < ( int )pInfo->weekday; idx++ )
     {
         printf( "   " );
     }
 
     // 日部分を出力する
-	for( int today = 1; today <= pInfo->last; today++, pos++ )
+    TodayInfo today;
+    today.year = 2019;
+    today.month = month;
+    today.day = 1;
+    today.weekday = pInfo->weekday;
+    for( int loop_count = 0; loop_count < pInfo->last; loop_count++ )
     {
-    	if( pos && ( ( pos % 7 ) == 0 ) )
+        printf( "%2d ", today.day );
+        // 土曜日まで出力したら、改行して折り返す
+        if( today.weekday == eSat )
         {
             printf( "\n" );
         }
-        printf( "%2d ", today );
+        StepTodayInfo( &today, pInfo->last ); // 1日進める
     }
 	printf( "\n" );
 } // PrintCalendar()
