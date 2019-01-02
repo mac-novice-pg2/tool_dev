@@ -71,12 +71,12 @@ check_event_day( const TodayInfo *today )
     for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
     {
         event = &( event_info_2019[ today->month - 1 ][ idx ] );
-        // イベント終端判定( 構造体メンバ全てが無効値を終端として扱う)
+        // イベント終端判定( 構造体メンバ全てが無効値のものをリスト終端として扱う )
         if( ( event->day == EVENT_END ) &&
             ( event->event_name == nullptr ) &&
             ( event->is_holiday == false ) )
         {
-            event = nullptr; // 上位へ該当なしを示す無効ポインタを返す
+            event = nullptr; // 該当エントリなしを示す無効ポインタを返す
             break;
         }
         else if( event->day == today->day ) // イベントリストに指定日あり
@@ -84,7 +84,6 @@ check_event_day( const TodayInfo *today )
             break; // 現在のイベント情報を上位へ返す
         }
     }
-
     return event;
 } // check_event_day()
 
@@ -104,12 +103,11 @@ check_holiday( const TodayInfo *today )
     EventInfo *event = check_event_day( today );
     if( event != nullptr ) // 該当イベントが見つかった？
     {
-        if( event->is_holiday )
+        if( event->is_holiday ) // 該当日は祝日？
         {
             judgement = true;
         }
     }
-
     return judgement;
 } // check_holiday()
 
@@ -120,7 +118,7 @@ print_no_overtime( const TodayInfo *start, int eom )
 
     int bef_bussiness_day = today.day;
     bool is_cont_holidays = false; // 連休中判定
-    bool is_holiday = false; // 連休中判定
+    bool is_holiday = false; // 本日の休日判定
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
     printf( "★定時退社日★\n" );
@@ -131,22 +129,22 @@ print_no_overtime( const TodayInfo *start, int eom )
         {
             is_cont_holidays = true; // 休暇中フラグOn
         }
-        else // !is_holiday( =平日 )
+        else // !is_holiday( = 平日 )
         {
             // 3連休判定(連休終了時に直前の出勤日を出力する)
             if( is_cont_holidays )
             {
-                if( cont_holidays >= 3 )
+                if( cont_holidays >= 3 ) // 3連休以上だった？
                 {
                     printf( "%2d日\n", bef_bussiness_day );
                 }
             }
-            // 給料日での定時退社出力
+            // 給料日の定時退社判定
             if( today.day == SALARY_DAY )
             {
                 printf( "%2d日\n", today.day );
             }
-            // プレミアムフライデー判定用に最終金曜日を保存しておく
+            // 後のプレミアムフライデー判定用に最終金曜日を保存
             if( today.weekday == eFri )
             {
                 last_friday = today.day;
@@ -154,7 +152,6 @@ print_no_overtime( const TodayInfo *start, int eom )
             is_cont_holidays = false; // 休暇中フラグOff
             bef_bussiness_day = today.day; // 直近の営業日を更新する
         }
-
         step_today_info( &today, eom ); // 1日進める
     }
 
