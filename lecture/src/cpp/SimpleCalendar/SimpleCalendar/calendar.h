@@ -32,7 +32,7 @@ typedef enum
 typedef struct
 {
     int      eom;    // 月末( end of month )
-    eWeekday weekday; // 開始曜日
+    eWeekday start_weekday; // 開始曜日
 }MonthInfo;
 
 // 今日の年月日情報
