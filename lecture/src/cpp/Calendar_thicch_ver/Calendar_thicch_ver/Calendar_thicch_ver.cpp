@@ -27,8 +27,8 @@ typedef enum
 // カレンダー作成用情報
 typedef struct
 {
-    int      eom;    // 月末( end of month )
-    eWeekday weekday; // 開始曜日
+    int      eom;     // 月末( end of month )
+    eWeekday start_weekday; // 開始曜日
 }MonthInfo;
 
 /*
@@ -66,7 +66,7 @@ main( int argc, const char* argv[] )
 {
     MonthInfo
     eom_table[] = {
-        // eom, weekday
+        // eom, start_weekday
         {  31,  eTue }, // 2019/01
         {  28,  eFri }, // 2019/02
         {  31,  eFri }, // 2019/03
@@ -97,34 +97,46 @@ main( int argc, const char* argv[] )
          eSat = 6
         */
 
-        //１月１日が火曜日だから、日曜と月曜は要らないから空白をいれるためにスキップする。
-        //（１月1日の場合）0 < 2やから0と1の二セット分の空白３個分を入れる
+        // 2019年1月1日は火曜日
+        // 従って日曜と月曜は不要なので、空白を入れてスキップする。
+        // （1月1日の場合）0 < 2やから0と1の2セット分の空白3個分を入れる
         // 半角スペース3個 x 2セット = 合計6個のスペースが入る )
-        for( int skip = 0; skip < eom_table[ month ].weekday; skip++ )
+        for( int skip = 0; skip < eom_table[ month ].start_weekday; skip++ )
         {
             printf( "   " );
         }
 
-        //1月１日がどこから(火曜日)始まることを意味してる
-        eWeekday current_weekday = eom_table[ month ].weekday;
+        // 1月1日がどこから(火曜日)始まることを意味してる
+        // その月が何曜日から始まるのかは、
+        // eom_table配列の[ 月 ].start_weekdayメンバに入っている
+        eWeekday current_weekday = eom_table[ month ].start_weekday;
+        eWeekday next;
 
-        // １日から始まって、月末を表示
+        // 1日から始めて、月末までの日を表示する
+        // 月末はeom_table配列の[ 月 ].eomメンバに入っている
         for( int day = 1; day <= eom_table[ month ].eom; day++ )
         {
-            //数字２桁分取る
+            // [書式指定文字列]
+            // 数字の出力幅は2桁(%2d)分取り、スペース1つを出力する
             printf( "%2d ", day );
 
-            //next_weekdayっていう関数
-            //土曜日で改行
-            current_weekday = next_weekday( current_weekday );
-            if( current_weekday == eSun )
+            // next_weekday()という関数は、現在の曜日を渡すと、次の曜日を返す
+            //  ex) next_weekday( eMon ) // eMonを渡すとeTueが返ってくる
+            next = next_weekday( current_weekday );
+            // 土曜日で改行する
+            // next_weekday()に今日の曜日を渡すと明日の曜日が得られるので、
+            //  「明日が日曜日 = 今日は土曜日」
+            // という風に判定出来る
+            if( next == eSun ) // 明日は日曜日( 今日は土曜日？ )
             {
-                printf( "\n" );
+                printf( "\n" ); // 改行を入れる
             }
+            current_weekday = next; // 今日の曜日を更新する
         }
         printf( "\n\n" );
     }
 
+    // getchar()はEnterキーを押すまで待つ
     printf( "Enterキーを押すと終了します" );
     getchar();
 }
