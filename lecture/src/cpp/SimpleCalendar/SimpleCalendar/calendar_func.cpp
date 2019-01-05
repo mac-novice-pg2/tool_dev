@@ -43,26 +43,28 @@ next_weekday( eWeekday current )
 // TodayInfo型データを一日進める関数
 // 引数のeomはend of monthで月末の意
 static void
-step_today_info( TodayInfo *today_info, int eom )
+step_today_info( TodayInfo *today, int eom )
 {
-    if( today_info->day != eom ) // 月末の場合、月を一つ進める
+    if( today->day != eom ) // 今日は月末でない？
     {
-        ( today_info->day )++;
+        ( today->day )++; // 日を1日進める
     }
-    else
+    else // 今日は月末？
     {
-        today_info->day = 1; // 1日に戻す
-        ( today_info->month )++; // 月を1つ進める
-        if( today_info->month == 13 ) // 年末の場合は更に年を進める
+        // 一か月進めて、1日に戻す
+        // 年末なら、1年進めて1月に戻す
+        today->day = 1;
+        ( today->month )++;
+        if( today->month == 13 ) // 年末？
         {
-            ( today_info->year )++;
-            today_info->month = 1; // 1月に戻す
+            ( today->year )++;
+            today->month = 1;
         }
     }
 
     // 曜日を進める
-    today_info->weekday = next_weekday( today_info->weekday );
-} // StepTodayInfo()
+    today->weekday = next_weekday( today->weekday );
+} // step_today_info()
 
 static EventInfo*
 check_event_day( const TodayInfo *today )
@@ -192,7 +194,7 @@ PrintToday( void )
     time( &timer );
     struct tm *date = localtime( &timer );
     printf( "Today:%s\n", asctime( date ) );
-} // print_today()
+} // PrintToday()
 
 void
 PrintCalendar( int year, int month )
@@ -207,14 +209,14 @@ PrintCalendar( int year, int month )
     MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
 
     // 日部分の出力位置合わせ
-    for( int idx = 0; idx < ( int )pInfo->weekday; idx++ )
+    for( int skip = 0; skip < ( int )pInfo->start_weekday; skip++ )
     {
         printf( "   " );
     }
 
     // 日部分を出力する
-    TodayInfo today = { year, month, 1, pInfo->weekday };
-    for( int loop_count = 0; loop_count < pInfo->eom; loop_count++ )
+    TodayInfo today = { year, month, 1, pInfo->start_weekday };
+    for( int day = 0; day < pInfo->eom; day++ )
     {
         printf( "%2d ", today.day );
         // 土曜日まで出力したら、改行して折り返す
@@ -238,7 +240,7 @@ PrintEventAlert( int year, int month )
 
     // カレンダー/イベント情報初期化
     MonthInfo *pInfo = &( month_info_2019[ month - 1 ] );
-    TodayInfo today = { year, month, 1, pInfo->weekday };
+    TodayInfo today = { year, month, 1, pInfo->start_weekday };
 
     // イベントお知らせ出力
     print_event_alert( &today, pInfo->eom );

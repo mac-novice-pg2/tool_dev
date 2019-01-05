@@ -7,7 +7,7 @@
 **イベントお知らせ機能**のイメージをもう少し具体化しましょう。
 
 - 特定の日をお知らせする機能
-  - カレンダー上に表示するのは大変なので、枠外でよし
+  - カレンダー上に表示するのは大変なので、枠外で
 - 特定の日時の定義
   - 定時退社日
     - 給料日(25日)
@@ -76,18 +76,19 @@ typedef struct
 EventInfo
 event_info_2019[][ EVENT_ITEM_MAX ] = {
     { // 2019/1
+        // { day, event_name, is_holiday}
         { 1, "元旦", true },
         { 7, "七草の日", false },
         { 14,"成人の日", true },
-        { EVENT_END,nullptr, false }, // 無効値。2019/1の終端値
+        { EVENT_END,nullptr, false },
     },
-    // 中略
     { // 2019/12
+        // { day, event_name, is_holiday}
         { 23, "天皇誕生日？", true },
         { 24, "クリスマスイブ", false },
         { 25, "クリスマス", false },
         { 31, "大晦日", false },
-        { EVENT_END,nullptr, false }, // 無効値。2019/1の終端値
+        { EVENT_END,nullptr, false },
     },
 };
 ```
@@ -265,3 +266,4 @@ print_no_overtime( const TodayInfo *start, int eom )
 } // print_no_overtime()
 ```
 
+これで予定していた機能の全てが実装出来ました
