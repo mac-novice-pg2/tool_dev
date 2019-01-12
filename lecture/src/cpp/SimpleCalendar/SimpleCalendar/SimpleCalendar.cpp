@@ -11,27 +11,24 @@
 int
 main( int argc, const char* argv[] )
 {
-    int year;
-    int month;
-
-    if( argc < 2 )
-    {
-        printf( "usage) SimpleCalendar.exe [year] [moth]\n" );
-        exit( 1 );
-    }
-
-    sscanf( argv[ 1 ], "%d", &year );
-    sscanf( argv[ 2 ], "%d", &month );
+    int year = 2019;
     PrintToday();
-    PrintCalendar( year, month );
-    PrintEventAlert( year, month );
+    for( int month = 1; month < 12; month++ )
+    {
+        PrintCalendar( year, month );
+        PrintEventAlert( year, month );
+        printf(
+            "\n"
+            "-----------------------------------------------------------\n"
+            "\n" );
+    }
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー
 // プログラムのデバッグ: F5 または [デバッグ] > [デバッグの開始] メニュー
 
 // 作業を開始するためのヒント: 
-//    1. ソリューション エクスプローラー ウィンドウを使用してファイルを追加/管理します 
+//   1. ソリューション エクスプローラー ウィンドウを使用してファイルを追加/管理します 
 //   2. チーム エクスプローラー ウィンドウを使用してソース管理に接続します
 //   3. 出力ウィンドウを使用して、ビルド出力とその他のメッセージを表示します
 //   4. エラー一覧ウィンドウを使用してエラーを表示します

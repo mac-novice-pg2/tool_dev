@@ -95,7 +95,7 @@ check_holiday( const TodayInfo *today )
     bool judgement = false;
 
     // 土日判定
-    if( ( today->weekday == eSat ) &&
+    if( ( today->weekday == eSat ) ||
         ( today->weekday == eSun ) )
     {
         judgement = true;
@@ -119,28 +119,24 @@ print_no_overtime( const TodayInfo *start, int eom )
     TodayInfo today = *start;
 
     int bef_bussiness_day = today.day;
-    bool is_cont_holidays = false; // 連休中判定
-    bool is_holiday = false; // 本日の休日判定
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
     printf( "★定時退社日★\n" );
     for( int loop_count = 0; loop_count < eom; loop_count++ )
     {
-        is_holiday = check_holiday( &today ); // 本日の休日判定
-        if( is_holiday ) // 本日は休日？
+        if( check_holiday( &today ) ) // 本日は休日？
         {
-            is_cont_holidays = true; // 休暇中フラグOn
+            //printf( "!!! debug !!![%2d] は休み\n",today.day );
+            cont_holidays++; // 連続休日数をインクリメント
         }
         else // !is_holiday( = 平日 )
         {
             // 3連休判定(連休終了時に直前の出勤日を出力する)
-            if( is_cont_holidays )
+            if( cont_holidays >= 3 ) // 3連休以上だった？
             {
-                if( cont_holidays >= 3 ) // 3連休以上だった？
-                {
-                    printf( "%2d日\n", bef_bussiness_day );
-                }
+                printf( "%2d日\n", bef_bussiness_day );
             }
+            cont_holidays = 0; // 連続休日数カウントをクリア
             // 給料日の定時退社判定
             if( today.day == SALARY_DAY )
             {
@@ -151,14 +147,14 @@ print_no_overtime( const TodayInfo *start, int eom )
             {
                 last_friday = today.day;
             }
-            is_cont_holidays = false; // 休暇中フラグOff
             bef_bussiness_day = today.day; // 直近の営業日を更新する
         }
         step_today_info( &today, eom ); // 1日進める
     }
 
     // プレミアムフライデー出力
-    if( last_friday != NOT_FOUND )
+    if( ( last_friday != SALARY_DAY ) &&
+        ( last_friday != NOT_FOUND ) )
     {
         printf( "%2d日\n", last_friday );
     }
