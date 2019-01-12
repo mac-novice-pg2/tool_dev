@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cassert>
 
+#include <set> // std::set
+
 #include "calendar.h"
 
 // 外部参照
@@ -117,6 +119,7 @@ static void
 print_no_overtime( const TodayInfo *start, int eom )
 {
     TodayInfo today = *start;
+    std::set< int > results_days;
 
     int bef_bussiness_day = today.day;
     int cont_holidays = 0; // 連続休暇数
@@ -134,13 +137,13 @@ print_no_overtime( const TodayInfo *start, int eom )
             // 3連休判定(連休終了時に直前の出勤日を出力する)
             if( cont_holidays >= 3 ) // 3連休以上だった？
             {
-                printf( "%2d日\n", bef_bussiness_day );
+                results_days.insert( bef_bussiness_day );
             }
             cont_holidays = 0; // 連続休日数カウントをクリア
             // 給料日の定時退社判定
             if( today.day == SALARY_DAY )
             {
-                printf( "%2d日\n", today.day );
+                results_days.insert( today.day );
             }
             // 後のプレミアムフライデー判定用に最終金曜日を保存
             if( today.weekday == eFri )
@@ -153,10 +156,14 @@ print_no_overtime( const TodayInfo *start, int eom )
     }
 
     // プレミアムフライデー出力
-    if( ( last_friday != SALARY_DAY ) &&
-        ( last_friday != NOT_FOUND ) )
+    if( last_friday != NOT_FOUND )
     {
-        printf( "%2d日\n", last_friday );
+        results_days.insert( last_friday );
+    }
+
+    for( auto day : results_days )
+    {
+        printf( "%2d日\n", day );
     }
 } // print_no_overtime()
 
