@@ -261,3 +261,54 @@ print_no_overtime( const TodayInfo *start, int eom )
 ```
 
 これで予定していた機能の全てが実装出来ました
+
+## オマケ
+
+上のコードですが、実はまだバグと不便な点があります。
+
+- 複数の定時退社判定が重なった場合、同一日が複数表示される
+- 日付が昇順でない
+
+修正の方法はいくつかありますが、C++の機能であるrange based forとSTLライブラリを使う事で簡単に修正する事が出来ます。std::setとはデータ構造の一つでコンテナクラスと呼ばれます。このコンテナは以下のような特徴を持つ為、コードを少し置き換えるだけで期待する動作を行ってくれます。
+
+- データが順序通り並べられる
+- 重複データは削除される
+
+また、STLコンテナクラスを使うとfor文の機能が拡張(？)され、コンテナ内のデータを一括表示するようなコードをスッキリ書く事が出来ます。
+
+```diff
+static void
+print_no_overtime( const TodayInfo *start, int eom )
+{
+    TodayInfo today = *start;
++   std::set< int > results_days;
+
+@@@ 中略
+    // 3連休判定(連休終了時に直前の出勤日を出力する)
+    if( cont_holidays >= 3 ) // 3連休以上だった？
+    {
+-        printf( "%2d日\n", bef_bussiness_day );
++        results_days.insert( bef_bussiness_day );
+    }
+
+@@@ 中略
+    // 給料日の定時退社判定
+    if( today.day == SALARY_DAY )
+    {
+-        results_days.insert( today.day );
+    }
+
+@@@ 中略
+    // プレミアムフライデー出力
+    if( last_friday != NOT_FOUND )
+    {
+-       printf( "%2d日\n", last_friday );
++       results_days.insert( last_friday );
+    }
+
++   for( auto day : results_days )
++   {
++       printf( "%2d日\n", day );
++   }
+```
+
