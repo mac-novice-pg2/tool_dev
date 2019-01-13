@@ -237,6 +237,10 @@ for( int skip = 0; skip < ( int )weekday; skip++ )
 }
 ```
 
+フローチャートで示すと以下のようになります
+
+![skip_weekday](./picture/skip_weekday.jpg)
+
 ## 日部分の出力
 
 最後は日部分の出力です。あと一息ですね。
@@ -315,6 +319,10 @@ step_today_info( TodayInfo *today, int eom )
 } // step_today_info()
 ```
 
+step_today_info()関数のフローチャートを示しておきます
+
+![step_today_info](./picture/step_today_info.flow.jpg)
+
 ### MEMO：スコープの考え方
 
 上で定義した関数はそれぞれstatic関数として定義しています。これは**その関数がどこから使えるか？**を決めるもので、**スコープと呼ばれる定義の有効範囲を示す**ものとなります。
@@ -352,4 +360,8 @@ step_today_info( TodayInfo *today, int eom )
 	printf( "\n" );
 ```
 
-これでカレンダー出力は完成です
+フローチャートは以下の通りです
+
+![print_days](./picture/print_days.flow.jpg)
+
+これでいちねんカレンダー機能が完成しました
