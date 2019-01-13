@@ -34,8 +34,6 @@
 - 祝日/プライベートイベント
   - 祝日/プライベートイベント一覧表に合致するエントリがある場合
 
-
-
 これらの内容を見て、
 
 - 1日から順番に月末までをイベント判定する為、常に最新の出勤日を保存しておく必要がある
@@ -111,8 +109,6 @@ event_info_2019[][ EVENT_ITEM_MAX ] = {
 - 無効データ( nullptr )
   - 指定日はイベント日ではありません。返り値は無効ポインタです
 
-
-
 具体的なコードは以下の通りです。引数にconstが付いていますが、これは**この関数内で引数で渡したデータが書き換えられない**事を示すものです。(constが無ければ**引数で渡したデータが関数内で変更出来てしまう**為、関数の設計意図を示す為constを付けるのがセオリーです。
 
 ```cpp
@@ -139,6 +135,10 @@ check_event_day( const TodayInfo *today )
     return event;
 } // check_event_day()
 ```
+
+フローチャートについても紹介しておきます
+
+![search_event_list](./picture/search_event_list.flow.jpg)
 
 ### 休日判定( check_holiday() )
 
@@ -295,7 +295,8 @@ print_no_overtime( const TodayInfo *start, int eom )
     // 給料日の定時退社判定
     if( today.day == SALARY_DAY )
     {
--        results_days.insert( today.day );
+-        printf( "%2d日\n", today.day );
++        results_days.insert( today.day );
     }
 
 @@@ 中略
