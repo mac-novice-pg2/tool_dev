@@ -268,7 +268,7 @@ print_no_overtime( const TodayInfo *start, int eom )
 
 フローチャートもかなりのボリュームになりました
 
-![](C:\work\src\tool_dev\repos\lecture\picture\print_no_overtime.flow.jpg)
+![print_no_overtime](./picture/print_no_overtime.flow.jpg)
 
 これで予定していた機能の全てが実装出来ました
 
