@@ -34,8 +34,6 @@
 - 祝日/プライベートイベント
   - 祝日/プライベートイベント一覧表に合致するエントリがある場合
 
-
-
 これらの内容を見て、
 
 - 1日から順番に月末までをイベント判定する為、常に最新の出勤日を保存しておく必要がある
@@ -111,34 +109,38 @@ event_info_2019[][ EVENT_ITEM_MAX ] = {
 - 無効データ( nullptr )
   - 指定日はイベント日ではありません。返り値は無効ポインタです
 
-
-
 具体的なコードは以下の通りです。引数にconstが付いていますが、これは**この関数内で引数で渡したデータが書き換えられない**事を示すものです。(constが無ければ**引数で渡したデータが関数内で変更出来てしまう**為、関数の設計意図を示す為constを付けるのがセオリーです。
 
 ```cpp
 static EventInfo*
-check_event_day( const TodayInfo *today )
+search_event_list( const TodayInfo *today )
 {
+    int event_list_index = 0;
     EventInfo *event = nullptr;
-    for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
+    while( event_list_index < EVENT_ITEM_MAX )
     {
-        event = &( event_info_2019[ today->month - 1 ][ idx ] );
+        event = &( event_info_2019[ today->month - 1 ][ event_list_index ] );
         // イベント終端判定( 構造体メンバ全てが無効値のものをリスト終端として扱う )
         if( ( event->day == EVENT_END ) &&
             ( event->event_name == nullptr ) &&
             ( event->is_holiday == false ) )
         {
-            event = nullptr; //  該当エントリなしを示す無効ポインタを返す
+            event = nullptr; // 該当エントリなしを示す無効ポインタを返す
             break;
         }
         else if( event->day == today->day ) // イベントリストに指定日あり
         {
             break; // 現在のイベント情報を上位へ返す
         }
+        event_list_index++; // イベントリストのインデックスを進める
     }
     return event;
-} // check_event_day()
+} // search_event_list()
 ```
+
+フローチャートについても紹介しておきます
+
+![search_event_list](./picture/search_event_list.flow.jpg)
 
 ### 休日判定( check_holiday() )
 
@@ -156,38 +158,42 @@ check_holiday( const TodayInfo *today )
     bool judgement = false;
 
     // 土日判定
-    if( ( today->weekday == eSat ) &&
+    if( ( today->weekday == eSat ) ||
         ( today->weekday == eSun ) )
     {
         judgement = true;
     }
-   
-    // 祝日判定
-    EventInfo *event = check_event_day( today );
-    if( event != nullptr ) // 該当イベントが見つかった？
+    else // 祝日判定
     {
-        if( event->is_holiday ) // 該当日は祝日？
+        EventInfo *event = search_event_list( today );
+        if( event != nullptr ) // 該当イベントが見つかった？
         {
-            judgement = true;
+            if( event->is_holiday ) // 該当日は祝日？
+            {
+                judgement = true;
+            }
         }
     }
     return judgement;
 } // check_holiday()
 ```
 
+フローチャートはこちらです
+
+![check_holiday](./picture/check_holiday.flow.jpg)
+
 ### イベント日の出力
 
-指定月を1日から順番にcheck_event_day()へ渡し、イベントリストに該当エントリが無いかを探します。「該当イベントがある＝イベント日」なので、イベントの詳細情報を表示します。**check_event_day()の返り値が無効データ( nullptr )でなければ、イベントリストに該当イベントがある**と判定しているのがポイントです。
+指定月を1日から順番にcheck_event_day()へ渡し、イベントリストに該当エントリが無いかを探します。「該当イベントがある＝イベント日」なので、イベントの詳細情報を表示します。**search_event_list()の返り値が無効データ( nullptr )でなければ、イベントリストに該当イベントがある**と判定しているのがポイントです。
 
 ```cpp
 static void
 print_event_alert( const TodayInfo *start, int eom )
 {
-    EventInfo *event;
     TodayInfo today = *start;
-    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    while( today.day < eom )
     {
-        event = check_event_day( &today );
+        EventInfo *event = search_event_list( &today );
         if( event != nullptr ) // 該当イベントが見つかった？
         {
             printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
@@ -223,7 +229,7 @@ print_no_overtime( const TodayInfo *start, int eom )
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
     printf( "★定時退社日★\n" );
-    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    while( today.day < eom )
     {
         if( check_holiday( &today ) ) // 本日は休日？
         {
@@ -260,6 +266,10 @@ print_no_overtime( const TodayInfo *start, int eom )
 } // print_no_overtime()
 ```
 
+フローチャートもかなりのボリュームになりました
+
+![](C:\work\src\tool_dev\repos\lecture\picture\print_no_overtime.flow.jpg)
+
 これで予定していた機能の全てが実装出来ました
 
 ## オマケ
@@ -295,7 +305,8 @@ print_no_overtime( const TodayInfo *start, int eom )
     // 給料日の定時退社判定
     if( today.day == SALARY_DAY )
     {
--        results_days.insert( today.day );
+-        printf( "%2d日\n", today.day );
++        results_days.insert( today.day );
     }
 
 @@@ 中略
