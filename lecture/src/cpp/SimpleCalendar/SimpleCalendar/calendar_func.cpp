@@ -69,12 +69,13 @@ step_today_info( TodayInfo *today, int eom )
 } // step_today_info()
 
 static EventInfo*
-check_event_day( const TodayInfo *today )
+search_event_list( const TodayInfo *today )
 {
+    int event_list_index = 0;
     EventInfo *event = nullptr;
-    for( int idx = 0; idx < EVENT_ITEM_MAX; idx++ )
+    while( event_list_index < EVENT_ITEM_MAX )
     {
-        event = &( event_info_2019[ today->month - 1 ][ idx ] );
+        event = &( event_info_2019[ today->month - 1 ][ event_list_index ] );
         // イベント終端判定( 構造体メンバ全てが無効値のものをリスト終端として扱う )
         if( ( event->day == EVENT_END ) &&
             ( event->event_name == nullptr ) &&
@@ -87,9 +88,10 @@ check_event_day( const TodayInfo *today )
         {
             break; // 現在のイベント情報を上位へ返す
         }
+        event_list_index++; // イベントリストのインデックスを進める
     }
     return event;
-} // check_event_day()
+} // search_event_list()
 
 static bool
 check_holiday( const TodayInfo *today )
@@ -102,14 +104,15 @@ check_holiday( const TodayInfo *today )
     {
         judgement = true;
     }
-   
-    // 祝日判定
-    EventInfo *event = check_event_day( today );
-    if( event != nullptr ) // 該当イベントが見つかった？
+    else // 祝日判定
     {
-        if( event->is_holiday ) // 該当日は祝日？
+        EventInfo *event = search_event_list( today );
+        if( event != nullptr ) // 該当イベントが見つかった？
         {
-            judgement = true;
+            if( event->is_holiday ) // 該当日は祝日？
+            {
+                judgement = true;
+            }
         }
     }
     return judgement;
@@ -119,13 +122,13 @@ static void
 print_no_overtime( const TodayInfo *start, int eom )
 {
     TodayInfo today = *start;
-    std::set< int > results_days;
+    std::set< int > result_days;
 
     int bef_bussiness_day = today.day;
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
     printf( "★定時退社日★\n" );
-    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    while( today.day < eom )
     {
         if( check_holiday( &today ) ) // 本日は休日？
         {
@@ -137,13 +140,13 @@ print_no_overtime( const TodayInfo *start, int eom )
             // 3連休判定(連休終了時に直前の出勤日を出力する)
             if( cont_holidays >= 3 ) // 3連休以上だった？
             {
-                results_days.insert( bef_bussiness_day );
+                result_days.insert( bef_bussiness_day );
             }
             cont_holidays = 0; // 連続休日数カウントをクリア
             // 給料日の定時退社判定
             if( today.day == SALARY_DAY )
             {
-                results_days.insert( today.day );
+                result_days.insert( today.day );
             }
             // 後のプレミアムフライデー判定用に最終金曜日を保存
             if( today.weekday == eFri )
@@ -155,13 +158,13 @@ print_no_overtime( const TodayInfo *start, int eom )
         step_today_info( &today, eom ); // 1日進める
     }
 
-    // プレミアムフライデー出力
+    // プレミアムフライデー判定
     if( last_friday != NOT_FOUND )
     {
-        results_days.insert( last_friday );
+        result_days.insert( last_friday );
     }
 
-    for( auto day : results_days )
+    for( auto day : result_days )
     {
         printf( "%2d日\n", day );
     }
@@ -170,11 +173,10 @@ print_no_overtime( const TodayInfo *start, int eom )
 static void
 print_event_alert( const TodayInfo *start, int eom )
 {
-    EventInfo *event;
-    TodayInfo today = *start;
-    for( int loop_count = 0; loop_count < eom; loop_count++ )
+    TodayInfo today = *start; // 引数をローカル変数にコピー
+    while( today.day < eom )
     {
-        event = check_event_day( &today );
+        EventInfo *event = search_event_list( &today );
         if( event != nullptr ) // 該当イベントが見つかった？
         {
             printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
