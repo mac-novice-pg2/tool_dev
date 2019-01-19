@@ -6,30 +6,10 @@
 #include <cstdio>
 #include <cassert>
 
-/*
-  ------------------------------------------
-   型定義
-  ------------------------------------------
-*/
-// 曜日を示す列挙型
-typedef enum
-{
-    eSun = 0,
-    eMon,
-    eTue,
-    eWed,
-    eThu,
-    eFri,
-    eSat,
-    eWeekEnd,
-}eWeekday;
+#include "calendar_type.h"
 
-// カレンダー作成用情報
-typedef struct
-{
-    int      eom;     // 月末( end of month )
-    eWeekday start_weekday; // 開始曜日
-}MonthInfo;
+extern MonthInfo eom_table[];
+extern EventInfo event_info_2019[][ EVENT_ITEM_MAX ];
 
 /*
   ------------------------------------------
@@ -37,7 +17,7 @@ typedef struct
   ------------------------------------------
 */
 static eWeekday
-next_weekday( eWeekday current )
+next_youbi( eWeekday current )
 {
     switch( current )
     {
@@ -59,81 +39,165 @@ next_weekday( eWeekday current )
         assert( 0 );
         return eWeekEnd;
     }
-} // next_weekday()
+} // next_youbi()
+
+// TodayInfo型データを一日進める関数
+// 引数のeomはend of monthで月末の意
+static void
+step_today_info( TodayInfo *today, int eom ) //step_today_infoの処理■
+{
+    if( today->day != eom ) // 今日は月末でない？
+    {
+        ( today->day )++; // 日を1日進める
+    }
+    else // 今日は月末？
+    {
+        // 一か月進めて、1日に戻す
+        // 年末なら、1年進めて1月に戻す
+        today->day = 1;
+        ( today->month )++;
+        if( today->month == 13 ) // 年末？
+        {
+            today->month = 1;
+            ( today->year )++;
+        }
+    }
+
+    // 曜日を進める
+    // next_weekday()という関数は、現在の曜日を渡すと、次の曜日を返す
+    //  ex) next_weekday( eMon ) // eMonを渡すとeTueが返ってくる
+    today->weekday = next_youbi( today->weekday );
+} // step_today_info()
+
+static EventInfo*
+search_event_list( const TodayInfo *today )
+{
+    int event_list_index = 0;
+    EventInfo *event = nullptr;
+    while( event_list_index < EVENT_ITEM_MAX )
+    {
+        event = &( event_info_2019[ today->month - 1 ][ event_list_index ] );
+        // イベント終端判定( 構造体メンバ全てが無効値のものをリスト終端として扱う )
+        if( ( event->day == EVENT_END ) &&
+            ( event->event_name == nullptr ) &&
+            ( event->is_holiday == false ) )
+        {
+            event = nullptr; // 該当エントリなしを示す無効ポインタを返す
+            break;
+        }
+        else if( event->day == today->day ) // イベントリストに指定日あり
+        {
+            break; // 現在のイベント情報を上位へ返す
+        }
+        event_list_index++; // イベントリストのインデックスを進める
+    }
+    return event;
+} // search_event_list()
+
+static void
+print_skip_weekday( eWeekday start_weekday )//3
+{
+    // 頭の読み飛ばし
+    /*
+     eSun = 0,
+     eMon = 1
+     eTue = 2
+     eWed = 3
+     eThu = 4
+     eFri = 5
+     eSat = 6
+    */
+
+    // 2019年1月1日は火曜日
+    // 従って日曜と月曜は不要なので、空白を入れてスキップする。
+    // （1月1日の場合）0 < 2やから0と1の2セット分の空白3個分を入れる
+    // 半角スペース3個 x 2セット = 合計6個のスペースが入る )
+    for( int skip = 0; skip < start_weekday; skip++ )
+    {
+        printf( "   " );
+    }
+} // print_skip_weekday()
+
+static void
+print_calendar( int year, int month )//2
+{
+    printf( "%d月のカレンダー\n", month );
+    printf( "日 月 火 水 木 金 土\n" );
+
+    // 1月1日がどこから(火曜日)始まることを意味してる
+    // その月が何曜日から始まるのかは、
+    // eom_table配列の[ 月 ].start_weekdayメンバに入っている
+    eWeekday start_weekday = eom_table[ month - 1 ].start_weekday;
+
+    // 曜日の位置まで空白を詰める
+    print_skip_weekday( start_weekday ); // 曜日の位置まで空白を詰める
+
+    // 1日から始めて、月末までの日を表示する
+    // 月末はeom_table配列の[ 月 ].eomメンバに入っている
+    TodayInfo today;
+    today.year = year;
+    today.month = month;
+    today.day = 1;
+    today.weekday = start_weekday;
+    int eom = eom_table[ month - 1 ].eom;
+    for( int loop_cnt = 0; loop_cnt < eom; loop_cnt++ )
+    {
+        // [書式指定文字列]
+        // 数字の出力幅は2桁(%2d)分取り、スペース1つを出力する
+        printf( "%2d ", today.day );
+
+        if( today.weekday == eSat ) // 今日は土曜日
+        {
+            printf( "\n" ); // 改行を入れる
+        }
+        step_today_info( &today, eom );//■
+    }
+    printf( "\n\n" );
+} // print_calendar()
+
+void
+print_event( int year, int month )
+{
+    printf( "%d月のイベント日\n"
+        "---------------------------\n",
+        month );
+
+    // 1月1日がどこから(火曜日)始まることを意味してる
+    // その月が何曜日から始まるのかは、
+    // eom_table配列の[ 月 ].start_weekdayメンバに入っている
+    eWeekday start_weekday = eom_table[ month - 1 ].start_weekday;
+
+    TodayInfo today;
+    today.year = year;
+    today.month = month;
+    today.day = 1;
+    today.weekday = start_weekday;
+    int eom = eom_table[ month - 1 ].eom;
+    while( today.day < eom )
+    {
+        EventInfo *event = search_event_list( &today );
+        if( event != nullptr ) // 該当イベントが見つかった？
+        {
+            printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
+        }
+        step_today_info( &today, eom ); // 1日進める
+    }
+    printf( "\n" );
+} // print_event()
 
 int
-main( int argc, const char* argv[] )
+main( int argc, const char* argv[] )// 1
 {
-    MonthInfo
-    eom_table[] = {
-        // eom, start_weekday
-        {  31,  eTue }, // 2019/01
-        {  28,  eFri }, // 2019/02
-        {  31,  eFri }, // 2019/03
-        {  30,  eMon }, // 2019/04
-        {  31,  eWed }, // 2019/05
-        {  30,  eSat }, // 2019/06
-        {  31,  eMon }, // 2019/07
-        {  31,  eThu }, // 2019/08
-        {  30,  eSun }, // 2019/09
-        {  31,  eTue }, // 2019/10
-        {  30,  eFri }, // 2019/11
-        {  31,  eSun }, // 2019/12
-    };
-
-    for( int month = 0; month < 12; month++ )
+    int year = 2019;
+    for( int month = 1; month <= 12; month++ )
     {
-        printf( "%d月のカレンダー\n", month + 1 );
-        printf( "日 月 火 水 木 金 土\n" );
+        // カレンダーを表示する
+        print_calendar( year, month );
 
-        // 頭の読み飛ばし
-        /*
-         eSun = 0,
-         eMon = 1
-         eTue = 2
-         eWed = 3
-         eThu = 4
-         eFri = 5
-         eSat = 6
-        */
+        // イベントお知らせを表示する
+        print_event( year, month );
 
-        // 2019年1月1日は火曜日
-        // 従って日曜と月曜は不要なので、空白を入れてスキップする。
-        // （1月1日の場合）0 < 2やから0と1の2セット分の空白3個分を入れる
-        // 半角スペース3個 x 2セット = 合計6個のスペースが入る )
-        for( int skip = 0; skip < eom_table[ month ].start_weekday; skip++ )
-        {
-            printf( "   " );
-        }
-
-        // 1月1日がどこから(火曜日)始まることを意味してる
-        // その月が何曜日から始まるのかは、
-        // eom_table配列の[ 月 ].start_weekdayメンバに入っている
-        eWeekday current_weekday = eom_table[ month ].start_weekday;
-        eWeekday next;
-
-        // 1日から始めて、月末までの日を表示する
-        // 月末はeom_table配列の[ 月 ].eomメンバに入っている
-        for( int day = 1; day <= eom_table[ month ].eom; day++ )
-        {
-            // [書式指定文字列]
-            // 数字の出力幅は2桁(%2d)分取り、スペース1つを出力する
-            printf( "%2d ", day );
-
-            // next_weekday()という関数は、現在の曜日を渡すと、次の曜日を返す
-            //  ex) next_weekday( eMon ) // eMonを渡すとeTueが返ってくる
-            next = next_weekday( current_weekday );
-            // 土曜日で改行する
-            // next_weekday()に今日の曜日を渡すと明日の曜日が得られるので、
-            //  「明日が日曜日 = 今日は土曜日」
-            // という風に判定出来る
-            if( next == eSun ) // 明日は日曜日( 今日は土曜日？ )
-            {
-                printf( "\n" ); // 改行を入れる
-            }
-            current_weekday = next; // 今日の曜日を更新する
-        }
-        printf( "\n\n" );
+        printf( "=================================\n" );
     }
 
     // getchar()はEnterキーを押すまで待つ
