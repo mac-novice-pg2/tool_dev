@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
 
-#include "calendar.h"
+#include "calendar_type.h"
 
 MonthInfo
-month_info_2019[] = {
+eom_table[] = {
     // eom, start_weekday
     {  31,  eTue }, // 2019/01
     {  28,  eFri }, // 2019/02

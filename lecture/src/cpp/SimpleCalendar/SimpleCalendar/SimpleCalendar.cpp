@@ -13,7 +13,7 @@ main( int argc, const char* argv[] )
 {
     int year = 2019;
     PrintToday();
-    for( int month = 1; month < 12; month++ )
+    for( int month = 1; month <= 12; month++ )
     {
         PrintCalendar( year, month );
         PrintEventAlert( year, month );
