@@ -93,6 +93,14 @@ event_info_2019[][ EVENT_ITEM_MAX ] = {
         { 23, "秋分の日", true },
         { EVENT_END,nullptr, false },
     },
+    { // 2019/11
+        // { day, event_name, is_holiday}
+        { 3, "文化の日", true },
+        { 15, "七五三", false },
+        { 23, "勤労感謝の日", true },
+        { 28, "感謝祭", false },
+        { EVENT_END,nullptr, false },
+    },
     { // 2019/12
         // { day, event_name, is_holiday}
         { 23, "天皇誕生日？", true },
