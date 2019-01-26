@@ -323,3 +323,9 @@ print_no_overtime( const TodayInfo *start, int eom )
 +   }
 ```
 
+## C#バージョンの紹介
+
+途中までの機能ですが、C#版も作ってみました
+
+[C#バージョン](./prog_cs_ver.md)
+

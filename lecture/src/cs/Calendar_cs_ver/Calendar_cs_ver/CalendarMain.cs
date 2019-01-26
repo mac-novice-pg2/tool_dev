@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Calendar_cs_ver
 {
-    class Program
+    class CalendarMain
     {
         static 曜日 次の曜日に進める(曜日 現在の曜日)
         {
