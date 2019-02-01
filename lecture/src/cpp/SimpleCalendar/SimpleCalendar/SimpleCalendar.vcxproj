@@ -156,9 +156,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="calendar.h" />
+    <ClInclude Include="CalendarPrinter.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalendarPrinter.cpp" />
     <ClCompile Include="calendar_func.cpp" />
     <ClCompile Include="calendar_info.cpp" />
     <ClCompile Include="pch.cpp">

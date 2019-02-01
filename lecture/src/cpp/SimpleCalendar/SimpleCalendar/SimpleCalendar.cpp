@@ -7,17 +7,21 @@
 #include <cstdlib>
 
 #include "calendar.h"
+#include "CalendarPrinter.h"
 
 int
 main( int argc, const char* argv[] )
 {
+//    CalendarPrinter printer;
+    CalendarPrinter printer( "2019_calendar.txt" );
     int year = 2019;
-    PrintToday();
+
+    PrintToday( &printer );
     for( int month = 1; month <= 12; month++ )
     {
-        PrintCalendar( year, month );
-        PrintEventAlert( year, month );
-        printf(
+        PrintCalendar( year, month, &printer );
+        PrintEventAlert( year, month, &printer );
+        fprintf( printer.Print(),
             "\n"
             "-----------------------------------------------------------\n"
             "\n" );
