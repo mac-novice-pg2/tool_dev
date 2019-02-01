@@ -7,6 +7,8 @@
 #include <set> // std::set
 
 #include "calendar.h"
+#include "CalendarPrinter.h"
+
 
 // 外部参照
 extern MonthInfo month_info_2019[];
@@ -119,7 +121,7 @@ check_holiday( const TodayInfo *today )
 } // check_holiday()
 
 static void
-print_no_overtime( const TodayInfo *start, int eom )
+print_no_overtime( const TodayInfo *start, int eom, CalendarPrinter *printer )
 {
     TodayInfo today = *start;
     std::set< int > result_days;
@@ -127,7 +129,7 @@ print_no_overtime( const TodayInfo *start, int eom )
     int bef_bussiness_day = today.day;
     int cont_holidays = 0; // 連続休暇数
     int last_friday = NOT_FOUND;
-    printf( "★定時退社日★\n" );
+    fprintf( printer->Print(), "★定時退社日★\n" );
     while( today.day < eom )
     {
         if( check_holiday( &today ) ) // 本日は休日？
@@ -166,12 +168,12 @@ print_no_overtime( const TodayInfo *start, int eom )
 
     for( auto day : result_days )
     {
-        printf( "%2d日\n", day );
+        fprintf( printer->Print(), "%2d日\n", day );
     }
 } // print_no_overtime()
 
 static void
-print_event_alert( const TodayInfo *start, int eom )
+print_event_alert( const TodayInfo *start, int eom, CalendarPrinter *printer )
 {
     TodayInfo today = *start; // 引数をローカル変数にコピー
     while( today.day < eom )
@@ -179,11 +181,11 @@ print_event_alert( const TodayInfo *start, int eom )
         EventInfo *event = search_event_list( &today );
         if( event != nullptr ) // 該当イベントが見つかった？
         {
-            printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
+            fprintf( printer->Print(), "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
         }
         step_today_info( &today, eom ); // 1日進める
     }
-    printf( "\n" );
+    fprintf( printer->Print(), "\n" );
 } // print_event_alert()
 
 /*
@@ -192,19 +194,19 @@ print_event_alert( const TodayInfo *start, int eom )
   ------------------------------------------
 */
 void
-PrintToday( void )
+PrintToday( CalendarPrinter *printer )
 {
     time_t timer;
 
     time( &timer );
     struct tm *date = localtime( &timer );
-    printf( "Today:%s\n", asctime( date ) );
+    fprintf( printer->Print(), "Today:%s\n", asctime( date ) );
 } // PrintToday()
 
 void
-PrintCalendar( int year, int month )
+PrintCalendar( int year, int month, CalendarPrinter *printer )
 {
-    printf(
+    fprintf( printer->Print(),
         "%4d年%2d月のカレンダー\n"
         "\n"
         "日 月 火 水 木 金 土\n",
@@ -216,28 +218,29 @@ PrintCalendar( int year, int month )
     // 日部分の出力位置合わせ
     for( int skip = 0; skip < ( int )pInfo->start_weekday; skip++ )
     {
-        printf( "   " );
+        fprintf( printer->Print(), "   " );
     }
 
     // 日部分を出力する
     TodayInfo today = { year, month, 1, pInfo->start_weekday };
     for( int day = 0; day < pInfo->eom; day++ )
     {
-        printf( "%2d ", today.day );
+        fprintf( printer->Print(), "%2d ", today.day );
         // 土曜日まで出力したら、改行して折り返す
         if( today.weekday == eSat )
         {
-            printf( "\n" );
+            fprintf( printer->Print(), "\n" );
         }
         step_today_info( &today, pInfo->eom ); // 1日進める
     }
-	printf( "\n" );
+    fprintf( printer->Print(), "\n" );
 } // PrintCalendar()
 
 void
-PrintEventAlert( int year, int month )
+PrintEventAlert( int year, int month, CalendarPrinter *printer )
 {
-    printf( "\n"
+    fprintf( printer->Print(), 
+        "\n"
         "=======================================\n"
         " イベント情報 \n"
         "=======================================\n"
@@ -248,8 +251,8 @@ PrintEventAlert( int year, int month )
     TodayInfo today = { year, month, 1, pInfo->start_weekday };
 
     // イベントお知らせ出力
-    print_event_alert( &today, pInfo->eom );
+    print_event_alert( &today, pInfo->eom, printer );
 
     // 定時退社日チェック
-    print_no_overtime( &today, pInfo->eom );
+    print_no_overtime( &today, pInfo->eom, printer );
 } // EventAlert()
