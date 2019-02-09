@@ -54,5 +54,5 @@ typedef struct
 
 // APIプロトタイプ宣言
 void PrintToday( CalendarPrinter *printer );
-void PrintCalendar( int year, int month, CalendarPrinter *printer );
-void PrintEventAlert( int year, int month, CalendarPrinter *printer );
+void PrintCalendar( int year, int month, CalendarPrinter *printer, MonthInfo month_info[] );
+void PrintEventAlert( int year, int month, CalendarPrinter *printer, MonthInfo month_info[] );

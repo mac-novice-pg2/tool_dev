@@ -3,28 +3,33 @@
 
 #include "pch.h"
 
-#include <cstdio>
-#include <cstdlib>
-
 #include "calendar.h"
+
 #include "CalendarPrinter.h"
+#include "CMonthInfo.h"
+#include "CalendarControler.h"
 
 int
-main( int argc, const char* argv[] )
+main()
 {
-//    CalendarPrinter printer;
-    CalendarPrinter printer( "2019_calendar.txt" );
-    int year = 2019;
+    CMonthInfo month_info;
+    CalendarPrinter printer;
+    CalendarControler controler;
 
-    PrintToday( &printer );
-    for( int month = 1; month <= 12; month++ )
+    controler.PrintMenu();
+    bool apl_end = false;
+    while( !apl_end )
     {
-        PrintCalendar( year, month, &printer );
-        PrintEventAlert( year, month, &printer );
-        fprintf( printer.Print(),
-            "\n"
-            "-----------------------------------------------------------\n"
-            "\n" );
+        int year = controler.GetInputYear();
+        int month = controler.GetInputMonth();
+
+        PrintToday( &printer );
+        PrintCalendar( year, month, &printer, month_info.GetMonthInfoTable( year ) );
+        if( year == 2019 )
+        {
+            PrintEventAlert( year, month, &printer, month_info.GetMonthInfoTable( year ) );
+        }
+        apl_end = controler.ChangeCalendar();
     }
 }
 
