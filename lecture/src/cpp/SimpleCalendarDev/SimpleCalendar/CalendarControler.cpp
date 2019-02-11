@@ -11,9 +11,8 @@
 void
 CalendarControler::ClearScreen( void ) const
 {
-    // エスケープシーケンスによる画面クリア
     system( "cls" );
-} // CalendarControler::clear_screen()
+} // CalendarControler::ClearScreen()
 
 void
 CalendarControler::cursor_key_proc( int key )
@@ -38,14 +37,6 @@ CalendarControler::cursor_key_proc( int key )
         break;
     }
 } // CalendarControler::cursor_key_proc()
-
-CalendarControler::CalendarControler()
-{
-} // CalendarControler::CalendarControler()
-
-CalendarControler::~CalendarControler()
-{
-} // CalendarControler::~CalendarControler()
 
 bool
 CalendarControler::PrintMenu( void )
@@ -102,8 +93,8 @@ CalendarControler::ChangeCalendar()
     );
 
     bool request_quit = false;
-    int key_1st = _getch();
-    int key_2nd = _getch();
+    int key_1st = _getch(); // 1回目のキーコードを拾う
+    int key_2nd = _getch(); // 2回目のキーコードを拾う
     switch( key_1st )
     {
     case 'q':

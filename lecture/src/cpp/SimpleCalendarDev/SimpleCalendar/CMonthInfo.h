@@ -6,7 +6,6 @@ class CMonthInfo
 
 public:
     CMonthInfo();
-    virtual ~CMonthInfo();
 
     MonthInfo* GetMonthInfoTable( int year );
 
