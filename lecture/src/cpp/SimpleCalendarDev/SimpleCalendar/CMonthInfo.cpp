@@ -19,10 +19,6 @@ CMonthInfo::CMonthInfo()
     }
 } // CMonthInfo::CMonthInfo()
 
-CMonthInfo::~CMonthInfo()
-{
-} // CMonthInfo::~CMonthInfo()
-
 MonthInfo*
 CMonthInfo::GetMonthInfoTable( int year )
 {

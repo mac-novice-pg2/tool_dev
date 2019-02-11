@@ -3,12 +3,8 @@
 
 #include "pch.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
 #include "calendar.h"
 #include "calendar_func.h"
-
 #include "CMonthInfo.h"
 #include "CalendarControler.h"
 

@@ -7,9 +7,6 @@ class CalendarControler
     void cursor_key_proc( int key );
 
 public:
-    CalendarControler();
-    virtual ~CalendarControler();
-
     void ClearScreen( void ) const;
     bool PrintMenu();
     bool ChangeCalendar();
