@@ -7,6 +7,7 @@
 #include <set> // std::set
 
 #include "calendar.h"
+#include "CMonthInfo.h"
 #include "CalendarPrinter.h"
 #include "CHolidayManager.h"
 
@@ -189,8 +190,7 @@ void
 PrintCalendar(
     int year,
     int month,
-    CalendarPrinter *printer,
-    MonthInfo month_info[]
+    CalendarPrinter *printer
 )
 {
     fprintf( printer->Output(),
@@ -200,17 +200,18 @@ PrintCalendar(
         year, month );
     
     // カレンダー情報テーブルから、指定年月のテーブルを引く
-    MonthInfo *pInfo = &( month_info[ month - 1 ] );
+    eWeekday start_weekday = CMonthInfo::Formula_Zeller( year, month, 1 );
 
     // 日部分の出力位置合わせ
-    for( int skip = 0; skip < ( int )pInfo->start_weekday; skip++ )
+    for( int skip = 0; skip < ( int )start_weekday; skip++ )
     {
         fprintf( printer->Output(), "   " );
     }
 
     // 日部分を出力する
-    DateInfo today = { year, month, 1, pInfo->start_weekday };
-    for( int day = 0; day < pInfo->eom; day++ )
+    int eom = CMonthInfo::GetEndOfMonth( year, month );
+    DateInfo today = { year, month, 1, start_weekday };
+    for( int day = 0; day < eom; day++ )
     {
         fprintf( printer->Output(), "%2d ", today.day );
         // 土曜日まで出力したら、改行して折り返す
@@ -218,7 +219,7 @@ PrintCalendar(
         {
             fprintf( printer->Output(), "\n" );
         }
-        step_today_info( &today, pInfo->eom ); // 1日進める
+        step_today_info( &today, eom ); // 1日進める
     }
     fprintf( printer->Output(), "\n" );
 } // PrintCalendar()
@@ -228,7 +229,6 @@ PrintEventAlert(
     int year,
     int month,
     CalendarPrinter *printer,
-    MonthInfo month_info[],
     CHolidayManager *holiday
 )
 {
@@ -240,12 +240,13 @@ PrintEventAlert(
     );
 
     // カレンダー/イベント情報初期化
-    MonthInfo *pInfo = &( month_info[ month - 1 ] );
-    DateInfo today = { year, month, 1, pInfo->start_weekday };
+    eWeekday start_weekday = CMonthInfo::Formula_Zeller( year, month, 1 );
+    DateInfo today = { year, month, 1, start_weekday };
 
     // 祝日出力
-    print_holiday( &today, pInfo->eom, printer, holiday );
+    int eom = CMonthInfo::GetEndOfMonth( year, month );
+    print_holiday( &today, eom, printer, holiday );
 
     // 定時退社日チェック
-    print_no_overtime( &today, pInfo->eom, printer, holiday );
+    print_no_overtime( &today, eom, printer, holiday );
 } // EventAlert()
