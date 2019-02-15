@@ -11,7 +11,6 @@
 int
 main()
 {
-    CMonthInfo month_info;
     CalendarPrinter printer;
     CalendarControler controler;
     CHolidayManager holiday;
@@ -24,10 +23,8 @@ main()
         int month = controler.GetInputMonth();
 
         PrintToday( &printer );
-        PrintCalendar( year, month, &printer,
-            month_info.GetMonthInfoTable( year ) );
-        PrintEventAlert( year, month, &printer,
-            month_info.GetMonthInfoTable( year ), &holiday );
+        PrintCalendar( year, month, &printer );
+        PrintEventAlert( year, month, &printer, &holiday );
         apl_end = controler.ChangeCalendar();
     }
 }
