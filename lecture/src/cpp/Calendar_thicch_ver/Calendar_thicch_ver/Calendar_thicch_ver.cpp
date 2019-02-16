@@ -8,14 +8,54 @@
 
 #include "calendar_type.h"
 
-extern MonthInfo eom_table[];
 extern EventInfo event_info_2019[][ EVENT_ITEM_MAX ];
+
+int Get_EndOfMonth( int year, int month )
+{
+    const int eom[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    int ret = eom[ month - 1 ];
+
+    if( month == 2 )
+    {
+        if( year % 4 == 0 ) 
+        {
+            if( year % 100 == 0 )
+            {
+                if( year % 400 == 0 )
+                {
+                    ret = 29;
+                }
+            }
+            else
+            {
+                ret = 29;
+            }
+        }
+    }
+
+    return ret;
+}
 
 /*
   ------------------------------------------
    static関数
   ------------------------------------------
 */
+// Zeller の公式で週の何日目か調べる
+eWeekday
+Formula_Zeller( int year, int month, int day )
+{
+    if( month < 3 )
+    {
+        year--;
+        month += 12;
+    }
+
+    int temp = ( year + year / 4 - year / 100 + year / 400 + ( 13 * month + 8 ) / 5 + day ) % 7;
+
+    return ( eWeekday )temp;
+} // Formula_Zeller()
+
 static eWeekday
 next_youbi( eWeekday current )
 {
@@ -125,21 +165,20 @@ print_calendar( int year, int month )//2
     printf( "日 月 火 水 木 金 土\n" );
 
     // 1月1日がどこから(火曜日)始まることを意味してる
-    // その月が何曜日から始まるのかは、
-    // eom_table配列の[ 月 ].start_weekdayメンバに入っている
-    eWeekday start_weekday = eom_table[ month - 1 ].start_weekday;
+    // その月が何曜日から始まるのかは、ツェラーの公式で取得する
+    eWeekday start_weekday = Formula_Zeller( year,month,1 );
 
     // 曜日の位置まで空白を詰める
     print_skip_weekday( start_weekday ); // 曜日の位置まで空白を詰める
 
     // 1日から始めて、月末までの日を表示する
-    // 月末はeom_table配列の[ 月 ].eomメンバに入っている
+    // 月末はGet_EndOfMonth()関数で取得出来る
     TodayInfo today;
     today.year = year;
     today.month = month;
     today.day = 1;
     today.weekday = start_weekday;
-    int eom = eom_table[ month - 1 ].eom;
+    int eom = Get_EndOfMonth( year, month );
     for( int loop_cnt = 0; loop_cnt < eom; loop_cnt++ )
     {
         // [書式指定文字列]
@@ -163,16 +202,15 @@ print_event( int year, int month )
         month );
 
     // 1月1日がどこから(火曜日)始まることを意味してる
-    // その月が何曜日から始まるのかは、
-    // eom_table配列の[ 月 ].start_weekdayメンバに入っている
-    eWeekday start_weekday = eom_table[ month - 1 ].start_weekday;
+    // その月が何曜日から始まるのかは、ツェラーの公式で取得する
+    eWeekday start_weekday = Formula_Zeller( year, month, 1 );
 
     TodayInfo today;
     today.year = year;
     today.month = month;
     today.day = 1;
     today.weekday = start_weekday;
-    int eom = eom_table[ month - 1 ].eom;
+    int eom = Get_EndOfMonth(year,month);
     while( today.day < eom )
     {
         EventInfo *event = search_event_list( &today );
@@ -188,14 +226,14 @@ print_event( int year, int month )
 int
 main( int argc, const char* argv[] )// 1
 {
-    int year = 2019;
+    int year = 2020;
     for( int month = 1; month <= 12; month++ )
     {
         // カレンダーを表示する
         print_calendar( year, month );
 
         // イベントお知らせを表示する
-        print_event( year, month );
+//        print_event( year, month );
 
         printf( "=================================\n" );
     }
