@@ -45,7 +45,7 @@ CMonthInfo::Formula_Zeller(
 int
 CMonthInfo::GetEndOfMonth( int year, int month )
 {
-    const int eom_[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    const int eom_[] =     { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     const int eom_leap[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     int eom;
 
