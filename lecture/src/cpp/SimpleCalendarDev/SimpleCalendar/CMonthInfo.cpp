@@ -1,7 +1,28 @@
 ﻿#include "pch.h"
 
+#include <vector>
+#include <string>
+
 #include "calendar.h"
 #include "CMonthInfo.h"
+
+using string_container_t = std::vector< std::string >;
+
+double
+CMonthInfo::Calc_MoonAge( int year, int month, int day )
+{
+    return ( ( year - 2009 ) % 19 ) * 11 + month + day;
+} // CMonthInfo::Calc_MoonAge()
+
+const char*
+CMonthInfo::Calc_ETO( int year )
+{
+    string_container_t eto_string =
+    {
+        "申","酉","戌","亥","子","丑","寅","卯","辰","巳","午","未"
+    };
+    return ( eto_string[ year % ( eto_string.size() ) ] ).c_str();
+} // CMonthInfo::Calc_ETO()
 
 bool
 CMonthInfo::Is_LeapYear( int year )
