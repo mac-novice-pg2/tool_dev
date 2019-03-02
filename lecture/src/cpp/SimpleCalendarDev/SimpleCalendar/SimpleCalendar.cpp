@@ -8,23 +8,30 @@
 #include "CMonthInfo.h"
 #include "CalendarControler.h"
 
+//#define TEST_MODE
 int
 main()
 {
-    CalendarPrinter printer;
+    //CalendarPrinter printer;
+    CalendarPrinter printer( "2019_01.txt" );
     CalendarControler controler;
     CHolidayManager holiday;
 
+    int year = 2019;
+    int month = 1;
+#ifndef TEST_MODE
     controler.PrintMenu();
+#endif
     bool apl_end = false;
     while( !apl_end )
     {
-        int year = controler.GetInputYear();
-        int month = controler.GetInputMonth();
-
+#ifndef TEST_MODE
+        year = controler.GetInputYear();
+        month = controler.GetInputMonth();
+#endif
         PrintToday( &printer );
-        PrintCalendar( year, month, &printer );
         PrintEventAlert( year, month, &printer, &holiday );
+        PrintCalendar( year, month, &printer );
         apl_end = controler.ChangeCalendar();
     }
 }
