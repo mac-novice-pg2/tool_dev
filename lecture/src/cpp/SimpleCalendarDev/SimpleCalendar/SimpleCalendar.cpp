@@ -12,8 +12,8 @@
 int
 main()
 {
-    //CalendarPrinter printer;
-    CalendarPrinter printer( "2019_01.txt" );
+    CalendarPrinter printer;
+    //CalendarPrinter printer( "2019_01.txt" );
     CalendarControler controler;
     CHolidayManager holiday;
 

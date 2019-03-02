@@ -68,8 +68,6 @@ step_today_info(
 
     // 曜日を進める
     today->weekday = next_weekday( today->weekday );
-    // 月齢を進める
-    today->moon_age = ( ( int )today->moon_age + 1 ) % 30;
 } // step_today_info()
 
 static bool
@@ -247,7 +245,7 @@ PrintCalendar(
     // 日部分を出力する
     int eom = CMonthInfo::GetEndOfMonth( year, month );
     double cur_moon_age = CMonthInfo::Calc_MoonAge( year, month, 1 );
-    DateInfo today = { year, month, 1, start_weekday, cur_moon_age };
+    DateInfo today = { year, month, 1, start_weekday };
     int week_start_day = 1;
     int week_end_day;
     for( int day = 0; day < eom; day++ )
