@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <cassert>
 
 #include "calendar.h"
 #include "CMonthInfo.h"
@@ -11,7 +12,12 @@ using string_container_t = std::vector< std::string >;
 double
 CMonthInfo::Calc_MoonAge( int year, int month, int day )
 {
-    return ( ( year - 2009 ) % 19 ) * 11 + month + day;
+    double val = ( ( ( year - 2009 ) % 19 ) * 11 + month + day ) % 30;
+    if( month <= 2 )
+    {
+        val += 2;
+    }
+    return val;
 } // CMonthInfo::Calc_MoonAge()
 
 const char*
@@ -23,6 +29,46 @@ CMonthInfo::Calc_ETO( int year )
     };
     return ( eto_string[ year % ( eto_string.size() ) ] ).c_str();
 } // CMonthInfo::Calc_ETO()
+
+const char*
+CMonthInfo::Convert_MoonName( double moon_age )
+{
+    int age = ( int )moon_age;
+
+    if( age <= 1 )
+        return "新月  ";
+    else if( age <= 2 )
+        return "繊月  ";
+    else if( age <= 3 )
+        return "三日月";
+    else if( age <= 7 )
+        return "上弦  ";
+    else if( age <= 10 )
+        return "十日夜";
+    else if( age <= 14 )
+        return "小望月";
+    else if( age <= 15 )
+        return "満月  ";
+    else if( age <= 16 )
+        return "十六夜";
+    else if( age <= 17 )
+        return "立待月";
+    else if( age <= 18 )
+        return "居待月";
+    else if( age <= 19 )
+        return "寝待月";
+    else if( age <= 20 )
+        return "更待月";
+    else if( age <= 23 )
+        return "下弦  ";
+    else if( age <= 26 )
+        return "有明月";
+    else if( age <= 30 )
+        return "三十日";
+    else
+        assert( 0 );
+    return 0;
+}
 
 bool
 CMonthInfo::Is_LeapYear( int year )

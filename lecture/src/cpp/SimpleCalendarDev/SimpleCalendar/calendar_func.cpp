@@ -68,6 +68,8 @@ step_today_info(
 
     // 曜日を進める
     today->weekday = next_weekday( today->weekday );
+    // 月齢を進める
+    today->moon_age = ( ( int )today->moon_age + 1 ) % 30;
 } // step_today_info()
 
 static bool
@@ -171,6 +173,35 @@ print_holiday(
     fprintf( printer->Output(), "\n" );
 } // print_event_alert()
 
+static void
+print_moon_age(
+    int week_start_day,
+    int week_end_day,
+    double *cur_moon_age,
+    eWeekday start_weekday,
+    const char *skip_spaces,
+    CalendarPrinter *printer
+)
+{
+    if( week_start_day == 1 ) // 初週分のスキップ処理
+    {
+        // 日部分の出力位置合わせ
+        for( int skip = 0; skip < ( int )start_weekday; skip++ )
+        {
+            fprintf( printer->Output(), skip_spaces );
+        }
+    }
+    for( int idx = 0; idx <= week_end_day - week_start_day; idx++ )
+    {
+        fprintf( printer->Output(), "%s|", CMonthInfo::Convert_MoonName( *cur_moon_age ) );
+        *cur_moon_age = ( int )( *cur_moon_age + 1 ) % 30;
+    }
+    fprintf( printer->Output(),
+        "\n"
+        "-------------------------------------------------\n"
+    );
+} // print_moon_age()
+
 /*
   ------------------------------------------
    API関数
@@ -193,10 +224,15 @@ PrintCalendar(
     CalendarPrinter *printer
 )
 {
+    const char* skip_spaces = "      |";
+
+
     fprintf( printer->Output(),
         "%4d年%2d月のカレンダー\n"
         "\n"
-        "日 月 火 水 木 金 土\n",
+        "  日  |  月  |  火  |  水  |  木  |  金  |  土  |\n"
+        "-------------------------------------------------\n"
+        ,
         year, month );
     
     // カレンダー情報テーブルから、指定年月のテーブルを引く
@@ -205,23 +241,32 @@ PrintCalendar(
     // 日部分の出力位置合わせ
     for( int skip = 0; skip < ( int )start_weekday; skip++ )
     {
-        fprintf( printer->Output(), "   " );
+        fprintf( printer->Output(), skip_spaces );
     }
 
     // 日部分を出力する
     int eom = CMonthInfo::GetEndOfMonth( year, month );
-    DateInfo today = { year, month, 1, start_weekday };
+    double cur_moon_age = CMonthInfo::Calc_MoonAge( year, month, 1 );
+    DateInfo today = { year, month, 1, start_weekday, cur_moon_age };
+    int week_start_day = 1;
+    int week_end_day;
     for( int day = 0; day < eom; day++ )
     {
-        fprintf( printer->Output(), "%2d ", today.day );
+        fprintf( printer->Output(), "  %2d  |", today.day );
         // 土曜日まで出力したら、改行して折り返す
         if( today.weekday == eSat )
         {
             fprintf( printer->Output(), "\n" );
+            week_end_day = today.day;
+            print_moon_age( week_start_day, week_end_day,
+                &cur_moon_age, start_weekday, skip_spaces, printer );
+            week_start_day = today.day + 1;
         }
         step_today_info( &today, eom ); // 1日進める
     }
     fprintf( printer->Output(), "\n" );
+    print_moon_age( week_start_day, eom,
+        &cur_moon_age, start_weekday, skip_spaces, printer );
 } // PrintCalendar()
 
 void
