@@ -23,11 +23,14 @@ CMonthInfo::Calc_MoonAge( int year, int month, int day )
 const char*
 CMonthInfo::Calc_ETO( int year )
 {
+    char buf[ 256 ];
     string_container_t eto_string =
     {
         "申","酉","戌","亥","子","丑","寅","卯","辰","巳","午","未"
     };
-    return ( eto_string[ year % ( eto_string.size() ) ] ).c_str();
+    int index = year % eto_string.size();
+    strcpy( buf, eto_string[ index ].c_str() );
+    return buf;
 } // CMonthInfo::Calc_ETO()
 
 const char*
@@ -36,19 +39,19 @@ CMonthInfo::Convert_MoonName( double moon_age )
     int age = ( int )moon_age;
 
     if( age <= 1 )
-        return "新月  ";
+        return " 新月 ";
     else if( age <= 2 )
-        return "繊月  ";
+        return " 繊月 ";
     else if( age <= 3 )
         return "三日月";
     else if( age <= 7 )
-        return "上弦  ";
+        return " 上弦 ";
     else if( age <= 10 )
         return "十日夜";
     else if( age <= 14 )
         return "小望月";
     else if( age <= 15 )
-        return "満月  ";
+        return " 満月 ";
     else if( age <= 16 )
         return "十六夜";
     else if( age <= 17 )
@@ -60,7 +63,7 @@ CMonthInfo::Convert_MoonName( double moon_age )
     else if( age <= 20 )
         return "更待月";
     else if( age <= 23 )
-        return "下弦  ";
+        return " 下弦 ";
     else if( age <= 26 )
         return "有明月";
     else if( age <= 30 )
