@@ -95,11 +95,7 @@ CMonthInfo::Is_LeapYear( int year )
 
 // Zeller の公式で週の何日目か調べる
 eWeekday
-CMonthInfo::Formula_Zeller(
-    int year,
-    int month,
-    int day
-)
+CMonthInfo::Formula_Zeller( int year, int month, int day )
 {
     if( month < 3 )
     {
