@@ -13,7 +13,7 @@ int
 main()
 {
     CalendarControler controler;
-    CHolidayManager holiday;
+    CEventManager holiday;
 
     int year = 2019;
     int month = 1;

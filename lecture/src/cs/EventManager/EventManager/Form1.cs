@@ -26,9 +26,12 @@ namespace EventManager
         private void イベント表更新()
         {
             イベント表.Clear();
-            using( var sr = new StreamReader( event_filename_, file_enc_ ) )
+            if( File.Exists( event_filename_ ) )
             {
-                イベント表.Text = sr.ReadToEnd();
+                using( var sr = new StreamReader( event_filename_, file_enc_ ) )
+                {
+                    イベント表.Text = sr.ReadToEnd();
+                }
             }
         }
 
@@ -41,9 +44,11 @@ namespace EventManager
         {
             using( var sw = new StreamWriter( event_filename_, true, file_enc_ ) )
             {
-                sw.WriteLine( string.Format( "{0},{1}",
+                sw.WriteLine( string.Format( "{0},{1},{2}",
                 イベント日テキスト.Text,
-                イベント内容テキスト.Text ) );
+                イベント内容テキスト.Text,
+                休日チェック.Checked ? "休日" : "平日"
+                ) );
             }
             イベント表更新();
         }

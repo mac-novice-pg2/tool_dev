@@ -1,33 +1,35 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <string>
 
+#include "common_func.h"
 #include "calendar.h"
 
-class CHolidayInfo
+class CEventInfo
 {
 public:
     DateInfo date_;
     std::string event_name_;
+    bool is_holiday_;
 
-    CHolidayInfo();
+    CEventInfo();
 
     bool IsMatch( const DateInfo& date ) const;
 };
 
-class CHolidayManager
+class CEventManager
 {
-    using HolidayList = std::vector< CHolidayInfo >;
+    using HolidayList = std::vector< CEventInfo >;
     const char *HOLIDAY_FILENAME = "holiday.csv";
 
     HolidayList list_[ END_OF_YEAR ];
 
-    CHolidayInfo read_event_info( const char *input ) const;
+    CEventInfo read_event_info( string_container entry ) const;
 
 public:
-    CHolidayManager();
+    CEventManager();
 
-    const CHolidayInfo*
+    const CEventInfo*
     Search( const DateInfo* search_date ) const;
 };
