@@ -161,16 +161,20 @@
     <ClInclude Include="CalendarControler.h" />
     <ClInclude Include="CalendarPrinter.h" />
     <ClInclude Include="calendar_func.h" />
-    <ClInclude Include="CHolidayManager.h" />
+    <ClInclude Include="CEventManager.h" />
     <ClInclude Include="CMonthInfo.h" />
+    <ClInclude Include="common_func.h" />
+    <ClInclude Include="CSV_Reader.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CalendarControler.cpp" />
     <ClCompile Include="CalendarPrinter.cpp" />
     <ClCompile Include="calendar_func.cpp" />
-    <ClCompile Include="CHolidayManager.cpp" />
+    <ClCompile Include="CEventManager.cpp" />
     <ClCompile Include="CMonthInfo.cpp" />
+    <ClCompile Include="common_func.cpp" />
+    <ClCompile Include="CSV_Reader.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

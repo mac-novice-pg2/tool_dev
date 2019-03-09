@@ -8,7 +8,7 @@
 
 #include "calendar.h"
 #include "CMonthInfo.h"
-#include "CHolidayManager.h"
+#include "CEventManager.h"
 
 /*
   ------------------------------------------
@@ -67,7 +67,7 @@ step_today_info( DateInfo *today, int eom )
 } // step_today_info()
 
 static bool
-check_holiday( const DateInfo *today, CHolidayManager *holiday )
+check_holiday( const DateInfo *today, CEventManager *holiday )
 {
     bool judgement = false;
 
@@ -88,7 +88,7 @@ check_holiday( const DateInfo *today, CHolidayManager *holiday )
 } // check_holiday()
 
 static void
-print_no_overtime( const DateInfo *start, int eom, CHolidayManager *holiday )
+print_no_overtime( const DateInfo *start, int eom, CEventManager *holiday )
 {
     DateInfo today = *start;
     std::set< int > result_days;
@@ -140,12 +140,12 @@ print_no_overtime( const DateInfo *start, int eom, CHolidayManager *holiday )
 } // print_no_overtime()
 
 static void
-print_holiday( const DateInfo *start, int eom, CHolidayManager *holiday )
+print_holiday( const DateInfo *start, int eom, CEventManager *holiday )
 {
     DateInfo today = *start; // 引数をローカル変数にコピー
     while( today.day < eom )
     {
-        const CHolidayInfo *e = holiday->Search( &today );
+        const CEventInfo *e = holiday->Search( &today );
         if( e != nullptr ) // 該当イベントが見つかった？
         {
             printf( "%2d/%2dは%sです\n", today.month, today.day, e->event_name_.c_str() );
@@ -233,7 +233,7 @@ PrintCalendar( int year, int month )
 } // PrintCalendar()
 
 void
-PrintEventAlert( int year, int month, CHolidayManager *holiday )
+PrintEventAlert( int year, int month, CEventManager *event )
 {
     printf( 
         "\n"
@@ -248,8 +248,8 @@ PrintEventAlert( int year, int month, CHolidayManager *holiday )
 
     // 祝日出力
     int eom = CMonthInfo::GetEndOfMonth( year, month );
-    print_holiday( &today, eom, holiday );
+    print_holiday( &today, eom, event );
 
     // 定時退社日チェック
-    print_no_overtime( &today, eom, holiday );
+    print_no_overtime( &today, eom, event );
 } // EventAlert()

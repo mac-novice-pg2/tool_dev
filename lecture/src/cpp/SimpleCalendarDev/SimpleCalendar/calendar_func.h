@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "CHolidayManager.h"
+#include "CEventManager.h"
 
 // APIプロトタイプ宣言
 void PrintToday( void );
 void PrintCalendar( int year, int month );
-void PrintEventAlert( int year, int month, CHolidayManager *holiday );
+void PrintEventAlert( int year, int month, CEventManager *holiday );
