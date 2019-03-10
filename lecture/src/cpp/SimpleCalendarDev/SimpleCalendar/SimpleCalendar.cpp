@@ -16,7 +16,7 @@ main()
     CEventManager holiday;
 
     int year = 2019;
-    int month = 1;
+    int month = 3;
 #ifndef TEST_MODE
     controler.PrintMenu();
 #endif

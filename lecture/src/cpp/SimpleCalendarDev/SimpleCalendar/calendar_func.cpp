@@ -166,6 +166,17 @@ print_moon_age( int day_of_week, double moon_age )
     printf( "\n-------------------------------------------------\n" );
 } // print_moon_age()
 
+static void
+skip_start_position( eWeekday start_weekday )
+{
+    const char* skip_spaces = "      |";
+    // 日部分の出力位置合わせ
+    for( int skip = 0; skip < ( int )start_weekday; skip++ )
+    {
+        printf( skip_spaces );
+    }
+} // skip_start_position()
+
 /*
   ------------------------------------------
    API関数
@@ -183,7 +194,6 @@ PrintToday( void )
 void
 PrintCalendar( int year, int month )
 {
-    const char* skip_spaces = "      |";
     printf(
         "%4d年%2d月(%s年)のカレンダー\n"
         "\n"
@@ -196,10 +206,7 @@ PrintCalendar( int year, int month )
     eWeekday start_weekday = CMonthInfo::Formula_Zeller( year, month, 1 );
 
     // 日部分の出力位置合わせ
-    for( int skip = 0; skip < ( int )start_weekday; skip++ )
-    {
-        printf( skip_spaces );
-    }
+    skip_start_position( start_weekday );
 
     // 日部分を出力する
     int eom = CMonthInfo::GetEndOfMonth( year, month );
@@ -215,12 +222,9 @@ PrintCalendar( int year, int month )
         if( today.weekday == eSat )
         {
             printf( "\n" );
+            // 月齢出力
             if( is_first_week ) // 初週分のスキップ処理
-            {
-                // 日部分の出力位置合わせ
-                for( int skip = 0; skip < ( int )start_weekday; skip++ )
-                    printf( skip_spaces );
-            }
+                skip_start_position( start_weekday );
             print_moon_age( days_of_week, cur_moon_age );
             cur_moon_age = ( int )( cur_moon_age + days_of_week ) % 30;
             days_of_week = 0;
