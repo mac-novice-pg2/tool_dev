@@ -42,11 +42,13 @@ CMonthInfo::Convert_MoonName( double moon_age )
         return " 新月 ";
     else if( age <= 2 )
         return " 繊月 ";
-    else if( age <= 3 )
+    else if( age <= 6 )
         return "三日月";
-    else if( age <= 7 )
+    else if( age <= 8 )
         return " 上弦 ";
-    else if( age <= 10 )
+    else if( age <= 12 )
+        return "十日夜";
+    else if( age <= 13 )
         return "十日夜";
     else if( age <= 14 )
         return "小望月";
@@ -60,18 +62,18 @@ CMonthInfo::Convert_MoonName( double moon_age )
         return "居待月";
     else if( age <= 19 )
         return "寝待月";
-    else if( age <= 20 )
+    else if( age <= 21 )
         return "更待月";
     else if( age <= 23 )
         return " 下弦 ";
-    else if( age <= 26 )
+    else if( age <= 29 )
         return "有明月";
     else if( age <= 30 )
         return "三十日";
     else
         assert( 0 );
     return 0;
-}
+} // Convert_MoonName()
 
 bool
 CMonthInfo::Is_LeapYear( int year )
