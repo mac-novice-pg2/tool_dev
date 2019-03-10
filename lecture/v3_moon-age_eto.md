@@ -185,7 +185,7 @@ PrintMoonAge( ( int year, int month, int day )
 
 罫線は単純に罫線記号を入れるだけなので大丈夫な気がします。しかし、月齢を日の合間に挟んでいく必要があり、こっちは少し考えなければいけません。変更点を含めたフローチャートを示しておきます。(実際には変数やフラグの操作が必要になりますが、抽象化を進める事でやりたい事を明確にしています)
 
-![print_days_with_moon_age.flow](.\picture\print_days_with_moon_age.flow.jpg)
+![print_days_with_moon_age.flow](./picture/print_days_with_moon_age.flow.jpg)
 
 上のフローチャートの★部分が変更点になります
 
@@ -241,7 +241,7 @@ PrintCalendar( int year, int month )
 
 月齢を出力するタイミングは、フローチャートにある通り従来の土曜日出力後の改行直後。ここで処理する事で**一行毎に月齢出力処理を挟む**事が出来ます。では、月齢出力処理のフローチャートを示します。
 
-![print_moon_age_proc.flow](.\picture\print_moon_age_proc.flow.jpg)
+![print_moon_age_proc.flow](./picture/print_moon_age_proc.flow.jpg)
 
 では、PrintCalendar()関数の該当箇所の変更内容を示します。これで対応完了です
 
