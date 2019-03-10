@@ -49,7 +49,7 @@ CMonthInfo::Convert_MoonName( double moon_age )
     else if( age <= 12 )
         return "十日夜";
     else if( age <= 13 )
-        return "十日夜";
+        return "十三夜";
     else if( age <= 14 )
         return "小望月";
     else if( age <= 15 )

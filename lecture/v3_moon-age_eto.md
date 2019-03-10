@@ -89,7 +89,7 @@ calc_eto_fromAD( int year )
         "辰", //  8番目の干支 辰(しん・たつ)
         "巳", //  9番目の干支 巳(し・み)
         "午", // 10番目の干支 午(ご・うま)
-        "未", // 11番目の干支 亥(がい・い)
+        "未", // 11番目の干支 未(び・ひつじ)
     };    
     return eto_table[ year % 12 ];
 } // calc_eto_fromAD()
@@ -109,7 +109,7 @@ calc_eto_fromAD( int year )
 
 **月の満ち欠けを周期化**したものとでもいいましょうか。**月の満ち欠けは太陽と月の関係から成るもの**とは中学生辺りで習うと思いますが、その頃月齢についてどう訊かされていたのかサッパリ思い出せません。
 
-**月の満ち欠けの周期は、おおむね29日と半日(さしづめ29.5日といった所)**なので、大体一か月で一巡します。月齢は**新月を月齢0日、満月を14.7日**と言った風に記載するのですが、流石に日と月齢表記の併記はややこしくなりそうです。しかしご安心。雅を文化とする日本には**月名**があります
+**月の満ち欠けの周期は、おおむね29日と半日(さしづめ29.5日といった所)**なので、大体一か月で一巡します。月齢は**新月を月齢1日、満月を14.7日**と言った風に記載するのですが、流石に日と月齢表記の併記はややこしくなりそうです。しかしご安心。雅を文化とする日本には**月名**があります
 
 | 月齢  | 月名                   |
 | ----- | ---------------------- |
@@ -117,6 +117,7 @@ calc_eto_fromAD( int year )
 | 2     | 繊月（せんげつ）       |
 | 3     | 三日月（みかづき）     |
 | 7/8   | 上弦（じょうげん）     |
+| 10    | 十日夜                 |
 | 13    | 十三夜（じゅうさんや） |
 | 14    | 小望月（こもちづき）   |
 | 15    | 満月（まんげつ）       |
@@ -135,6 +136,17 @@ calc_eto_fromAD( int year )
 年月日から概算出来る為の計算式が(その手の人には)広く知られているようなので、それを流用しましょう
 
 ```cpp
+double
+Calc_MoonAge( int year, int month, int day )
+{
+    double val = ( ( ( year - 2009 ) % 19 ) * 11 + month + day ) % 30;
+    if( month <= 2 )
+    {
+        val += 2;
+    }
+    return val;
+} // Calc_MoonAge()
+
 const char*
 Convert_MoonName( double moon_age )
 {
@@ -144,7 +156,7 @@ Convert_MoonName( double moon_age )
     else if( age <=  6 ) return "三日月";
     else if( age <=  8 ) return " 上弦 ";
     else if( age <= 12 ) return "十日夜";
-    else if( age <= 13 ) return "十日夜";
+    else if( age <= 13 ) return "十三夜";
     else if( age <= 14 ) return "小望月";
     else if( age <= 15 ) return " 満月 ";
     else if( age <= 16 ) return "十六夜";
@@ -162,7 +174,7 @@ Convert_MoonName( double moon_age )
 void
 PrintMoonAge( ( int year, int month, int day )
 {
-    double moon_age = ( ( ( year - 2009 ) % 19 ) * 11 + month + day ) % 30;
+    double moon_age = Calc_MoonAge( year, month, day );
     if( month <= 2 )
         moon_age += 2;
     return Convert_MoonName( moon_age );
@@ -173,7 +185,7 @@ PrintMoonAge( ( int year, int month, int day )
 
 これらの情報を元に、出力イメージを作成してみます
 
-![moon_age_sample](.\picture\moon_age_sample.png)
+![moon_age_sample](./picture/moon_age_sample.png)
 
 ## システム検討
 
@@ -243,14 +255,33 @@ PrintCalendar( int year, int month )
 
 ![print_moon_age_proc.flow](./picture/print_moon_age_proc.flow.jpg)
 
-では、PrintCalendar()関数の該当箇所の変更内容を示します。これで対応完了です
+フローチャートにあるprint_moon_age()の実装は以下の通りです
+
+```cpp
+static void
+print_moon_age( int day_of_week, double moon_age )
+{
+    for( int idx = 0; idx < day_of_week; idx++ )
+    {
+        printf( "%s|", CMonthInfo::Convert_MoonName( moon_age ) );
+        moon_age = ( int )( moon_age + 1 ) % 30;
+    }
+    printf( "\n-------------------------------------------------\n" );
+} // print_moon_age()
+```
+
+### PrintCalendar変更内容
+
+では、これまでの内容をPrintCalendar()に反映しましょう。変更箇所を抜粋します。
+
+これで干支・月齢表示の対応が完了しました
 
 ```diff
     // 日部分を出力する
     int eom = GetEndOfMonth( year, month );
     DateInfo today = { year, month, 1, start_weekday };
 +   // 月齢処理用変数
-+   double cur_moon_age = CMonthInfo::Calc_MoonAge( year, month, 1 );
++   double cur_moon_age = Calc_MoonAge( year, month, 1 );
 +   bool is_first_week = true; // 初週判定フラグ
 +   int days_of_week = 0; // 現出力週の日数
     for( int day = 0; day < eom; day++ )
