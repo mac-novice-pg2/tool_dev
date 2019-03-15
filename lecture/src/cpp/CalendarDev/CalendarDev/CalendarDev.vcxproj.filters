@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\func">
+      <UniqueIdentifier>{9f13b64a-b79d-4800-a1a9-0d4027ccbe2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\class">
+      <UniqueIdentifier>{28f0d946-e073-4454-a70d-86fb52622186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\def">
+      <UniqueIdentifier>{f1410d33-055e-4d4d-a202-fed3b08421c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\main">
+      <UniqueIdentifier>{fa0832fc-3ffa-4479-a7c3-a3ce7952e3e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\func">
+      <UniqueIdentifier>{68dffa8d-ef2e-4029-b941-0f2b6ac35b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\lib">
+      <UniqueIdentifier>{bd49aa85-3085-417d-b7e3-ea727e04fccf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calendar.h">
+      <Filter>ヘッダー ファイル\def</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calendar_func.h">
+      <Filter>ヘッダー ファイル\func</Filter>
+    </ClInclude>
+    <ClInclude Include="include\common_func.h">
+      <Filter>ヘッダー ファイル\func</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CEventManager.h">
+      <Filter>ヘッダー ファイル\class</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CMonthInfo.h">
+      <Filter>ヘッダー ファイル\class</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CPrinter.h">
+      <Filter>ヘッダー ファイル\class</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CSV_Reader.h">
+      <Filter>ヘッダー ファイル\class</Filter>
+    </ClInclude>
+    <ClInclude Include="include\user_interface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CalendarDev.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="main\user_interface.cpp">
+      <Filter>ソース ファイル\main</Filter>
+    </ClCompile>
+    <ClCompile Include="library\CEventManager.cpp">
+      <Filter>ソース ファイル\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="library\CMonthInfo.cpp">
+      <Filter>ソース ファイル\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="library\CPrinter.cpp">
+      <Filter>ソース ファイル\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="library\CSV_Reader.cpp">
+      <Filter>ソース ファイル\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="function\calendar_func.cpp">
+      <Filter>ソース ファイル\func</Filter>
+    </ClCompile>
+    <ClCompile Include="function\common_func.cpp">
+      <Filter>ソース ファイル\func</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
