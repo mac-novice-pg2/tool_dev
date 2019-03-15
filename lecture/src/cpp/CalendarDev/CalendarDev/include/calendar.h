@@ -38,17 +38,13 @@ typedef struct
 }MonthInfo;
 
 // 今日の年月日情報
-typedef struct
+struct DateInfo
 {
     int year;
     int month;
     int day;
     eWeekday weekday;
-}DateInfo;
-
-typedef struct
-{
-    DateInfo date;
-    const char *event_name; // イベント名
-    bool is_holiday; // true:休日 false:平日
-}EventInfo;
+    DateInfo()
+        : year( 2000 ), month( 1 ), day( 1 ), weekday( eSun )
+    {}
+};

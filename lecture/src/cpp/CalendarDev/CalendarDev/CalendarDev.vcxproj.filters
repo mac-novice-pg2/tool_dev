@@ -68,9 +68,6 @@
     <ClCompile Include="CalendarDev.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="main\event_main.cpp">
-      <Filter>ソース ファイル\main</Filter>
-    </ClCompile>
     <ClCompile Include="main\user_interface.cpp">
       <Filter>ソース ファイル\main</Filter>
     </ClCompile>

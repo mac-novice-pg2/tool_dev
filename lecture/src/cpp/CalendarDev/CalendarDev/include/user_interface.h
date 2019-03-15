@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "calendar.h"
+
 class CalendarControler
 {
     int year_;
@@ -9,10 +11,8 @@ class CalendarControler
 
 public:
     void ClearScreen( void ) const;
-    bool PrintMenu();
-    bool ChangeCalendar();
-
-    int GetInputYear() const { return year_; }
-    int GetInputMonth() const { return month_; }
+    bool PrintMenu( void );
+    void ShowInstruction( void );
+    bool ChangeCalendar( void );
+    DateInfo GetInputDate( void );
 };
-

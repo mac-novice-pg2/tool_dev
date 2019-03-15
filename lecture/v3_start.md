@@ -13,3 +13,5 @@
 
 [干支と月齢](v3_moon-age_eto.md)
 
+[イベントお知らせ機能](v3_notify_event.md)
+

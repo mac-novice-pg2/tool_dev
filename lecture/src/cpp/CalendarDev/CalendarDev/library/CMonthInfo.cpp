@@ -10,10 +10,10 @@
 using string_container_t = std::vector< std::string >;
 
 double
-CMonthInfo::Calc_MoonAge( int year, int month, int day )
+CMonthInfo::Calc_MoonAge( const DateInfo& date )
 {
-    double val = ( ( ( year - 2009 ) % 19 ) * 11 + month + day ) % 30;
-    if( month <= 2 )
+    double val = ( ( ( date.year - 2009 ) % 19 ) * 11 + date.month + date.day ) % 30;
+    if( date.month <= 2 )
     {
         val += 2;
     }
@@ -89,39 +89,43 @@ CMonthInfo::Is_LeapYear( int year )
             judge = ( year % 400 ) ? false : true;
         }
     }
-
     return judge;
 } // CMonthInfo::Is_LeapYear()
 
 // Zeller の公式で週の何日目か調べる
 eWeekday
-CMonthInfo::Formula_Zeller( int year, int month, int day )
+CMonthInfo::Formula_Zeller( const DateInfo& date )
 {
-    if( month < 3 )
+    DateInfo tmp = date;
+    if( tmp.month < 3 )
     {
-        year--;
-        month += 12;
+        tmp.year--;
+        tmp.month += 12;
     }
 
-    int temp = ( year + year / 4 - year / 100 + year / 400 + ( 13 * month + 8 ) / 5 + day ) % 7;
+    int temp = ( tmp.year + tmp.year
+        / 4 - tmp.year
+        / 100 + tmp.year
+        / 400 + ( 13 * tmp.month + 8 )
+        / 5 + tmp.day ) % 7;
 
     return ( eWeekday )temp;
 } // CMonthInfo::Formula_Zeller()
 
 int
-CMonthInfo::GetEndOfMonth( int year, int month )
+CMonthInfo::GetEndOfMonth( const DateInfo& date )
 {
     const int eom_[] =     { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     const int eom_leap[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     int eom;
 
-    if( Is_LeapYear( year ) )
+    if( Is_LeapYear( date.year ) )
     {
-        eom = eom_leap[ month - 1 ];
+        eom = eom_leap[ date.month - 1 ];
     }
     else
     {
-        eom = eom_[ month - 1 ];
+        eom = eom_[ date.month - 1 ];
     }
     return eom;
 } // CMonthInfo::GetEndOfMonth()

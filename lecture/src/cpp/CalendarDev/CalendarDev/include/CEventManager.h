@@ -6,30 +6,30 @@
 #include "common_func.h"
 #include "calendar.h"
 
-class CEventInfo
+struct CEventInfo
 {
-public:
     DateInfo date_;
-    std::string event_name_;
-    bool is_holiday_;
+    std::string name_;
+    bool bHoliday_;
+    bool valid_;
 
     CEventInfo();
-
     bool IsMatch( const DateInfo& date ) const;
+    bool IsValid( void ) const;
 };
 
 class CEventManager
 {
-    using HolidayList = std::vector< CEventInfo >;
-    const char *HOLIDAY_FILENAME = "holiday.csv";
+    using event_list_t = std::vector< CEventInfo >;
 
-    HolidayList list_[ END_OF_YEAR ];
+    event_list_t list_[ END_OF_YEAR ];
+    CEventInfo invalid_data_;
 
-    CEventInfo read_event_info( string_container entry ) const;
+    virtual CEventInfo read_info( string_container entry ) const;
 
 public:
-    CEventManager();
+    CEventManager( const char *filename );
 
-    const CEventInfo*
-    Search( const DateInfo* search_date ) const;
+    const CEventInfo&
+    Search( const DateInfo& search_date ) const;
 };

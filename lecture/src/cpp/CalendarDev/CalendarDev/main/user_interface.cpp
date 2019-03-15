@@ -74,24 +74,23 @@ CalendarControler::PrintMenu( void )
     {
         printf( "入力に誤りがあります。もう一度入力して下さい\n" );
     }
+    else
+    {
+        ClearScreen(); // 画面をクリアして、表示更新に備える
+    }
 
     return success;
 } // CalendarControler::PrintMenu()
 
-bool
-CalendarControler::ChangeCalendar()
+void
+CalendarControler::ShowInstruction( void )
 {
-    printf(
-        "=======================================\n"
-        "↑ : 去年のカレンダーを表示\n"
-        "↓ : 来年のカレンダーを表示\n"
-        "→ : 次月のカレンダーを表示\n"
-        "← : 先月のカレンダーを表示\n"
-        "c  : 指定年月のカレンダーを表示\n"
-        "Q  : カレンダー表示を終了する\n"
-        "=======================================\n"
-    );
+    printf( "↑:去年 ↓:来年 →:来月 ←:先月 c:年月指定 q:終了\n" );
+} // CalendarControler::PrintInstruction()
 
+bool
+CalendarControler::ChangeCalendar( void )
+{
     bool request_quit = false;
     int key_1st = _getch(); // 1回目のキーコードを拾う
     int key_2nd = _getch(); // 2回目のキーコードを拾う
@@ -113,3 +112,13 @@ CalendarControler::ChangeCalendar()
 
     return request_quit;
 } // CalendarControler::ChangeCalendar()
+
+DateInfo
+CalendarControler::GetInputDate( void )
+{
+    DateInfo date;
+    date.year = year_;
+    date.month = month_;
+
+    return date;
+} // CalendarControler::GetInputDate()

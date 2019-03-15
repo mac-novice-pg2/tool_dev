@@ -175,7 +175,6 @@
     <ClCompile Include="library\CMonthInfo.cpp" />
     <ClCompile Include="library\CPrinter.cpp" />
     <ClCompile Include="library\CSV_Reader.cpp" />
-    <ClCompile Include="main\event_main.cpp" />
     <ClCompile Include="main\user_interface.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

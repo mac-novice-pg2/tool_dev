@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 
+#include <exception>
 #include "common_func.h"
 
 #include "CSV_Reader.h"
@@ -7,67 +8,65 @@
 #include "CMonthInfo.h"
 
 CEventInfo
-CEventManager::read_event_info( string_container tokens ) const
+CEventManager::read_info( string_container entry ) const
 {
-    char buf[ 256 ];
-
-    // スラッシュで年月日取り出し
-    string_container date_str = Split( tokens[ 0 ], '/' );
-    sprintf( buf, "%s %s %s",
-        date_str[ 0 ].c_str(), date_str[ 1 ].c_str(), date_str[ 2 ].c_str() );
+    if( entry.size() != 3 )
+        throw std::invalid_argument::exception();
 
     CEventInfo ret;
+    char buf[ 256 ];
+
+    // 年月日取り出し
+    string_container date_str = Split( entry[ 0 ], '/' );
+    sprintf( buf, "%s %s %s",
+        date_str[ 0 ].c_str(), date_str[ 1 ].c_str(), date_str[ 2 ].c_str() );
     sscanf( buf, "%d %d %d",
         &( ret.date_.year ), &( ret.date_.month ), &( ret.date_.day ) );
-    ret.date_.weekday = CMonthInfo::Formula_Zeller(
-        ret.date_.year, ret.date_.month, ret.date_.day
-    );
+    ret.date_.weekday = CMonthInfo::Formula_Zeller( ret.date_ );
 
-    // イベント名取り出し
-    if( tokens.size() >= 2 )
-        ret.event_name_ = tokens[ 1 ];
-
-    if( tokens.size() >= 3 )
-    {
-        ret.is_holiday_ = false;
-        if( strcmp( tokens[ 2 ].c_str(), "祝日" ) == 0  )
-            ret.is_holiday_ = true;
-    }
+    // イベント名/祝日・平日情報取り出し
+    ret.name_ = entry[ 1 ];
+    ret.bHoliday_ = strcmp( entry[ 2 ].c_str(), "祝日" );
+    ret.valid_ = true;
 
     return ret;
-} // CHolidayManager::read_event_info()
+} // CHolidayManager::read_info()
 
-CEventManager::CEventManager()
+CEventManager::CEventManager( const char *filename )
 {
-    CSV_Reader csv( HOLIDAY_FILENAME );
+    CSV_Reader csv( filename );
     string_container buf = csv.Readline();
     while( !buf.empty() )
     {
-        auto info = read_event_info( buf );
+        auto info = read_info( buf );
         list_[ info.date_.year ].push_back( info );
         buf = csv.Readline();
     }
+    invalid_data_.valid_ = false;
 } // CHolidayManager::CHolidayManager()
 
-const CEventInfo*
-CEventManager::Search( const DateInfo* today ) const
+const CEventInfo&
+CEventManager::Search( const DateInfo& date ) const
 {
-    for( size_t i = 0; i < list_[ today->year ].size(); i++ )
+    for( size_t i = 0; i < list_[ date.year ].size(); i++ )
     {
-        if( list_[ today->year ][ i ].IsMatch( *today ) )
-            return &( list_[ today->year ][ i ] );
+        if( list_[ date.year ][ i ].IsMatch( date ) )
+            return ( list_[ date.year ][ i ] );
     }
-
-    return nullptr;
+    return invalid_data_;
 } // CHolidayManager::Search()
 
 CEventInfo::CEventInfo()
+    : name_( "" ), bHoliday_( false )
 {
     date_.year = 0;
     date_.month = 0;
     date_.day = 0;
-    event_name_ = "";
-} // CEventInfo::CEventInfo()
+    date_.weekday = eWeekEnd;
+    name_ = "";
+    bHoliday_ = false;
+    valid_ = false;
+}
 
 bool
 CEventInfo::IsMatch( const DateInfo& check ) const
@@ -84,3 +83,9 @@ CEventInfo::IsMatch( const DateInfo& check ) const
         return false;
     }
 } // HolidayInfo::IsMatch()
+
+bool
+CEventInfo::IsValid( void ) const
+{
+    return valid_;
+}

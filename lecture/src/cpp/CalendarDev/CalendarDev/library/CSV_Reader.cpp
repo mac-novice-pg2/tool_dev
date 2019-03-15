@@ -3,13 +3,18 @@
 
 #include <cstdio>
 #include <sstream>
+#include <exception>
 
 #include "common_func.h"
 
 CSV_Reader::CSV_Reader( const char *filename )
     : fp_( fopen( filename, "rt" ) )
 {
-
+    if( fp_ == NULL )
+    {
+        fprintf( stderr, "%sが存在しません\n", filename );
+        throw std::invalid_argument::exception();
+    }
 }
 
 CSV_Reader::~CSV_Reader()
