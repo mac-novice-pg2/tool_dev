@@ -17,7 +17,7 @@ CEventManager::read_info( string_container entry ) const
     char buf[ 256 ];
 
     // 年月日取り出し
-    string_container date_str = Split( entry[ 0 ], '/' );
+    auto date_str = Split( entry[ 0 ], '/' );
     sprintf( buf, "%s %s %s",
         date_str[ 0 ].c_str(), date_str[ 1 ].c_str(), date_str[ 2 ].c_str() );
     sscanf( buf, "%d %d %d",
@@ -35,11 +35,11 @@ CEventManager::read_info( string_container entry ) const
 CEventManager::CEventManager( const char *filename )
 {
     CSV_Reader csv( filename );
-    string_container buf = csv.Readline();
+    auto buf = csv.Readline();
     while( !buf.empty() )
     {
         auto info = read_info( buf );
-        list_[ info.date_.year ].push_back( info );
+        list_.push_back( info );
         buf = csv.Readline();
     }
     invalid_data_.valid_ = false;
@@ -48,10 +48,10 @@ CEventManager::CEventManager( const char *filename )
 const CEventInfo&
 CEventManager::Search( const DateInfo& date ) const
 {
-    for( size_t i = 0; i < list_[ date.year ].size(); i++ )
+    for( size_t i = 0; i < list_.size(); i++ )
     {
-        if( list_[ date.year ][ i ].IsMatch( date ) )
-            return ( list_[ date.year ][ i ] );
+        if( list_[ i ].IsMatch( date ) )
+            return list_[ i ];
     }
     return invalid_data_;
 } // CHolidayManager::Search()
@@ -73,8 +73,7 @@ CEventInfo::IsMatch( const DateInfo& check ) const
 {
     if( ( this->date_.year == check.year ) &&
         ( this->date_.month == check.month ) &&
-        ( this->date_.day == check.day ) &&
-        ( this->date_.weekday == check.weekday ) )
+        ( this->date_.day == check.day ) )
     {
         return true;
     }

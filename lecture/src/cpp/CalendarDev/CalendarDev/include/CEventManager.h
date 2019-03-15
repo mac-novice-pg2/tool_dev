@@ -22,7 +22,7 @@ class CEventManager
 {
     using event_list_t = std::vector< CEventInfo >;
 
-    event_list_t list_[ END_OF_YEAR ];
+    event_list_t list_;
     CEventInfo invalid_data_;
 
     virtual CEventInfo read_info( string_container entry ) const;
