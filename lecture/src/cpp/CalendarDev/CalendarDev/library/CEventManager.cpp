@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <exception>
-#include "common_func.h"
 
+#include "common_func.h"
 #include "CSV_Reader.h"
 #include "CEventManager.h"
 #include "CMonthInfo.h"
@@ -80,19 +80,46 @@ CEventManager::Search( const DateInfo& date ) const
         return invalid_data_;
 
     auto idx_info = idx_info_.item_[ date.year - idx_info_.min_ ];
-    auto cur_year_pos = idx_info.start_index;
+    auto search_start = idx_info.start_index;
     int start_month = 0;
     for( int i = 0; i < idx_info.count; i++ )
     {
         // 当月を超えたら、探索打ち切り
-        if( ( event_[ cur_year_pos + i ].date_.month ) > date.month )
+        if( ( event_[ search_start + i ].date_.month ) > date.month )
             break;
 
-        if( event_[ cur_year_pos + i ].IsMatch( date ) )
-            return event_[ cur_year_pos + i ];
+        if( event_[ search_start + i ].IsMatch( date ) )
+            return event_[ search_start + i ];
     }
     return invalid_data_;
 } // CHolidayManager::Search()
+
+EvnetInfoList
+CEventManager::GetMonthEvent( const DateInfo & date )
+{
+    auto idx_info = idx_info_.item_[ date.year - idx_info_.min_ ];
+    int search_start = idx_info.start_index;
+
+    bool found = false;
+    int start, end, cur;
+    start = end = INT_MAX;
+    for( int i = 0; i < idx_info.count; i++ )
+    {
+        cur = search_start + i;
+        if( event_[ cur ].date_.month == date.month )
+        {
+            found = true;
+            if( start == INT_MAX )
+                start = cur;
+            end = cur;
+        }
+    }
+
+    if( found )
+        return EvnetInfoList( &event_[ start ], &event_[ end + 1 ] );
+    else
+        return EvnetInfoList();
+} // CEventManager::GetMonthEvent()
 
 CEventInfo::CEventInfo()
     : name_( "" ), bHoliday_( false )

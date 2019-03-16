@@ -29,30 +29,29 @@ struct EventCountInfo_t
     bool IsEmpty();
 };
 
-using event_count_t = std::vector< EventCountInfo_t >;
-
 struct EventListIndex_t
 {
     int min_;
     int max_;
 
-    event_count_t item_;
+    std::vector< EventCountInfo_t > item_;
     EventListIndex_t( void );
 };
 
+using EvnetInfoList = std::vector< CEventInfo >;
 class CEventManager
 {
-    using event_list_t = std::vector< CEventInfo >;
-
-    event_list_t event_;
+    std::vector< CEventInfo > event_;
     EventListIndex_t idx_info_;
     CEventInfo invalid_data_;
 
-    virtual CEventInfo read_info( string_container entry ) const;
+    CEventInfo read_info( string_container entry ) const;
 
 public:
     CEventManager( const char *filename );
 
     const CEventInfo&
     Search( const DateInfo& search_date ) const;
+
+    EvnetInfoList GetMonthEvent( const DateInfo& date );
 };
