@@ -150,6 +150,7 @@ print_holiday( const DateInfo &start, int eom )
     CEventManager holiday( "holiday.csv" );
 
     DateInfo today = start; // 引数をローカル変数にコピー
+    printf( "今月の祝日\n" );
     while( today.day < eom )
     {
         const CEventInfo& e = holiday.Search( today );
@@ -162,6 +163,25 @@ print_holiday( const DateInfo &start, int eom )
     }
     printf( "\n" );
 } // print_event_alert()
+
+static void
+print_event_day( const DateInfo &start, int eom )
+{
+    CEventManager event_manager( "event.csv" );
+    printf( "今月のイベント\n" );
+    auto event_list = event_manager.GetMonthEvent( start );
+
+    if( !event_list.empty() )
+    {
+        for( auto item : event_list )
+        {
+            printf( "%4d/%2d/%2d %s\n",
+                item.date_.year, item.date_.month, item.date_.day,
+                item.name_.c_str() );
+        }
+    }
+    printf( "\n" );
+} // print_event_day()
 
 static void
 print_moon_age( int day_of_week, double moon_age )
@@ -252,10 +272,8 @@ PrintCalendar( const DateInfo &date )
 } // PrintCalendar()
 
 void
-PrintEventAlert( const DateInfo &date )
+PrintEvent( const DateInfo &date )
 {
-//    CEventManager event_manager( "event.csv" );
-
     // 定時退社日チェック
     // カレンダー/イベント情報初期化
     int eom = CMonthInfo::GetEndOfMonth( date );
@@ -263,12 +281,6 @@ PrintEventAlert( const DateInfo &date )
     first_day.day = 1;
     print_no_overtime( first_day, eom );
 
-    printf( 
-        "\n"
-        "=======================================\n"
-        " イベント情報 \n"
-        "=======================================\n"
-    );
-    // 祝日出力
     print_holiday( first_day, eom );
-} // EventAlert()
+//    print_event_day( first_day, eom );
+} // PrintEventAlert()

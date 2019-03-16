@@ -6,4 +6,4 @@
 // APIプロトタイプ宣言
 void PrintToday( void );
 void PrintCalendar( const DateInfo &date );
-void PrintEventAlert( const DateInfo &date );
+void PrintEvent( const DateInfo &date );
