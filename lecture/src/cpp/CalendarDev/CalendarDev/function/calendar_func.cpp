@@ -69,7 +69,7 @@ step_today_info( DateInfo& today, int eom )
 static bool
 check_holiday(
     const DateInfo& today,
-    const CEventManager& event_manager )
+    CEventManager& event_manager )
 {
     bool judgement = false;
 
@@ -81,7 +81,8 @@ check_holiday(
     }
     else // 祝日判定
     {
-        CEventInfo e = event_manager.Search( today );
+        EvnetInfoList event_list = event_manager.GetMonthEvent( today );
+        const CEventInfo e = event_manager.Search( event_list, today );
         if( e.IsValid() && e.bHoliday_ )
         {
             judgement = true;
@@ -137,7 +138,7 @@ print_no_overtime( const DateInfo& start, int eom )
         result_days.insert( last_friday );
     }
 
-    for( auto day : result_days )
+    for( int day : result_days )
     {
         printf( "%2d日 ", day );
     }
@@ -151,9 +152,10 @@ print_holiday( const DateInfo &start, int eom )
 
     DateInfo today = start; // 引数をローカル変数にコピー
     printf( "今月の祝日\n" );
+    EvnetInfoList cur_month_event = holiday.GetMonthEvent( today );
     while( today.day < eom )
     {
-        const CEventInfo& e = holiday.Search( today );
+        const CEventInfo& e = holiday.Search( cur_month_event, today );
         if( e.IsValid() ) // 該当イベントが見つかった？
         {
             printf( "%2d/%2dは%sです\n",
@@ -169,11 +171,10 @@ print_event_day( const DateInfo &start, int eom )
 {
     CEventManager event_manager( "event.csv" );
     printf( "今月のイベント\n" );
-    auto event_list = event_manager.GetMonthEvent( start );
-
+    EvnetInfoList event_list = event_manager.GetMonthEvent( start );
     if( !event_list.empty() )
     {
-        for( auto item : event_list )
+        for( CEventInfo item : event_list )
         {
             printf( "%4d/%2d/%2d %s\n",
                 item.date_.year, item.date_.month, item.date_.day,
