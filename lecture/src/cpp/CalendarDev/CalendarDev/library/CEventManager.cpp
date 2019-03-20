@@ -18,7 +18,7 @@ CEventManager::read_info( string_container entry ) const
     char buf[ 256 ];
 
     // 年月日取り出し
-    auto date_str = Split( entry[ 0 ], '/' );
+    string_container date_str = Split( entry[ 0 ], '/' );
     sprintf( buf, "%s %s %s",
         date_str[ 0 ].c_str(), date_str[ 1 ].c_str(), date_str[ 2 ].c_str() );
     sscanf( buf, "%d %d %d",
@@ -41,7 +41,7 @@ CEventManager::CEventManager( const char *filename )
 
     size_t entry_count = 0;
     int cur_year = 0;
-    auto buf = csv.Readline();
+    string_container buf = csv.Readline();
 
     while( !buf.empty() )
     {
@@ -72,32 +72,23 @@ CEventManager::CEventManager( const char *filename )
     invalid_data_.valid_ = false;
 } // CHolidayManager::CHolidayManager()
 
-const CEventInfo&
-CEventManager::Search( const DateInfo& date ) const
+const CEventInfo
+CEventManager::Search(
+    EvnetInfoList list,
+    const DateInfo & search_date )
 {
-    if( ( date.year < idx_info_.min_ ) ||
-        ( date.year > idx_info_.max_ ) )
-        return invalid_data_;
-
-    auto idx_info = idx_info_.item_[ date.year - idx_info_.min_ ];
-    auto search_start = idx_info.start_index;
-    int start_month = 0;
-    for( int i = 0; i < idx_info.count; i++ )
+    for( CEventInfo e : list )
     {
-        // 当月を超えたら、探索打ち切り
-        if( ( event_[ search_start + i ].date_.month ) > date.month )
-            break;
-
-        if( event_[ search_start + i ].IsMatch( date ) )
-            return event_[ search_start + i ];
+        if( e.IsMatch( search_date ) )
+            return e;
     }
-    return invalid_data_;
-} // CHolidayManager::Search()
+    return CEventInfo();
+} // CEventManager::Search()
 
 EvnetInfoList
 CEventManager::GetMonthEvent( const DateInfo & date )
 {
-    auto idx_info = idx_info_.item_[ date.year - idx_info_.min_ ];
+    EventCountInfo_t idx_info = idx_info_.item_[ date.year - idx_info_.min_ ];
     int search_start = idx_info.start_index;
 
     bool found = false;

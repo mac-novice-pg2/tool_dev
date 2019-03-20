@@ -50,8 +50,8 @@ class CEventManager
 public:
     CEventManager( const char *filename );
 
-    const CEventInfo&
-    Search( const DateInfo& search_date ) const;
+    static const CEventInfo
+    Search( EvnetInfoList list, const DateInfo& search_date );
 
     EvnetInfoList GetMonthEvent( const DateInfo& date );
 };
