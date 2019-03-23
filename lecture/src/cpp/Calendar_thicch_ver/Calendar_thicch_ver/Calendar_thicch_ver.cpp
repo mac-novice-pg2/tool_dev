@@ -4,7 +4,9 @@
 #include "pch.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cassert>
+#include <conio.h>
 
 #include "calendar_type.h"
 
@@ -223,9 +225,191 @@ print_event( int year, int month )
     printf( "\n" );
 } // print_event()
 
+static int
+PrintMenu( int *year, int *month );
+
+void
+ClearScreen( void )
+{
+    system( "cls" );
+} // ClearScreen()
+
+void
+cursor_key_proc( int key, int *year, int *month )
+{
+    switch( key )
+    {
+    case 0x50: // "↓"
+        if( *year < 9999 )
+            ( *year )++;
+        break;
+    case 0x48: // "↑"
+        if( *year > 1 )
+            ( *year )--;
+        break;
+    case 0x4D: // "→"
+        if( *month < 12 )
+            ( *month )++;
+        break;
+    case 0x4B: // "←"
+        if( *month > 1 )
+            ( *month )--;
+        break;
+    }
+} // cursor_key_proc()
+
+bool
+ChangeCalendar( int *year, int *month )
+{
+    bool request_quit = false;
+    int key_1st = _getch(); // 1回目のキーコードを拾う
+    int key_2nd = _getch(); // 2回目のキーコードを拾う
+    switch( key_1st )
+    {
+    case 'q':
+        request_quit = true;
+        break;
+
+    case 'c':
+        PrintMenu( year, month );
+        break;
+
+    case 0xE0:
+        cursor_key_proc( key_2nd, year, month );
+        ClearScreen();
+        break;
+    }
+
+    return request_quit;
+} // ChangeCalendar()
+
+typedef struct
+{
+    int year;
+    int month;
+    int day;
+}DateInfo;
+
+static int
+PrintMenu( DateInfo *date )
+{
+    // キーボードからの入力を受け付ける
+    char input_buffer[ 256 ]; // キー入力の箱
+    fgets( input_buffer, sizeof( input_buffer ), stdin );//キー入力用
+    int input_value_count = sscanf( input_buffer, "%d %d",
+        &(date->year), &(date->month) );//出力のため用
+
+    // 年は1から9999の値が指定されている？
+    if( ( date->year < 1 ) || // 年が   1より小さい？
+        ( date->year > 9999 ) )  // 年が9999より大きい？
+    {
+        success = false;
+    }
+    // 月は1から12の値が指定されている？
+    if( ( date->month < 1 ) || // 月が 1より小さい？
+        ( date->month > 12 ) )  // 月が12より大きい？
+    {
+        success = false;
+    }
+
+}
+
+int get_position_x()
+{
+    return 320;
+}
+
+int get_position_y()
+{
+    return 240;
+}
+
+int GetPosition( int *x, int *y )
+{
+    *x = get_position_x();
+    *y = get_position_y();
+
+}
+
+void pt_func()
+{
+    int x = 0;
+    int y = 0;
+    GetPosition( &x, &y );
+
+    if( x == 320 && y == 240 )
+        printf( "test ok" );
+}
+
+static int
+PrintMenu( int *year, int *month )
+{
+    ClearScreen(); // 画面表示をクリアする
+    printf(
+        "表示年月日を入力して下さい\n"
+        "ex) 2019 2\n"
+        "> "
+    );
+
+    // キーボードからの入力を受け付ける
+    char input_buffer[ 256 ]; // キー入力の箱
+    fgets( input_buffer, sizeof( input_buffer ), stdin );//キー入力用
+
+    // input_bufferに入った値をyear/monthに入れる
+    // 
+    // 以下のように、char型配列から整数型変数2つに詰め直す
+    //  input_buffer : char型配列
+    //  year         : int型
+    //  month        : int型
+    int input_value_count = sscanf( input_buffer, "%d %d", year, month );//出力のため用
+
+    // 入力値チェック
+    bool success = true; // 先ずは入力成功に設定しておく
+    if( input_value_count != 2 )// 入力値が2になっている？
+    {
+        success = false;
+    }
+    // 年は1から9999の値が指定されている？
+    if( ( *year < 1 ) || // 年が   1より小さい？
+        ( *year > 9999 ) )  // 年が9999より大きい？
+    {
+        success = false;
+    }
+    // 月は1から12の値が指定されている？
+    if( ( *month < 1 ) || // 月が 1より小さい？
+        ( *month > 12 ) )  // 月が12より大きい？
+    {
+        success = false;
+    }
+    if( !success )
+    {
+        printf( "入力に誤りがあります。もう一度入力して下さい\n" );
+    }
+    else
+    {
+        ClearScreen(); // 画面をクリアして、表示更新に備える
+    }
+
+    return 0;
+}
+
 int
 main( int argc, const char* argv[] )// 1
 {
+#if 1
+    int year;
+    int month;
+
+    PrintMenu( &year, &month );
+    while( 1 )
+    {
+        // カレンダーを表示する
+        print_calendar( year, month );
+
+        // カーソルキーを受け付ける
+        ChangeCalendar( &year, &month );
+    }
+#else
     int year = 2020;
     for( int month = 1; month <= 12; month++ )
     {
@@ -237,7 +421,7 @@ main( int argc, const char* argv[] )// 1
 
         printf( "=================================\n" );
     }
-
+#endif
     // getchar()はEnterキーを押すまで待つ
     printf( "Enterキーを押すと終了します" );
     getchar();
