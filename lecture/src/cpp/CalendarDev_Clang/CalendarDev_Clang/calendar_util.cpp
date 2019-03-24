@@ -50,6 +50,17 @@ Cal_FormulaZeller( DateInfo *date )
     return ( eWeekday )temp;
 } // Cal_FormulaZeller()
 
+DateInfo
+Cal_GetFirstOfMonth( int year, int month )
+{
+    DateInfo date;
+    date.year = year;
+    date.month = month;
+    date.day = 1;
+    date.weekday = Cal_FormulaZeller( &date );
+    return date;
+} // Cal_GetFirstOfMonth()
+
 int
 Cal_GetEndOfMonth( DateInfo *date )
 {

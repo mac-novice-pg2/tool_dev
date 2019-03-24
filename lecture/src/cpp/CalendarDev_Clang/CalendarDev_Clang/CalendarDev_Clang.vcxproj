@@ -160,7 +160,6 @@
     <ClInclude Include="include\CEventManager.h" />
     <ClInclude Include="include\CSV_Reader.h" />
     <ClInclude Include="include\MenuControl.h" />
-    <ClInclude Include="include\user_interface.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

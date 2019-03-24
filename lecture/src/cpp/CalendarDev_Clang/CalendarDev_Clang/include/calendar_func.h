@@ -5,6 +5,7 @@
 // カレンダー一般
 eWeekday Cal_GetNextWeekday( eWeekday current );
 eWeekday Cal_FormulaZeller( DateInfo *date );
+DateInfo Cal_GetFirstOfMonth( int year, int month );
 int Cal_GetEndOfMonth( DateInfo *date );
 bool Cal_IsLeapYear( int year );
 
