@@ -90,100 +90,6 @@ check_holiday(
     }
     return judgement;
 } // check_holiday()
-
-static void
-print_no_overtime( const DateInfo& start, int eom )
-{
-    CEventManager holiday( "holiday.csv" );
-    DateInfo today = start;
-    std::set< int > result_days;
-
-    int bef_bussiness_day = today.day;
-    int cont_holidays = 0; // 連続休暇数
-    int last_friday = NOT_FOUND;
-    printf( "★定時退社日★ : " );
-    while( today.day < eom )
-    {
-        if( check_holiday( today, holiday ) ) // 本日は休日？
-        {
-            //printf( "!!! debug !!![%2d] は休み\n",today.day );
-            cont_holidays++; // 連続休日数をインクリメント
-        }
-        else // !is_holiday( = 平日 )
-        {
-            // 3連休判定(連休終了時に直前の出勤日を出力する)
-            if( cont_holidays >= 3 ) // 3連休以上だった？
-            {
-                result_days.insert( bef_bussiness_day );
-            }
-            cont_holidays = 0; // 連続休日数カウントをクリア
-            // 給料日の定時退社判定
-            if( today.day == SALARY_DAY )
-            {
-                result_days.insert( today.day );
-            }
-            // 後のプレミアムフライデー判定用に最終金曜日を保存
-            if( today.weekday == eFri )
-            {
-                last_friday = today.day;
-            }
-            bef_bussiness_day = today.day; // 直近の営業日を更新する
-        }
-        step_today_info( today, eom ); // 1日進める
-    }
-
-    // プレミアムフライデー判定
-    if( last_friday != NOT_FOUND )
-    {
-        result_days.insert( last_friday );
-    }
-
-    for( int day : result_days )
-    {
-        printf( "%2d日 ", day );
-    }
-    printf( "\n" );
-} // print_no_overtime()
-
-static void
-print_holiday( const DateInfo &start, int eom )
-{
-    CEventManager holiday( "holiday.csv" );
-
-    DateInfo today = start; // 引数をローカル変数にコピー
-    printf( "今月の祝日\n" );
-    EvnetInfoList cur_month_event = holiday.GetMonthEvent( today );
-    while( today.day < eom )
-    {
-        const CEventInfo& e = holiday.Search( cur_month_event, today );
-        if( e.IsValid() ) // 該当イベントが見つかった？
-        {
-            printf( "%2d/%2dは%sです\n",
-                today.month, today.day, e.name_.c_str() );
-        }
-        step_today_info( today, eom ); // 1日進める
-    }
-    printf( "\n" );
-} // print_event_alert()
-
-static void
-print_event_day( const DateInfo &start, int eom )
-{
-    CEventManager event_manager( "event.csv" );
-    printf( "今月のイベント\n" );
-    EvnetInfoList event_list = event_manager.GetMonthEvent( start );
-    if( !event_list.empty() )
-    {
-        for( CEventInfo item : event_list )
-        {
-            printf( "%4d/%2d/%2d %s\n",
-                item.date_.year, item.date_.month, item.date_.day,
-                item.name_.c_str() );
-        }
-    }
-    printf( "\n" );
-} // print_event_day()
-
 static void
 print_moon_age( int day_of_week, double moon_age )
 {
@@ -234,28 +140,23 @@ PrintCalendar( const DateInfo &date )
         date.year, date.month, eto_str );
     
     // カレンダー情報テーブルから、指定年月のテーブルを引く
-    DateInfo first_day;
-    first_day = date;
-    first_day.day = 1;
-    eWeekday start_weekday = CMonthInfo::Formula_Zeller( first_day );
+    DateInfo cur = CMonthInfo::GetFirstOfTheMonth( date.year, date.month );
+    int eom = CMonthInfo::GetEndOfMonth( cur );
+    eWeekday start_weekday = CMonthInfo::Formula_Zeller( cur );
 
     // 日部分の出力位置合わせ
     skip_start_position( start_weekday );
 
     // 日部分を出力する
-    int eom = CMonthInfo::GetEndOfMonth( date );
-    double cur_moon_age = CMonthInfo::Calc_MoonAge( first_day );
-    DateInfo today;
-    today = first_day;
-    today.weekday = start_weekday;
+    double cur_moon_age = CMonthInfo::Calc_MoonAge( cur );
     bool is_first_week = true;
     int days_of_week = 0;
     for( int day = 0; day < eom; day++ )
     {
         days_of_week++;
-        printf( "  %2d  |", today.day );
+        printf( "  %2d  |", cur.day );
         // 土曜日まで出力したら、改行して折り返す
-        if( today.weekday == eSat )
+        if( cur.weekday == eSat )
         {
             printf( "\n" );
             // 月齢出力
@@ -266,22 +167,106 @@ PrintCalendar( const DateInfo &date )
             days_of_week = 0;
             is_first_week = false;
         }
-        step_today_info( today, eom ); // 1日進める
+        step_today_info( cur, eom ); // 1日進める
     }
     printf( "\n" );
     print_moon_age( days_of_week, cur_moon_age );
 } // PrintCalendar()
 
 void
-PrintEvent( const DateInfo &date )
+PrintNoOvertime( const DateInfo& date )
 {
-    // 定時退社日チェック
-    // カレンダー/イベント情報初期化
-    int eom = CMonthInfo::GetEndOfMonth( date );
-    DateInfo first_day = date;
-    first_day.day = 1;
-    print_no_overtime( first_day, eom );
+    CEventManager holiday( "holiday.csv" );
+    DateInfo cur = CMonthInfo::GetFirstOfTheMonth( date.year, date.month );
+    int eom = CMonthInfo::GetEndOfMonth( cur );
+    std::set< int > result_days;
 
-    print_holiday( first_day, eom );
-//    print_event_day( first_day, eom );
-} // PrintEventAlert()
+    int bef_bussiness_day = cur.day;
+    int cont_holidays = 0; // 連続休暇数
+    int last_friday = NOT_FOUND;
+    printf( "★定時退社日★ : " );
+    while( cur.day < eom )
+    {
+        if( check_holiday( cur, holiday ) ) // 本日は休日？
+        {
+            //printf( "!!! debug !!![%2d] は休み\n",today.day );
+            cont_holidays++; // 連続休日数をインクリメント
+        }
+        else // !is_holiday( = 平日 )
+        {
+            // 3連休判定(連休終了時に直前の出勤日を出力する)
+            if( cont_holidays >= 3 ) // 3連休以上だった？
+            {
+                result_days.insert( bef_bussiness_day );
+            }
+            cont_holidays = 0; // 連続休日数カウントをクリア
+            // 給料日の定時退社判定
+            if( cur.day == SALARY_DAY )
+            {
+                result_days.insert( cur.day );
+            }
+            // 後のプレミアムフライデー判定用に最終金曜日を保存
+            if( cur.weekday == eFri )
+            {
+                last_friday = cur.day;
+            }
+            bef_bussiness_day = cur.day; // 直近の営業日を更新する
+        }
+        step_today_info( cur, eom ); // 1日進める
+    }
+
+    // プレミアムフライデー判定
+    if( last_friday != NOT_FOUND )
+    {
+        result_days.insert( last_friday );
+    }
+
+    for( int day : result_days )
+    {
+        printf( "%2d日 ", day );
+    }
+    printf( "\n" );
+} // PrintNoOvertime()
+
+void
+PrintHoliday( const DateInfo &date )
+{
+    CEventManager holiday( "holiday.csv" );
+
+    // 処理の開始点となる月初を作成
+    DateInfo cur = CMonthInfo::GetFirstOfTheMonth( date.year, date.month );
+    int eom = CMonthInfo::GetEndOfMonth( cur );
+    printf( "今月の祝日\n" );
+    EvnetInfoList cur_month_event = holiday.GetMonthEvent( cur );
+    while( cur.day < eom )
+    {
+        const CEventInfo& e = holiday.Search( cur_month_event, cur );
+        if( e.IsValid() ) // 該当イベントが見つかった？
+        {
+            printf( "%2d/%2dは%sです\n",
+                cur.month, cur.day, e.name_.c_str() );
+        }
+        step_today_info( cur, eom ); // 1日進める
+    }
+    printf( "\n" );
+} // PrintHoliday()
+
+void
+PrintEventDay( const DateInfo &date )
+{
+    DateInfo start( date );
+    CEventManager event_manager( "event.csv" );
+    printf( "今月のイベント\n" );
+    EvnetInfoList event_list = event_manager.GetMonthEvent( start );
+    if( !event_list.empty() )
+    {
+        for( CEventInfo item : event_list )
+        {
+            printf( "%4d/%2d/%2d %s\n",
+                item.date_.year, item.date_.month, item.date_.day,
+                item.name_.c_str() );
+        }
+    }
+    printf( "\n" );
+} // PrintEventDay()
+

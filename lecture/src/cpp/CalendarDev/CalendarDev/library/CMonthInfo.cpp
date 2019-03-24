@@ -129,3 +129,14 @@ CMonthInfo::GetEndOfMonth( const DateInfo& date )
     }
     return eom;
 } // CMonthInfo::GetEndOfMonth()
+
+DateInfo
+CMonthInfo::GetFirstOfTheMonth( int year, int month )
+{
+    DateInfo date;
+    date.year = year;
+    date.month = month;
+    date.day = 1;
+    date.weekday = Formula_Zeller( date );
+    return date;
+}

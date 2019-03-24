@@ -9,4 +9,5 @@ public:
     static bool Is_LeapYear( int year );
     static eWeekday Formula_Zeller( const DateInfo &date );
     static int GetEndOfMonth( const DateInfo &date );
+    static DateInfo GetFirstOfTheMonth( int year, int month );
 };

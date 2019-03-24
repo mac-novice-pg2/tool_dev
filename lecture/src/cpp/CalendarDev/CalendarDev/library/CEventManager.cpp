@@ -70,7 +70,7 @@ CEventManager::CEventManager( const char *filename )
         buf = csv.Readline();
     }
     invalid_data_.valid_ = false;
-} // CHolidayManager::CHolidayManager()
+} // CEventManager::CEventManager()
 
 const CEventInfo
 CEventManager::Search(

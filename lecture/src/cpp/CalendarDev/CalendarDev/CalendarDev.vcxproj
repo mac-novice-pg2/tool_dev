@@ -171,6 +171,7 @@
     <ClCompile Include="CalendarDev.cpp" />
     <ClCompile Include="function\calendar_func.cpp" />
     <ClCompile Include="function\common_func.cpp" />
+    <ClCompile Include="include\calendar.cpp" />
     <ClCompile Include="library\CEventManager.cpp" />
     <ClCompile Include="library\CMonthInfo.cpp" />
     <ClCompile Include="library\CPrinter.cpp" />
