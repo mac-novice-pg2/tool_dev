@@ -8,134 +8,15 @@
 #include <cassert>
 #include <conio.h>
 
-#include "calendar_type.h"
-
-extern EventInfo event_info_2019[][ EVENT_ITEM_MAX ];
-
-int Get_EndOfMonth( int year, int month )
-{
-    const int eom[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    int ret = eom[ month - 1 ];
-
-    if( month == 2 )
-    {
-        if( year % 4 == 0 ) 
-        {
-            if( year % 100 == 0 )
-            {
-                if( year % 400 == 0 )
-                {
-                    ret = 29;
-                }
-            }
-            else
-            {
-                ret = 29;
-            }
-        }
-    }
-
-    return ret;
-}
+#include "calendar_def.h"
+#include "calendar_func.h"
+#include "MenuControl.h"
 
 /*
   ------------------------------------------
    static関数
   ------------------------------------------
 */
-// Zeller の公式で週の何日目か調べる
-eWeekday
-Formula_Zeller( int year, int month, int day )
-{
-    if( month < 3 )
-    {
-        year--;
-        month += 12;
-    }
-
-    int temp = ( year + year / 4 - year / 100 + year / 400 + ( 13 * month + 8 ) / 5 + day ) % 7;
-
-    return ( eWeekday )temp;
-} // Formula_Zeller()
-
-static eWeekday
-next_youbi( eWeekday current )
-{
-    switch( current )
-    {
-    case eSun:
-        return eMon;
-    case eMon:
-        return eTue;
-    case eTue:
-        return eWed;
-    case eWed:
-        return eThu;
-    case eThu:
-        return eFri;
-    case eFri:
-        return eSat;
-    case eSat:
-        return eSun;
-    default:
-        assert( 0 );
-        return eWeekEnd;
-    }
-} // next_youbi()
-
-// TodayInfo型データを一日進める関数
-// 引数のeomはend of monthで月末の意
-static void
-step_today_info( TodayInfo *today, int eom ) //step_today_infoの処理■
-{
-    if( today->day != eom ) // 今日は月末でない？
-    {
-        ( today->day )++; // 日を1日進める
-    }
-    else // 今日は月末？
-    {
-        // 一か月進めて、1日に戻す
-        // 年末なら、1年進めて1月に戻す
-        today->day = 1;
-        ( today->month )++;
-        if( today->month == 13 ) // 年末？
-        {
-            today->month = 1;
-            ( today->year )++;
-        }
-    }
-
-    // 曜日を進める
-    // next_weekday()という関数は、現在の曜日を渡すと、次の曜日を返す
-    //  ex) next_weekday( eMon ) // eMonを渡すとeTueが返ってくる
-    today->weekday = next_youbi( today->weekday );
-} // step_today_info()
-
-static EventInfo*
-search_event_list( const TodayInfo *today )
-{
-    int event_list_index = 0;
-    EventInfo *event = nullptr;
-    while( event_list_index < EVENT_ITEM_MAX )
-    {
-        event = &( event_info_2019[ today->month - 1 ][ event_list_index ] );
-        // イベント終端判定( 構造体メンバ全てが無効値のものをリスト終端として扱う )
-        if( ( event->day == EVENT_END ) &&
-            ( event->event_name == nullptr ) &&
-            ( event->is_holiday == false ) )
-        {
-            event = nullptr; // 該当エントリなしを示す無効ポインタを返す
-            break;
-        }
-        else if( event->day == today->day ) // イベントリストに指定日あり
-        {
-            break; // 現在のイベント情報を上位へ返す
-        }
-        event_list_index++; // イベントリストのインデックスを進める
-    }
-    return event;
-} // search_event_list()
-
 static void
 print_skip_weekday( eWeekday start_weekday )//3
 {
@@ -161,253 +42,60 @@ print_skip_weekday( eWeekday start_weekday )//3
 } // print_skip_weekday()
 
 static void
-print_calendar( int year, int month )//2
+print_calendar( DateInfo *date )//2
 {
-    printf( "%d月のカレンダー\n", month );
+    printf( "%4d/%2dのカレンダー\n", date->year, date->month );
     printf( "日 月 火 水 木 金 土\n" );
 
     // 1月1日がどこから(火曜日)始まることを意味してる
     // その月が何曜日から始まるのかは、ツェラーの公式で取得する
-    eWeekday start_weekday = Formula_Zeller( year,month,1 );
+    DateInfo cur = *date;
+    cur.day = 1;
+    eWeekday start_weekday = Cal_FormulaZeller( &cur );
 
     // 曜日の位置まで空白を詰める
     print_skip_weekday( start_weekday ); // 曜日の位置まで空白を詰める
 
     // 1日から始めて、月末までの日を表示する
     // 月末はGet_EndOfMonth()関数で取得出来る
-    TodayInfo today;
-    today.year = year;
-    today.month = month;
-    today.day = 1;
-    today.weekday = start_weekday;
-    int eom = Get_EndOfMonth( year, month );
+    cur.weekday = start_weekday;
+    int eom = Cal_GetEndOfMonth( &cur );
     for( int loop_cnt = 0; loop_cnt < eom; loop_cnt++ )
     {
         // [書式指定文字列]
         // 数字の出力幅は2桁(%2d)分取り、スペース1つを出力する
-        printf( "%2d ", today.day );
+        printf( "%2d ", cur.day );
 
-        if( today.weekday == eSat ) // 今日は土曜日
+        if( cur.weekday == eSat ) // 今日は土曜日
         {
             printf( "\n" ); // 改行を入れる
         }
-        step_today_info( &today, eom );//■
+        Cal_StepDateInfo( &cur, eom );//■
     }
     printf( "\n\n" );
 } // print_calendar()
 
-void
-print_event( int year, int month )
-{
-    printf( "%d月のイベント日\n"
-        "---------------------------\n",
-        month );
-
-    // 1月1日がどこから(火曜日)始まることを意味してる
-    // その月が何曜日から始まるのかは、ツェラーの公式で取得する
-    eWeekday start_weekday = Formula_Zeller( year, month, 1 );
-
-    TodayInfo today;
-    today.year = year;
-    today.month = month;
-    today.day = 1;
-    today.weekday = start_weekday;
-    int eom = Get_EndOfMonth(year,month);
-    while( today.day < eom )
-    {
-        EventInfo *event = search_event_list( &today );
-        if( event != nullptr ) // 該当イベントが見つかった？
-        {
-            printf( "%2d/%2dは%sです\n", today.month, today.day, event->event_name );
-        }
-        step_today_info( &today, eom ); // 1日進める
-    }
-    printf( "\n" );
-} // print_event()
-
-static int
-PrintMenu( int *year, int *month );
-
-void
-ClearScreen( void )
-{
-    system( "cls" );
-} // ClearScreen()
-
-void
-cursor_key_proc( int key, int *year, int *month )
-{
-    switch( key )
-    {
-    case 0x50: // "↓"
-        if( *year < 9999 )
-            ( *year )++;
-        break;
-    case 0x48: // "↑"
-        if( *year > 1 )
-            ( *year )--;
-        break;
-    case 0x4D: // "→"
-        if( *month < 12 )
-            ( *month )++;
-        break;
-    case 0x4B: // "←"
-        if( *month > 1 )
-            ( *month )--;
-        break;
-    }
-} // cursor_key_proc()
-
-bool
-ChangeCalendar( int *year, int *month )
-{
-    bool request_quit = false;
-    int key_1st = _getch(); // 1回目のキーコードを拾う
-    int key_2nd = _getch(); // 2回目のキーコードを拾う
-    switch( key_1st )
-    {
-    case 'q':
-        request_quit = true;
-        break;
-
-    case 'c':
-        PrintMenu( year, month );
-        break;
-
-    case 0xE0:
-        cursor_key_proc( key_2nd, year, month );
-        ClearScreen();
-        break;
-    }
-
-    return request_quit;
-} // ChangeCalendar()
-
-typedef struct
-{
-    int year;
-    int month;
-    int day;
-}DateInfo;
-
-static int
-PrintMenu( DateInfo *date )
-{
-    // キーボードからの入力を受け付ける
-    char input_buffer[ 256 ]; // キー入力の箱
-    fgets( input_buffer, sizeof( input_buffer ), stdin );//キー入力用
-    int input_value_count = sscanf( input_buffer, "%d %d",
-        &(date->year), &(date->month) );//出力のため用
-
-    // 年は1から9999の値が指定されている？
-    if( ( date->year < 1 ) || // 年が   1より小さい？
-        ( date->year > 9999 ) )  // 年が9999より大きい？
-    {
-        success = false;
-    }
-    // 月は1から12の値が指定されている？
-    if( ( date->month < 1 ) || // 月が 1より小さい？
-        ( date->month > 12 ) )  // 月が12より大きい？
-    {
-        success = false;
-    }
-
-}
-
-int get_position_x()
-{
-    return 320;
-}
-
-int get_position_y()
-{
-    return 240;
-}
-
-int GetPosition( int *x, int *y )
-{
-    *x = get_position_x();
-    *y = get_position_y();
-
-}
-
-void pt_func()
-{
-    int x = 0;
-    int y = 0;
-    GetPosition( &x, &y );
-
-    if( x == 320 && y == 240 )
-        printf( "test ok" );
-}
-
-static int
-PrintMenu( int *year, int *month )
-{
-    ClearScreen(); // 画面表示をクリアする
-    printf(
-        "表示年月日を入力して下さい\n"
-        "ex) 2019 2\n"
-        "> "
-    );
-
-    // キーボードからの入力を受け付ける
-    char input_buffer[ 256 ]; // キー入力の箱
-    fgets( input_buffer, sizeof( input_buffer ), stdin );//キー入力用
-
-    // input_bufferに入った値をyear/monthに入れる
-    // 
-    // 以下のように、char型配列から整数型変数2つに詰め直す
-    //  input_buffer : char型配列
-    //  year         : int型
-    //  month        : int型
-    int input_value_count = sscanf( input_buffer, "%d %d", year, month );//出力のため用
-
-    // 入力値チェック
-    bool success = true; // 先ずは入力成功に設定しておく
-    if( input_value_count != 2 )// 入力値が2になっている？
-    {
-        success = false;
-    }
-    // 年は1から9999の値が指定されている？
-    if( ( *year < 1 ) || // 年が   1より小さい？
-        ( *year > 9999 ) )  // 年が9999より大きい？
-    {
-        success = false;
-    }
-    // 月は1から12の値が指定されている？
-    if( ( *month < 1 ) || // 月が 1より小さい？
-        ( *month > 12 ) )  // 月が12より大きい？
-    {
-        success = false;
-    }
-    if( !success )
-    {
-        printf( "入力に誤りがあります。もう一度入力して下さい\n" );
-    }
-    else
-    {
-        ClearScreen(); // 画面をクリアして、表示更新に備える
-    }
-
-    return 0;
-}
-
 int
-main( int argc, const char* argv[] )// 1
+main()// 1
 {
 #if 1
-    int year;
-    int month;
+    DateInfo date;
 
-    PrintMenu( &year, &month );
-    while( 1 )
+    // メインメニューを表示する
+    Menu_Main( &date );
+
+    // apl_endがfalseになるまでカレンダー表示処理を行う
+    bool apl_end = false;
+    while( !apl_end )
     {
         // カレンダーを表示する
-        print_calendar( year, month );
+        print_calendar( &date );
 
-        // カーソルキーを受け付ける
-        ChangeCalendar( &year, &month );
+        // 操作方法の表示
+        Menu_ShowInstruction();
+
+        // キー入力を受け付け、カレンダーを更新する
+        apl_end = Menu_ChangeCalendar( &date );
     }
 #else
     int year = 2020;
@@ -415,9 +103,6 @@ main( int argc, const char* argv[] )// 1
     {
         // カレンダーを表示する
         print_calendar( year, month );
-
-        // イベントお知らせを表示する
-//        print_event( year, month );
 
         printf( "=================================\n" );
     }

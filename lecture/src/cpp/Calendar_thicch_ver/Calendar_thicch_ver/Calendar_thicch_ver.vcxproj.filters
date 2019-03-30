@@ -18,7 +18,13 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="calendar_type.h">
+    <ClInclude Include="include\calendar_def.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calendar_func.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MenuControl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -30,6 +36,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="calendar_data.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuControl.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="calendar_util.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

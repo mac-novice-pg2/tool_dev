@@ -5,10 +5,14 @@
    マクロ定義
   ------------------------------------------
 */
+#define ARRAY_SIZE( arr ) ( sizeof( arr ) / sizeof( arr[ 0 ] ) )
+
 #define SALARY_DAY     ( 25 )
 #define NOT_FOUND      ( 0xFFFFFFFF )
 #define EVENT_ITEM_MAX ( 8 )
 #define EVENT_END      ( 0xFFFFFFFFU )
+#define END_OF_YEAR    ( 9999 )
+#define END_OF_MONTH   ( 12 )
 
 /*
   ------------------------------------------
@@ -28,25 +32,11 @@ typedef enum
     eWeekEnd,
 }eWeekday;
 
-// カレンダー作成用情報
-typedef struct
-{
-    int      eom;     // 月末( end of month )
-    eWeekday start_weekday; // 開始曜日
-}MonthInfo;
-
-// 本日を示す構造体
-typedef struct
+// 今日の年月日情報
+struct DateInfo
 {
     int year;
     int month;
     int day;
     eWeekday weekday;
-}TodayInfo;
-
-typedef struct
-{
-    int day; // イベント日
-    const char *event_name; // イベント名
-    bool is_holiday; // true:休日 false:平日
-}EventInfo;
+};
