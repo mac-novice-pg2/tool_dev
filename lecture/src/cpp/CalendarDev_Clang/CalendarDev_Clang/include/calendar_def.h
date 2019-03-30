@@ -40,3 +40,11 @@ struct DateInfo
     int day;
     eWeekday weekday;
 };
+
+struct EventInfo
+{
+    DateInfo date;
+    char event_name[ 64 ];
+    bool is_holiday;
+    bool is_valid;
+};

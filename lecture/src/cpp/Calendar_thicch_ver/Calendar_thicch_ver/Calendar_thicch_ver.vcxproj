@@ -173,7 +173,6 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="calendar_data.cpp" />
     <ClCompile Include="Calendar_thicch_ver.cpp" />
     <ClCompile Include="calendar_util.cpp" />
     <ClCompile Include="MenuControl.cpp" />

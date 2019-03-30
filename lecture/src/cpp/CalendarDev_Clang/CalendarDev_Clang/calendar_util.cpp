@@ -196,3 +196,111 @@ Cal_InitDateInfo( DateInfo *date )
     date->day = 1;
     date->weekday = eSun;
 } // Cal_InitDateInfo()
+
+EventInfo*
+Cal_CreateEventTable( const char *holiday_filename, int *tbl_size )
+{
+    EventInfo *tbl;
+    FILE *fp = fopen( holiday_filename, "rt" );
+    if( fp == NULL )
+    {
+        printf( "休日ファイルがオープン出来ません" );
+        exit( 1 );
+    }
+
+    // 祝日数を先にカウントしておく
+    char read_buf[ 256 ];
+    int event_count = 0;
+    EventInfo *cur_pos;
+    while( !feof( fp ) )
+    {
+        fgets( read_buf, sizeof( read_buf ), fp );
+        event_count++;
+    }
+    tbl = ( EventInfo* )malloc( sizeof( EventInfo ) * event_count );
+
+    // ファイルポインタを先頭まで巻き戻す
+    rewind( fp );
+
+    char date[ 64 ];
+    char name[ 64 ];
+    EventInfo *cur;
+    for( int idx = 0; idx < event_count; idx++ )
+    {
+        cur = &( tbl[ idx ] );
+        fgets( read_buf, sizeof( read_buf ), fp );
+        // 日付/祝日名取り出し
+        //  ファイルからの入力：1950/1/1,元日,
+        //   "1950/1/1" -> date
+        //   "元旦"     -> name
+        sscanf( read_buf, "%[^,],%[^,],", date, cur->event_name );
+        sscanf( date, "%d/%d/%d",
+            &( cur->date.year ), &( cur->date.month ), &( cur->date.day ) );
+        cur->is_holiday = true;
+        cur->is_valid = true;
+    }
+    fclose( fp );
+
+    *tbl_size = event_count;
+    return tbl;
+} // Cal_CreateEventTable()
+
+EventInfo*
+Cal_GetCurEventTable(
+    DateInfo *date,
+    EventInfo *base_tbl,
+    int base_tbl_size,
+    int *out_tbl_size )
+{
+    bool found = false;
+    EventInfo *cur;
+    int tbl_start;
+    int tbl_end;
+    *out_tbl_size = 0;
+    for( int idx = 0; idx < base_tbl_size; idx++ )
+    {
+        cur = &( base_tbl[ idx ] );
+        if( !found )
+        {
+            if( ( date->year == cur->date.year ) &&
+                ( date->month == cur->date.month ) )
+            {
+                tbl_start = idx;
+                found = true;
+            }
+        }
+        else
+        {
+            if( ( date->year != cur->date.year ) ||
+                ( date->month != cur->date.month ) ) // 月替わりを検出？
+            {
+                *out_tbl_size = idx - tbl_start;
+                break;
+            }
+        }
+    }
+
+    if( !found )
+        return NULL;
+    return &( base_tbl[ tbl_start ] );
+} // Cal_GetCurEventTable()
+
+int
+Cal_SearchEventTable(
+    DateInfo *date,
+    EventInfo *tbl,
+    int tbl_size
+)
+{
+    EventInfo *cur;
+    for( int idx = 0; idx < tbl_size; idx++ )
+    {
+        if( ( date->year == tbl[ idx ].date.year ) &&
+            ( date->month == tbl[ idx ].date.month ) &&
+            ( date->day == tbl[ idx ].date.day ) )
+        {
+            return idx;
+        }
+    }
+    return 0xFFFFFFFF; // 見つからなかった場合の値
+} // Cal_SearchEventTable()

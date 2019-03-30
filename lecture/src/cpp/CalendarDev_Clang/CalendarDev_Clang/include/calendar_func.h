@@ -8,6 +8,10 @@ eWeekday Cal_FormulaZeller( DateInfo *date );
 DateInfo Cal_GetFirstOfMonth( int year, int month );
 int Cal_GetEndOfMonth( DateInfo *date );
 bool Cal_IsLeapYear( int year );
+EventInfo* Cal_CreateEventTable( const char *holiday_filename, int *tbl_size );
+EventInfo* Cal_GetCurEventTable( DateInfo *date, EventInfo *base_tbl,
+    int base_tbl_size, int *out_tbl_size );
+int Cal_SearchEventTable( DateInfo *date, EventInfo *tbl, int tbl_size );
 
 // 月齢
 double Cal_CalcMoonAge( DateInfo *date );

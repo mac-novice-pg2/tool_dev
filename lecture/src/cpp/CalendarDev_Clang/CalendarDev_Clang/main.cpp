@@ -31,12 +31,11 @@ check_holiday( DateInfo *today, CEventManager& event_manager )
         const CEventInfo e = event_manager.Search( event_list, today );
         if( e.IsValid() && e.bHoliday_ )
         {
-            judgement = true;
+             judgement = true;
         }
     }
     return judgement;
 } // check_holiday()
-
 
 static void
 print_moon_age( int day_of_week, double moon_age )
@@ -121,42 +120,24 @@ PrintNoOvertime( DateInfo *start )
 void
 PrintHoliday( DateInfo *start )
 {
-    CEventManager holiday( "holiday.csv" );
-
-    int eom = Cal_GetEndOfMonth( start );
+    int base_tbl_size;
+    int cur_tbl_size;
     DateInfo cur = Cal_GetFirstOfMonth( start->year, start->month );
+    EventInfo *base_tbl = Cal_CreateEventTable( "holiday.csv", &base_tbl_size );
+    EventInfo *cur_tbl = Cal_GetCurEventTable( &cur, base_tbl, base_tbl_size, &cur_tbl_size );
     printf( "今月の祝日\n" );
-    EvnetInfoList cur_month_event = holiday.GetMonthEvent( &cur );
-    while( cur.day < eom )
+    if( cur_tbl == NULL )
+        printf( "…祝日がありません。。。（＞＜）" );
+    for( int idx = 0; idx < cur_tbl_size; idx++ )
     {
-        const CEventInfo& e = holiday.Search( cur_month_event, &cur );
-        if( e.IsValid() ) // 該当イベントが見つかった？
-        {
-            printf( "%2d/%2dは%sです\n",
-                cur.month, cur.day, e.name_.c_str() );
-        }
-        Cal_StepDateInfo( &cur, eom ); // 1日進める
+        printf( "%2d/%2dは%sです\n",
+            cur_tbl[ idx ].date.month,
+            cur_tbl[ idx ].date.day,
+            cur_tbl[ idx ].event_name );
     }
+    free( base_tbl );
     printf( "\n" );
 } // PrintHoliday()
-
-void
-PrintEventDay( DateInfo *start )
-{
-    CEventManager event_manager( "event.csv" );
-    printf( "今月のイベント\n" );
-    EvnetInfoList event_list = event_manager.GetMonthEvent( start );
-    if( !event_list.empty() )
-    {
-        for( CEventInfo item : event_list )
-        {
-            printf( "%4d/%2d/%2d %s\n",
-                item.date_.year, item.date_.month, item.date_.day,
-                item.name_.c_str() );
-        }
-    }
-    printf( "\n" );
-} // PrintEventDay()
 
 void
 PrintToday( void )
@@ -230,8 +211,8 @@ int main()
     {
         PrintCalendar( &date );
         Menu_ShowInstruction();
-        PrintNoOvertime( &date );
         PrintHoliday( &date );
+        PrintNoOvertime( &date );
         // PrintEventDay( &date );
         apl_end = Menu_ChangeCalendar( &date );
     }
