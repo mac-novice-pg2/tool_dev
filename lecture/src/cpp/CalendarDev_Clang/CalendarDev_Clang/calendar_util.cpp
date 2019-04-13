@@ -8,7 +8,8 @@
 void
 Cal_ConvJapaneseEraName( int year, char *result )
 {
-    EraNameType table[] = {
+    int calc_year;
+    EraNameType wareki_tbl[] = {
         { 2019, "令和" },
         { 1989, "平成" },
         { 1926, "昭和" },
@@ -16,12 +17,26 @@ Cal_ConvJapaneseEraName( int year, char *result )
         { 1868, "明治" },
     };
 
-    for( int i = 0; i < ARRAY_SIZE( table ); i++ )
+    for( int i = 0; i < ARRAY_SIZE( wareki_tbl ); i++ )
     {
-        if( year >= table[ i ].year )
+        // 引数の西暦がどの和暦に該当するか調べる
+        if( year >= wareki_tbl[ i ].first_year )
         {
-            sprintf( result, "%s%2d年",
-                table[ i ].era_name, year - table[ i ].year );
+            /*
+             西暦とその西暦が含まれる和暦の元年の差分を求める
+              例) 2000年(平成)の差分を算出する
+               2000年 - 1989年(平成元年) = 11年(平成元年からの経過年)
+             更に1が起点なので + 1する
+            */
+            calc_year = year - wareki_tbl[ i ].first_year + 1;
+            if( calc_year == 1 ) // 和暦1年目は元年表記にする
+            {
+                sprintf( result, "%s元年", wareki_tbl[ i ].era_name );
+            }
+            else
+            {
+                sprintf( result, "%s%2d年", wareki_tbl[ i ].era_name, calc_year );
+            }
             break;
         }
     }

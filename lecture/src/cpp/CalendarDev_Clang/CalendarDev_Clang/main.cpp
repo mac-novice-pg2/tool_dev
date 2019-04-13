@@ -141,29 +141,31 @@ PrintHoliday( DateInfo *start )
 
 static void
 print_disaster_age_EraName(
-    const char *prefix,
     int cur_year,
     int *disaster_age_table,
     int table_size )
 {
-    int disater_age;
     char era[ 256 ];
+    int age;
+    int counting_age;
+    int birth_year;
+    int front_disaster_age; // 前厄年齢
 
-    printf( "=== %sの厄年 === \n", prefix );
-    printf( "      前厄        |      本厄         |      後厄         |\n" );
     for( int i = 0; i < table_size; i++ )
     {
-        // キリストより年上は対象外
-        if( ( cur_year - disaster_age_table[ i ] - 1 ) < 0 )
+        counting_age = disaster_age_table[ i ];
+        front_disaster_age = counting_age - 1; // 数え年の前厄を求める
+        age = front_disaster_age - 1; // 数え年 -> 満年齢換算
+        if( cur_year <= age ) //キリストより年上は対象外
         {
             break;
         }
-        disater_age = cur_year - disaster_age_table[ i ] + 1;
+        birth_year = cur_year - age;
         for( int j = 0; j < 3; j++ )
         {
-            Cal_ConvJapaneseEraName( disater_age, era );
-            printf( " %s(%4d年) | ", era, disater_age );
-            disater_age--;
+            Cal_ConvJapaneseEraName( birth_year, era );
+            printf( " %2d歳 %s(%4d年) | ", front_disaster_age + j, era, birth_year );
+            birth_year--;
         }
         printf( "\n" );
     }
@@ -171,24 +173,29 @@ print_disaster_age_EraName(
 
 static void
 print_disaster_age(
-    const char *prefix,
     int cur_year,
     int *disaster_age_table,
     int table_size )
 {
-    int disater_age;
+    int age;
+    int counting_age;
+    int disaster_age;
+    int front_disaster_age; // 前厄年齢
 
-    printf( "=== %sの厄年 === \n", prefix );
-    printf( "  前厄  |  本厄  |  後厄  |\n" );
     for( int i = 0; i < table_size; i++ )
     {
-        // キリストより年上は対象外
-        if( ( cur_year - disaster_age_table[ i ] - 1 ) < 0 )
+        counting_age = disaster_age_table[ i ];
+        front_disaster_age = counting_age - 1; // 数え年の前厄を求める
+        age = front_disaster_age - 1; // 数え年 -> 満年齢換算
+        if( cur_year <= age ) //キリストより年上は対象外
         {
             break;
         }
-        disater_age = cur_year - disaster_age_table[ i ];
-        printf( " %4d年 | %4d年 | %4d年 |\n", disater_age + 1, disater_age, disater_age - 1 );
+        disaster_age = cur_year - front_disaster_age;
+        printf( " %2d歳 %4d年 | %2d歳 %4d年 | %2d歳 %4d年\n",
+            front_disaster_age + 1, disaster_age + 1,
+            front_disaster_age, disaster_age,
+            front_disaster_age - 1, disaster_age - 1 );
     }
 } // print_disaster_age()
 
@@ -199,17 +206,24 @@ PrintDisaster( DateInfo *start )
     int cur_year = start->year;
     int age_male[] = { 25, 42, 61 };
     int age_female[] = { 19, 33, 37 };
+    printf( "=== 厄年生まれ一覧(年齢は数え年による) === \n" );
     if( ( cur_year < 1868 ) || ( cur_year > 2100 ) )
     {
-        print_disaster_age( "男性", start->year, age_male, ARRAY_SIZE( age_male ) );
+        const char *index = "前厄   |      本厄   |      後厄";
+        printf( " 男性 %s\n", index );
+        print_disaster_age( start->year, age_male, ARRAY_SIZE( age_male ) );
         printf( "\n" );
-        print_disaster_age( "女性", start->year, age_female, ARRAY_SIZE( age_male ) );
+        printf( " 女性 %s\n", index );
+        print_disaster_age( start->year, age_female, ARRAY_SIZE( age_male ) );
     }
     else
     {
-        print_disaster_age_EraName( " 男性", start->year, age_male, ARRAY_SIZE( age_male ) );
+        const char *index = "前厄             |       本厄             |       後厄";
+        printf( " 男性 %s\n", index );
+        print_disaster_age_EraName( start->year, age_male, ARRAY_SIZE( age_male ) );
         printf( "\n" );
-        print_disaster_age_EraName( " 女性", start->year, age_female, ARRAY_SIZE( age_female ) );
+        printf( " 女性 %s\n", index );
+        print_disaster_age_EraName( start->year, age_female, ARRAY_SIZE( age_female ) );
     }
 } // PrintDisaster()
 

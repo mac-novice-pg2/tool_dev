@@ -51,6 +51,6 @@ struct EventInfo
 
 typedef struct
 {
-    int year;
+    int first_year;
     const char *era_name;
 }EraNameType;
