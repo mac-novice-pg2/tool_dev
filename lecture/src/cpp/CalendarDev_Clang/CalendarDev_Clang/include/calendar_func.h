@@ -3,6 +3,7 @@
 #include "calendar_def.h"
 
 // カレンダー一般
+void Cal_ConvJapaneseEraName( int year, char *result );
 eWeekday Cal_GetNextWeekday( eWeekday current );
 eWeekday Cal_FormulaZeller( DateInfo *date );
 DateInfo Cal_GetFirstOfMonth( int year, int month );

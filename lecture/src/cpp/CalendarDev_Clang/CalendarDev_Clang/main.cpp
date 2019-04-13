@@ -139,6 +139,80 @@ PrintHoliday( DateInfo *start )
     printf( "\n" );
 } // PrintHoliday()
 
+static void
+print_disaster_age_EraName(
+    const char *prefix,
+    int cur_year,
+    int *disaster_age_table,
+    int table_size )
+{
+    int disater_age;
+    char era[ 256 ];
+
+    printf( "=== %sの厄年 === \n", prefix );
+    printf( "      前厄        |      本厄         |      後厄         |\n" );
+    for( int i = 0; i < table_size; i++ )
+    {
+        // キリストより年上は対象外
+        if( ( cur_year - disaster_age_table[ i ] - 1 ) < 0 )
+        {
+            break;
+        }
+        disater_age = cur_year - disaster_age_table[ i ] + 1;
+        for( int j = 0; j < 3; j++ )
+        {
+            Cal_ConvJapaneseEraName( disater_age, era );
+            printf( " %s(%4d年) | ", era, disater_age );
+            disater_age--;
+        }
+        printf( "\n" );
+    }
+} // print_disaster_age_EraName()
+
+static void
+print_disaster_age(
+    const char *prefix,
+    int cur_year,
+    int *disaster_age_table,
+    int table_size )
+{
+    int disater_age;
+
+    printf( "=== %sの厄年 === \n", prefix );
+    printf( "  前厄  |  本厄  |  後厄  |\n" );
+    for( int i = 0; i < table_size; i++ )
+    {
+        // キリストより年上は対象外
+        if( ( cur_year - disaster_age_table[ i ] - 1 ) < 0 )
+        {
+            break;
+        }
+        disater_age = cur_year - disaster_age_table[ i ];
+        printf( " %4d年 | %4d年 | %4d年 |\n", disater_age + 1, disater_age, disater_age - 1 );
+    }
+} // print_disaster_age()
+
+void
+PrintDisaster( DateInfo *start )
+{
+    printf( "-------------------------------------------\n" );
+    int cur_year = start->year;
+    int age_male[] = { 25, 42, 61 };
+    int age_female[] = { 19, 33, 37 };
+    if( ( cur_year < 1868 ) || ( cur_year > 2100 ) )
+    {
+        print_disaster_age( "男性", start->year, age_male, ARRAY_SIZE( age_male ) );
+        printf( "\n" );
+        print_disaster_age( "女性", start->year, age_female, ARRAY_SIZE( age_male ) );
+    }
+    else
+    {
+        print_disaster_age_EraName( " 男性", start->year, age_male, ARRAY_SIZE( age_male ) );
+        printf( "\n" );
+        print_disaster_age_EraName( " 女性", start->year, age_female, ARRAY_SIZE( age_female ) );
+    }
+} // PrintDisaster()
+
 void
 PrintToday( void )
 {
@@ -205,12 +279,18 @@ int main()
     DateInfo date;
     Cal_InitDateInfo( &date );
 
+#if 0
+    date.year = 1800;
+    date.month = 4;
+#else
     Menu_Main( &date );
+#endif
     bool apl_end = false;
     while( !apl_end )
     {
         PrintCalendar( &date );
         Menu_ShowInstruction();
+        PrintDisaster( &date );
         PrintHoliday( &date );
         PrintNoOvertime( &date );
         // PrintEventDay( &date );

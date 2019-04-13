@@ -5,6 +5,28 @@
 
 #include "calendar_func.h"
 
+void
+Cal_ConvJapaneseEraName( int year, char *result )
+{
+    EraNameType table[] = {
+        { 2019, "令和" },
+        { 1989, "平成" },
+        { 1926, "昭和" },
+        { 1912, "大正" },
+        { 1868, "明治" },
+    };
+
+    for( int i = 0; i < ARRAY_SIZE( table ); i++ )
+    {
+        if( year >= table[ i ].year )
+        {
+            sprintf( result, "%s%2d年",
+                table[ i ].era_name, year - table[ i ].year );
+            break;
+        }
+    }
+} // Cal_ConvJapaneseEraName()
+
 eWeekday
 Cal_GetNextWeekday( eWeekday current )
 {

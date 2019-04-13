@@ -85,6 +85,12 @@ CEventManager::Search( EvnetInfoList list, DateInfo *search_date )
 EvnetInfoList
 CEventManager::GetMonthEvent( DateInfo *date )
 {
+    // 祝日テーブル外の年？
+    if( ( date->year <= idx_info_.min_ ) ||
+        ( date->year >= idx_info_.max_ ) )
+    {
+        return EvnetInfoList();
+    }
     EventCountInfo_t idx_info = idx_info_.item_[ date->year - idx_info_.min_ ];
     int search_start = idx_info.start_index;
 

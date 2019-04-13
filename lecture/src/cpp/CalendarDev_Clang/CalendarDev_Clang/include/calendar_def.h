@@ -48,3 +48,9 @@ struct EventInfo
     bool is_holiday;
     bool is_valid;
 };
+
+typedef struct
+{
+    int year;
+    const char *era_name;
+}EraNameType;
