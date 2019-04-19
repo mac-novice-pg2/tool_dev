@@ -45,13 +45,13 @@ print_moon_age( int day_of_week, double moon_age )
         printf( "%s|", Cal_GetMoonName( moon_age ) );
         moon_age = ( int )( moon_age + 1 ) % 30;
     }
-    printf( "\n-------------------------------------------------\n" );
+    printf( "\n---------------------------------------------------------------\n" );
 } // print_moon_age()
 
 static void
 skip_start_position( eWeekday start_weekday )
 {
-    const char* skip_spaces = "      |";
+    const char* skip_spaces = "        |";
     // 日部分の出力位置合わせ
     for( int skip = 0; skip < ( int )start_weekday; skip++ )
     {
@@ -202,7 +202,7 @@ print_disaster_age(
 void
 PrintDisaster( DateInfo *start )
 {
-    printf( "-------------------------------------------\n" );
+    printf( "---------------------------------------------------------------\n" );
     int cur_year = start->year;
     int age_male[] = { 25, 42, 61 };
     int age_female[] = { 19, 33, 37 };
@@ -244,8 +244,8 @@ PrintCalendar( DateInfo *date )
     Cal_CalcEto( date->year, eto_str );
     printf(
         "%4d年%2d月(%s年)のカレンダー\n"
-        "  日  |  月  |  火  |  水  |  木  |  金  |  土  |\n"
-        "-------------------------------------------------\n"
+        "   日   |   月   |   火   |   水   |   木   |   金   |   土   |\n"
+        "---------------------------------------------------------------\n"
         ,
         date->year, date->month, eto_str );
 
@@ -269,7 +269,8 @@ PrintCalendar( DateInfo *date )
     for( int day = 0; day < eom; day++ )
     {
         days_of_week++;
-        printf( "  %2d  |", today.day );
+        printf( "%2d(%s)|",
+            today.day, Cal_GetRokuyouString( &today ) );
         // 土曜日まで出力したら、改行して折り返す
         if( today.weekday == eSat )
         {
@@ -294,7 +295,7 @@ int main()
     Cal_InitDateInfo( &date );
 
 #if 0
-    date.year = 1800;
+    date.year = 2019;
     date.month = 4;
 #else
     Menu_Main( &date );

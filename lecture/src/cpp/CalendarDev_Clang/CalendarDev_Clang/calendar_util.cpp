@@ -155,37 +155,37 @@ Cal_GetMoonName( double moon_age )
     int age = ( int )moon_age;
 
     if( age <= 1 )
-        return " 新月 ";
+        return "  新月  ";
     else if( age <= 2 )
-        return " 繊月 ";
+        return "  繊月  ";
     else if( age <= 6 )
-        return "三日月";
+        return " 三日月 ";
     else if( age <= 8 )
-        return " 上弦 ";
+        return "  上弦  ";
     else if( age <= 12 )
-        return "十日夜";
+        return " 十日夜 ";
     else if( age <= 13 )
-        return "十三夜";
+        return " 十三夜 ";
     else if( age <= 14 )
-        return "小望月";
+        return " 小望月 ";
     else if( age <= 15 )
-        return " 満月 ";
+        return "  満月  ";
     else if( age <= 16 )
-        return "十六夜";
+        return " 十六夜 ";
     else if( age <= 17 )
-        return "立待月";
+        return " 立待月 ";
     else if( age <= 18 )
-        return "居待月";
+        return " 居待月 ";
     else if( age <= 19 )
-        return "寝待月";
+        return " 寝待月 ";
     else if( age <= 21 )
-        return "更待月";
+        return " 更待月 ";
     else if( age <= 23 )
-        return " 下弦 ";
+        return "  下弦  ";
     else if( age <= 29 )
-        return "有明月";
+        return " 有明月 ";
     else if( age <= 30 )
-        return "三十日";
+        return " 三十日 ";
     else
         assert( 0 );
     return 0;
@@ -248,7 +248,6 @@ Cal_CreateEventTable( const char *holiday_filename, int *tbl_size )
     // 祝日数を先にカウントしておく
     char read_buf[ 256 ];
     int event_count = 0;
-    EventInfo *cur_pos;
     while( !feof( fp ) )
     {
         fgets( read_buf, sizeof( read_buf ), fp );
@@ -260,7 +259,6 @@ Cal_CreateEventTable( const char *holiday_filename, int *tbl_size )
     rewind( fp );
 
     char date[ 64 ];
-    char name[ 64 ];
     EventInfo *cur;
     for( int idx = 0; idx < event_count; idx++ )
     {
@@ -291,8 +289,7 @@ Cal_GetCurEventTable(
 {
     bool found = false;
     EventInfo *cur;
-    int tbl_start;
-    int tbl_end;
+    int tbl_start = 0;
     *out_tbl_size = 0;
     for( int idx = 0; idx < base_tbl_size; idx++ )
     {
@@ -329,7 +326,6 @@ Cal_SearchEventTable(
     int tbl_size
 )
 {
-    EventInfo *cur;
     for( int idx = 0; idx < tbl_size; idx++ )
     {
         if( ( date->year == tbl[ idx ].date.year ) &&

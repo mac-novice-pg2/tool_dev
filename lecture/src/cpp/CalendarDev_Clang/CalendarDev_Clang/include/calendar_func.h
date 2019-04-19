@@ -21,6 +21,8 @@ const char* Cal_GetMoonName( double moon_age );
 // 干支
 void Cal_CalcEto( int year, char *eto_str );
 
+const char* Cal_GetRokuyouString( DateInfo *date );
+
 // DateInfo操作用関数
 void Cal_StepDateInfo( DateInfo *today, int eom );
 void Cal_InitDateInfo( DateInfo *date );

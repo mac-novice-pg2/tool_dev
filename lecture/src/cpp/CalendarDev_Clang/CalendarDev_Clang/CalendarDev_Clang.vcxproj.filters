@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\CLR">
+      <UniqueIdentifier>{9a30a2ff-695c-4072-8b3e-935485d450e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -52,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="calendar_util.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CLR_Calendar.cpp">
+      <Filter>ソース ファイル\CLR</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
