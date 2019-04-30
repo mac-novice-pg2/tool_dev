@@ -146,24 +146,26 @@ Recipe::read_entry( FILE *fp )
 
     // レシピフィールド読み出し
     fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
+    fgets( buf, sizeof( buf ), fp ); // 設定値読み出し
     out.recipe[ 0 ] = '\0';
     while( strcmp( buf, "<ingredients>\n" ) != 0 )
     {
-        fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
         if( ( sizeof( out.recipe ) / 2 ) < strlen( out.recipe ) + strlen( buf ) )
             break;
         strcat( out.recipe, buf );
+        fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
     }
 
     // 材料フィールド読み出し
     fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
+    fgets( buf, sizeof( buf ), fp ); // 設定値読み出し
     out.ingredients[ 0 ] = '\0';
     while( strcmp( buf, "<EOI>\n" ) != 0 )
     {
-        fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
         if( ( sizeof( out.ingredients ) / 2 ) < strlen( out.ingredients ) + strlen( buf ) )
             break;
         strcat( out.ingredients, buf );
+        fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
     }
     return out;
 } // Recipe::read_entry()
@@ -202,8 +204,7 @@ void Recipe::ShowDishList()
 {
     printf( "\n"
             "登録されている料理一覧\n"
-            "-----------------------------------------\n"
-    );
+            "%s\n", Util::separator );
     for( SearchInfo r : search_info_ )
     {
         printf( "%s\n", r.name );
@@ -232,12 +233,15 @@ Recipe::Search( SearchCondition *cond )
     return search_result_;
 } // Recipe::Search()
 
+bool dbg_matching = true;
 bool
 SearchCondition::IsMatch_name( const char *check )
 {
-    if( ( strcmp( check, "" ) != 0 ) &&
-        ( strcmp( check, this->name ) == 0 ) )
+    if( ( strcmp( this->name, "" ) != 0 ) &&
+        ( strcmp( this->name, check ) == 0 ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -249,9 +253,11 @@ SearchCondition::IsMatch_name( const char *check )
 bool
 SearchCondition::IsMatch_time( int check )
 {
-    if( ( check > 0 ) &&
-        ( check < this->time ) )
+    if( ( this->time > 0 ) &&
+        ( this->time >= check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -263,9 +269,11 @@ SearchCondition::IsMatch_time( int check )
 bool
 SearchCondition::IsMatch_cost( int check )
 {
-    if( ( check > 0 ) &&
-        ( check < this->cost ) )
+    if( ( this->cost > 0 ) &&
+        ( this->cost >= check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -277,9 +285,11 @@ SearchCondition::IsMatch_cost( int check )
 bool
 SearchCondition::IsMatch_kcal( int check )
 {
-    if( ( check > 0 ) &&
-        ( check < this->kcal ) )
+    if( ( this->kcal > 0 ) &&
+        ( this->kcal >= check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -291,9 +301,11 @@ SearchCondition::IsMatch_kcal( int check )
 bool
 SearchCondition::IsMatch_genre( eFoodGenre check )
 {
-    if( ( check != eFoodGenre::Invalid_Food ) &&
-        ( check == this->genre ) )
+    if( ( this->genre != eFoodGenre::Invalid_Food ) &&
+        ( this->genre == check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -305,9 +317,11 @@ SearchCondition::IsMatch_genre( eFoodGenre check )
 bool
 SearchCondition::IsMatch_season( eSeason check )
 {
-    if( ( check != eSeason::Invalid_Season ) &&
-        ( check == this->season ) )
+    if( ( this->season != eSeason::Invalid_Season ) &&
+        ( this->season == check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -319,9 +333,11 @@ SearchCondition::IsMatch_season( eSeason check )
 bool
 SearchCondition::IsMatch_difficulty( eDifficulty check )
 {
-    if( ( check != eDifficulty::Invalid_Difficulty ) &&
-        ( check == this->difficulty ) )
+    if( ( this->difficulty != eDifficulty::Invalid_Difficulty ) &&
+        ( this->difficulty == check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -333,9 +349,11 @@ SearchCondition::IsMatch_difficulty( eDifficulty check )
 bool
 SearchCondition::IsMatch_type( eFoodStyle check )
 {
-    if( ( check != eFoodStyle::Invalid_FoodStyle ) &&
-        ( check == this->type ) )
+    if( ( this->type != eFoodStyle::Invalid_FoodStyle ) &&
+        ( this->type == check ) )
     {
+        if( dbg_matching )
+            puts( __func__ );
         return true;
     }
     else
@@ -360,8 +378,10 @@ SearchInfo::ToString()
              "シーズン : %s\n"
              "難易度   : %s\n"
              "形式     : %s\n"
-             "レシピ:\n%s\n"
-             "材料:\n%s\n",
+             "%s\n"
+             "<<< レシピ >>>\n%s\n"
+             "%s\n"
+             "<<< 材料/分量 >>>\n%s\n",
              item_no,
              name,
              time,
@@ -372,7 +392,9 @@ SearchInfo::ToString()
              Util::ConvEnum2String( season ),
              Util::ConvEnum2String( difficulty ),
              Util::ConvEnum2String( type ),
+             Util::separator,
              recipe,
+             Util::separator,
              ingredients );
 
     return buf;

@@ -86,8 +86,7 @@ SearchMenu::menu_search()
         printf( "検索項目\n"
                 "s : 指定条件で検索\n"
                 "q : 終了\n"
-                "-------------------------------------------\n"
-        );
+                "%s\n", Util::separator );
         printf( "1 : 料理番号 | %d\n", cond.item_no );
         printf( "2 : 料理名   | %s\n", cond.name );
         printf( "3 : 調理時間 | %d\n", cond.time );
@@ -139,14 +138,29 @@ SearchMenu::menu_search()
 
         case 'q':
             isEnd = true;
+            Clear();
             break;
 
         case 's':
             Clear();
-            printf( "検索結果\n" );
+            printf( "[検索結果]\n"
+                    "%s\n", Util::separator );
+            bool is_hit = false;
             for( auto r : recipe_->Search( &cond ) )
+            {
+                is_hit = true;
+                Clear();
+                printf( "[検索結果]\n"
+                        "%s\n", Util::separator );
                 puts( r.ToString() );
-            Util::WaitEnterKey( "Enterキーを押すと元のメニューに戻ります\n" );
+                Util::WaitEnterKey( "Enterキーで次の検索結果もしくは元のメニューを表示します\n" );
+            }
+            if( !is_hit )
+            {
+                printf( "該当する候補がありませんでした\n" );
+                Util::WaitEnterKey( "Enterキーで元のメニューを表示します\n" );
+            }
+            Clear();
             break;
         }
     }
@@ -158,7 +172,7 @@ SearchMenu::input_genre( const char *message )
     char buf[ 256 ];
 
     printf( "%sを入力して下さい( Enterで確定 )\n"
-            "-----------------------------------\n"
+            "%s\n"
             "1    :和食\n"
             "2    :洋食\n"
             "3    :中華\n"
@@ -166,7 +180,7 @@ SearchMenu::input_genre( const char *message )
             "5    :フランス料理\n"
             "6    :無国籍\n"
             "以外 :検索除外\n"
-            , message );
+            , message, Util::separator );
 
     fgets( buf, sizeof( buf ), stdin );
     int select;
@@ -191,14 +205,14 @@ SearchMenu::input_season( const char *message )
     char buf[ 256 ];
 
     printf( "%sを入力して下さい( Enterで確定 )\n"
-            "-----------------------------------\n"
+            "%s\n"
             "1    :春\n"
             "2    :夏\n"
             "3    :秋\n"
             "4    :冬\n"
             "5    :年中\n"
             "以外 :検索除外\n"
-            , message );
+            , message, Util::separator );
 
     fgets( buf, sizeof( buf ), stdin );
     int select;
@@ -222,12 +236,12 @@ SearchMenu::input_difficulty( const char *message )
     char buf[ 256 ];
 
     printf( "%sを入力して下さい( Enterで確定 )\n"
-            "-----------------------------------\n"
+            "%s\n"
             "1    :むずかしい\n"
             "2    :ほどほど\n"
             "3    :かんたん\n"
             "以外 :検索除外\n"
-            , message );
+            , message, Util::separator );
 
     fgets( buf, sizeof( buf ), stdin );
     int select;
@@ -249,7 +263,7 @@ SearchMenu::input_type( const char *message )
     char buf[ 256 ];
 
     printf( "%sを入力して下さい( Enterで確定 )\n"
-            "-----------------------------------\n"
+            "%s\n"
             "1    :朝食\n"
             "2    :昼食\n"
             "3    :夕食\n"
@@ -259,7 +273,7 @@ SearchMenu::input_type( const char *message )
             "7    :アウトドア\n"
             "8    :不問\n"
             "以外 :検索除外\n"
-            , message );
+            , message, Util::separator );
 
     fgets( buf, sizeof( buf ), stdin );
     int select;
@@ -289,10 +303,10 @@ void SearchMenu::Show( Recipe *recipe )
     while( !isEnd )
     {
         printf( "レシピ検索メニュー\n"
+                "%s\n"
                 "l : 料理一覧\n"
                 "i : 検索\n"
-                "q : 終了\n"
-        );
+                "q : 終了\n", Util::separator);
 
         fgets( input_buf, sizeof( input_buf ), stdin );
         switch( input_buf[ 0 ] )

@@ -3,7 +3,7 @@
 =name=
 –Ú‹ÊÄ‚«
 =time=
-15
+10
 =cost=
 50
 =kcal=
@@ -35,7 +35,7 @@
 =cost=
 50
 =kcal=
-50
+80
 =genre=
 ˜aH
 =type=
