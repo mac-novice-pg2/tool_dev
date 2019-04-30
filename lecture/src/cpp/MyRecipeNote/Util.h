@@ -11,6 +11,8 @@ public:
     static const char *ConvEnum2String( eFoodGenre genre );
     static const char *ConvEnum2String( eSeason season );
     static const char *ConvEnum2String( eDifficulty genre );
-    static const char *ConvEnum2String( eType type );
+    static const char *ConvEnum2String( eFoodStyle type );
+
+    static void WaitEnterKey( const char *message );
 };
 

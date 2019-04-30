@@ -13,14 +13,14 @@ struct SearchCondition{
     eFoodGenre genre;
     eSeason season;
     eDifficulty difficulty;
-    eType type;
+    eFoodStyle type;
 
     SearchCondition()
         : item_no( 0 ), name( "" ), time( -1 ), cost( -1 ), kcal( -1 ),
-        genre( eFoodGenre::Japanese ),
-        season( eSeason::AllSeason ),
-        difficulty( eDifficulty::Easy ),
-        type( eType::Breakfast )
+        genre( eFoodGenre::Invalid_Food ),
+        season( eSeason::Invalid_Season ),
+        difficulty( eDifficulty::Invalid_Difficulty ),
+        type( eFoodStyle::Invalid_FoodStyle )
     {}
 
     bool IsMatch_name( const char *check );
@@ -30,7 +30,7 @@ struct SearchCondition{
     bool IsMatch_genre( eFoodGenre check );
     bool IsMatch_season( eSeason check );
     bool IsMatch_difficulty( eDifficulty check );
-    bool IsMatch_type( eType check );
+    bool IsMatch_type( eFoodStyle check );
 };
 
 struct SearchInfo{
@@ -44,15 +44,17 @@ struct SearchInfo{
     eFoodGenre genre;
     eSeason season;
     eDifficulty difficulty;
-    eType type;
+    eFoodStyle type;
 
     char recipe[ 1024 ];
     char ingredients[ 256 ];
 
     SearchInfo()
-        : item_no( 0 ), name( "" ), time( 0 ), cost( 0 ), kcal( 0 )
-        , genre( eFoodGenre::Japanese ), season( eSeason::AllSeason )
-        , difficulty( eDifficulty::Easy ), type( eType::AllSituation )
+        : item_no( 0 ), name( "" ), time( 0 ), cost( 0 ), kcal( 0 ),
+        genre( eFoodGenre::Japanese_Food ),
+        season( eSeason::AllSeason ),
+        difficulty( eDifficulty::Easy_Difficulty ),
+        type( eFoodStyle::AllSituation )
     {}
 
     const char *ToString();

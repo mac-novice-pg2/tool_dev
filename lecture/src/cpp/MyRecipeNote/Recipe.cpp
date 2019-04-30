@@ -21,6 +21,7 @@ char2FoodGenre( const char *s )
         }
     }
     assert( 0 );
+    return eFoodGenre::Invalid_Food;
 } // char2FoodGenre()
 
 static eSeason
@@ -38,6 +39,7 @@ char2eSeason( const char *s )
         }
     }
     assert( 0 );
+    return eSeason::Invalid_Season;
 } // char2eSeason()
 
 static eDifficulty
@@ -55,10 +57,11 @@ char2eDifficulty( const char *s )
         }
     }
     assert( 0 );
+    return eDifficulty::Invalid_Difficulty;
 } // char2eDifficulty()
 
-static eType
-char2eType( const char *s )
+static eFoodStyle
+char2eFoodStyle( const char *s )
 {
     const char *tbl[] = {
         "朝食","昼食", "ディナー", "軽食", "立食パーティ", "アウトドア"
@@ -68,11 +71,12 @@ char2eType( const char *s )
     {
         if( strcmp( s, tbl[ idx ] ) == 0 )
         {
-            return static_cast< eType >( idx );
+            return static_cast< eFoodStyle >( idx );
         }
     }
     assert( 0 );
-} // char2eType()
+    return eFoodStyle::Invalid_FoodStyle;
+} // char2eFoodStyle()
 
 void
 Recipe::set_numeric_field( FILE *fp, int *out )
@@ -92,8 +96,7 @@ Recipe::read_string_param( FILE *fp )
 
     fgets( buf, sizeof( buf ), fp ); // フィールドヘッダ読み飛ばし
     fgets( buf, sizeof( buf ), fp ); // 設定値読み出し
-    if( buf[ strlen( buf ) - 1 ] == '\n' )
-        buf[ strlen( buf ) - 1 ] = '\0';
+    strcpy( buf, Util::Trim_C_String( buf ) );
 
     return buf;
 } // Recipe::read_string_param()
@@ -128,7 +131,7 @@ Recipe::read_entry( FILE *fp )
     out.genre = char2FoodGenre( read_string_param( fp ) );
 
     // 形式フィールド読み出し
-    out.type = char2eType( read_string_param( fp ) );
+    out.type = char2eFoodStyle( read_string_param( fp ) );
 
     // 難易度フィールド読み出し
     out.difficulty = char2eDifficulty( read_string_param( fp ) );
@@ -199,6 +202,7 @@ void Recipe::ShowDishList()
 {
     printf( "\n"
             "登録されている料理一覧\n"
+            "-----------------------------------------\n"
     );
     for( SearchInfo r : search_info_ )
     {
@@ -234,7 +238,7 @@ SearchCondition::IsMatch_name( const char *check )
     if( ( strcmp( check, "" ) != 0 ) &&
         ( strcmp( check, this->name ) == 0 ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -248,7 +252,7 @@ SearchCondition::IsMatch_time( int check )
     if( ( check > 0 ) &&
         ( check < this->time ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -262,7 +266,7 @@ SearchCondition::IsMatch_cost( int check )
     if( ( check > 0 ) &&
         ( check < this->cost ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -276,7 +280,7 @@ SearchCondition::IsMatch_kcal( int check )
     if( ( check > 0 ) &&
         ( check < this->kcal ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -287,10 +291,10 @@ SearchCondition::IsMatch_kcal( int check )
 bool
 SearchCondition::IsMatch_genre( eFoodGenre check )
 {
-    if( ( check != eFoodGenre::NonGenre ) &&
+    if( ( check != eFoodGenre::Invalid_Food ) &&
         ( check == this->genre ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -301,10 +305,10 @@ SearchCondition::IsMatch_genre( eFoodGenre check )
 bool
 SearchCondition::IsMatch_season( eSeason check )
 {
-    if( ( check != eSeason::AllSeason ) &&
+    if( ( check != eSeason::Invalid_Season ) &&
         ( check == this->season ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -315,10 +319,10 @@ SearchCondition::IsMatch_season( eSeason check )
 bool
 SearchCondition::IsMatch_difficulty( eDifficulty check )
 {
-    if( ( check != eDifficulty::Easy ) &&
+    if( ( check != eDifficulty::Invalid_Difficulty ) &&
         ( check == this->difficulty ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -327,12 +331,12 @@ SearchCondition::IsMatch_difficulty( eDifficulty check )
 } // SearchCondition::IsMatch_difficulty()
 
 bool
-SearchCondition::IsMatch_type( eType check )
+SearchCondition::IsMatch_type( eFoodStyle check )
 {
-    if( ( check != eType::AllSituation ) &&
+    if( ( check != eFoodStyle::Invalid_FoodStyle ) &&
         ( check == this->type ) )
     {
-        return false;
+        return true;
     }
     else
     {
@@ -348,9 +352,9 @@ SearchInfo::ToString()
     sprintf( buf,
              "No       : %d\n"
              "料理名   : %s\n"
-             "調理時間 : %2d分\n"
-             "費用     : %5d円\n"
-             "カロリー : %4dkcal\n"
+             "調理時間 : %d分\n"
+             "費用     : %d円\n"
+             "カロリー : %dkcal\n"
              "調理器具 : %s\n"
              "ジャンル : %s\n"
              "シーズン : %s\n"

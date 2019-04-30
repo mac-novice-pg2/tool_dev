@@ -33,7 +33,7 @@ class SearchMenu : public Menu {
     eFoodGenre input_genre( const char *message );
     eSeason input_season( const char *message );
     eDifficulty input_difficulty( const char *message );
-    eType input_type( const char *message );
+    eFoodStyle input_type( const char *message );
 
 public:
     virtual void Show( Recipe *recipe ) override;

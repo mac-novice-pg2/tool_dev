@@ -31,6 +31,7 @@ Menu::input_string( const char *message,
 } // Menu::input_string
 
 Menu::Menu()
+    : recipe_( nullptr )
 {}
 
 Menu::~Menu()
@@ -67,16 +68,19 @@ SearchMenu::cursor_key_proc( int key )
     }
 } // SearchMenu::cursor_key_proc()
 
-void SearchMenu::menu_show_list()
+void
+SearchMenu::menu_show_list()
 {
     recipe_->ShowDishList();
+    Util::WaitEnterKey( "Enterキーで検索メニューに戻ります\n" );
 } // SearchMenu::menu_show_list()
-void SearchMenu::menu_search()
+
+void
+SearchMenu::menu_search()
 {
     char input_buf[ 256 ];
     SearchCondition cond;
     bool isEnd = false;
-    int key_code;
     while( !isEnd )
     {
         printf( "検索項目\n"
@@ -103,7 +107,7 @@ void SearchMenu::menu_search()
 
         case '2':
             input_string( "料理名", input_buf, sizeof( input_buf ) );
-            strcpy( cond.name, input_buf );
+            strcpy( cond.name, Util::Trim_C_String( input_buf ) );
             break;
 
         case '3':
@@ -138,76 +142,142 @@ void SearchMenu::menu_search()
             break;
 
         case 's':
+            Clear();
+            printf( "検索結果\n" );
             for( auto r : recipe_->Search( &cond ) )
                 puts( r.ToString() );
+            Util::WaitEnterKey( "Enterキーを押すと元のメニューに戻ります\n" );
             break;
         }
     }
-}
+} // SearchMenu::menu_search()
 
 eFoodGenre
 SearchMenu::input_genre( const char *message )
 {
-    printf( "%sを選択して下さい\n", message );
-    /*
-    Japanese,
-    Western,
-    China,
-    Italian,
-    French,
-    NonGenre,
-    */
+    char buf[ 256 ];
 
-    
-    return eFoodGenre();
+    printf( "%sを入力して下さい( Enterで確定 )\n"
+            "-----------------------------------\n"
+            "1    :和食\n"
+            "2    :洋食\n"
+            "3    :中華\n"
+            "4    :イタリアン\n"
+            "5    :フランス料理\n"
+            "6    :無国籍\n"
+            "以外 :検索除外\n"
+            , message );
+
+    fgets( buf, sizeof( buf ), stdin );
+    int select;
+    if( sscanf( buf, "%d", &select ) != 1 )
+        assert( 0 );
+    switch( select )
+    {
+    case 1: return eFoodGenre::Japanese_Food;
+    case 2: return eFoodGenre::Western_Food;
+    case 3: return eFoodGenre::Chinese_Food;
+    case 4: return eFoodGenre::Italian_Food;
+    case 5: return eFoodGenre::French_Food;
+    case 6: return eFoodGenre::Stateless_Food;
+    default:
+        return eFoodGenre::Invalid_Food;
+    }
 } // SearchMenu::input_genre()
 
 eSeason
 SearchMenu::input_season( const char *message )
 {
-    printf( "%sを選択して下さい\n", message );
+    char buf[ 256 ];
 
-    /*
-    Spring,
-    Summer,
-    Autumn,
-    Winter,
-    AllSeason,
-    */
+    printf( "%sを入力して下さい( Enterで確定 )\n"
+            "-----------------------------------\n"
+            "1    :春\n"
+            "2    :夏\n"
+            "3    :秋\n"
+            "4    :冬\n"
+            "5    :年中\n"
+            "以外 :検索除外\n"
+            , message );
 
-    return eSeason();
+    fgets( buf, sizeof( buf ), stdin );
+    int select;
+    if( sscanf( buf, "%d", &select ) != 1 )
+        assert( 0 );
+    switch( select )
+    {
+    case 1: return eSeason::Spring;
+    case 2: return eSeason::Summer;
+    case 3: return eSeason::Autumn;
+    case 4: return eSeason::Winter;
+    case 5: return eSeason::AllSeason;
+    default:
+        return eSeason::Invalid_Season;
+    }
 } // SearchMenu::input_season()
 
 eDifficulty
 SearchMenu::input_difficulty( const char *message )
 {
-    printf( "%sを選択して下さい\n", message );
+    char buf[ 256 ];
 
-    /*
-    Hard,
-    Normal,
-    Easy,
-    */
-    return eDifficulty();
+    printf( "%sを入力して下さい( Enterで確定 )\n"
+            "-----------------------------------\n"
+            "1    :むずかしい\n"
+            "2    :ほどほど\n"
+            "3    :かんたん\n"
+            "以外 :検索除外\n"
+            , message );
+
+    fgets( buf, sizeof( buf ), stdin );
+    int select;
+    if( sscanf( buf, "%d", &select ) != 1 )
+        assert( 0 );
+    switch( select )
+    {
+    case 1: return eDifficulty::Hard_Difficulty;
+    case 2: return eDifficulty::Normal_Difficulty;
+    case 3: return eDifficulty::Easy_Difficulty;
+    default:
+        return eDifficulty::Invalid_Difficulty;
+    }
 } // SearchMenu::input_difficulty()
 
-eType
+eFoodStyle
 SearchMenu::input_type( const char *message )
 {
-    printf( "%sを選択して下さい\n", message );
+    char buf[ 256 ];
 
-    /*
-    Breakfast,
-    Lunch,
-    Dinner,
-    Desert,
-    LightMeal,
-    HomeParty,
-    Outdoor,
-    AllSituation
-    */
+    printf( "%sを入力して下さい( Enterで確定 )\n"
+            "-----------------------------------\n"
+            "1    :朝食\n"
+            "2    :昼食\n"
+            "3    :夕食\n"
+            "4    :デザート\n"
+            "5    :軽食\n"
+            "6    :ホームパーティ\n"
+            "7    :アウトドア\n"
+            "8    :不問\n"
+            "以外 :検索除外\n"
+            , message );
 
-    return eType();
+    fgets( buf, sizeof( buf ), stdin );
+    int select;
+    if( sscanf( buf, "%d", &select ) != 1 )
+        assert( 0 );
+    switch( select )
+    {
+    case 1: return eFoodStyle::Breakfast;
+    case 2: return eFoodStyle::Lunch;
+    case 3: return eFoodStyle::Dinner;
+    case 4: return eFoodStyle::Desert;
+    case 5: return eFoodStyle::LightMeal;
+    case 6: return eFoodStyle::HomeParty;
+    case 7: return eFoodStyle::Outdoor;
+    case 8: return eFoodStyle::AllSituation;
+    default:
+        return eFoodStyle::Invalid_FoodStyle;
+    }
 } // SearchMenu::input_type()
 
 void SearchMenu::Show( Recipe *recipe )
@@ -215,7 +285,6 @@ void SearchMenu::Show( Recipe *recipe )
     recipe_ = recipe;
     
     char input_buf[ 256 ];
-    int key_code;
     bool isEnd = false;
     while( !isEnd )
     {
@@ -229,8 +298,8 @@ void SearchMenu::Show( Recipe *recipe )
         switch( input_buf[ 0 ] )
         {
         case 'l': // 料理一覧表示
-            Clear();
             menu_show_list();
+            Clear();
             break;
 
         case 'i': // 検索メニューへ

@@ -2,12 +2,13 @@
 
 enum eFoodGenre
 {
-    Japanese,
-    Western,
-    China,
-    Italian,
-    French,
-    NonGenre,
+    Japanese_Food,
+    Western_Food,
+    Chinese_Food,
+    Italian_Food,
+    French_Food,
+    Stateless_Food,
+    Invalid_Food,
 };
 
 enum eSeason{
@@ -16,15 +17,17 @@ enum eSeason{
     Autumn,
     Winter,
     AllSeason,
+    Invalid_Season,
 };
 
 enum eDifficulty{
-    Hard,
-    Normal,
-    Easy,
+    Hard_Difficulty,
+    Normal_Difficulty,
+    Easy_Difficulty,
+    Invalid_Difficulty,
 };
 
-typedef enum {
+enum eFoodStyle{
     Breakfast,
     Lunch,
     Dinner,
@@ -32,5 +35,6 @@ typedef enum {
     LightMeal,
     HomeParty,
     Outdoor,
-    AllSituation
-}eType;
+    AllSituation,
+    Invalid_FoodStyle,
+};
