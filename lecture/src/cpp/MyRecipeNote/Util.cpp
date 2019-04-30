@@ -4,6 +4,8 @@
 #include <cstring>
 #include <cassert>
 
+const char* Util::separator = "-------------------------------------------------";
+
 const char *
 Util::ConvEnum2String( eFoodGenre genre )
 {

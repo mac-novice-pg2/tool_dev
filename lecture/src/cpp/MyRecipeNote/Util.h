@@ -1,11 +1,13 @@
-#pragma once
+ï»¿#pragma once
 
 #include "SearchType.h"
 
 class Util{
-    Util(); // ƒ†[ƒeƒBƒŠƒeƒBƒNƒ‰ƒX‚È‚Ì‚ÅÀ‘Ì’è‹`‚ğ—}~‚·‚é
+    Util(); // ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ã‚¯ãƒ©ã‚¹ãªã®ã§å®Ÿä½“å®šç¾©ã‚’æŠ‘æ­¢ã™ã‚‹
 
 public:
+    static const char *separator;
+
     static char *Trim_C_String( char *c_str );
 
     static const char *ConvEnum2String( eFoodGenre genre );
