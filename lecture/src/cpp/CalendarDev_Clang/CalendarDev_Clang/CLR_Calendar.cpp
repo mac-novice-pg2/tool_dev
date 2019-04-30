@@ -1,11 +1,29 @@
 ﻿#include "pch.h"
+
+#include <cstdio>
 #include "calendar_func.h"
 
 using System::Globalization::JapaneseLunisolarCalendar;
 
+bool Cal_CheckSupportOldEra( int year )
+{
+    if( ( year < 1868 ) || ( year > 2038 ) )
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+} // Cal_CheckSupportOldEra()
+
 const char*
 Cal_GetRokuyouString( DateInfo *new_date )
 {
+    if( !Cal_CheckSupportOldEra( new_date->year ) )
+    {
+        return "";
+    }
     auto old_date = System::DateTime( new_date->year, new_date->month, new_date->day );
     auto old_cal = gcnew JapaneseLunisolarCalendar();
 

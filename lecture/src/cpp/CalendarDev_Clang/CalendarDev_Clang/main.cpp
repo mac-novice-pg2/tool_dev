@@ -269,8 +269,14 @@ PrintCalendar( DateInfo *date )
     for( int day = 0; day < eom; day++ )
     {
         days_of_week++;
-        printf( "%2d(%s)|",
-            today.day, Cal_GetRokuyouString( &today ) );
+        if( Cal_CheckSupportOldEra( today.year ) )
+        {
+            printf( "%2d(%s)|", today.day, Cal_GetRokuyouString( &today ) );
+        }
+        else
+        {
+            printf( "   %2qd   |", today.day );
+        }
         // 土曜日まで出力したら、改行して折り返す
         if( today.weekday == eSat )
         {
