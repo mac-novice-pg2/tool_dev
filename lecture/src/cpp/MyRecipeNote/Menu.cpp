@@ -69,11 +69,26 @@ SearchMenu::cursor_key_proc( int key )
 } // SearchMenu::cursor_key_proc()
 
 void
-SearchMenu::menu_show_list()
+SearchMenu::show_search_result( SearchCondition *cond )
 {
-    recipe_->ShowDishList();
-    Util::WaitEnterKey( "Enterキーで検索メニューに戻ります\n" );
-} // SearchMenu::menu_show_list()
+    printf( "[検索結果]\n"
+            "%s\n", Util::separator );
+    bool is_hit = false;
+    for( auto r : recipe_->Search( cond ) )
+    {
+        is_hit = true;
+        Clear();
+        printf( "[検索結果]\n"
+                "%s\n", Util::separator );
+        puts( r.ToString() );
+        Util::WaitEnterKey( "Enterキーで次の検索結果もしくは元のメニューを表示します\n" );
+    }
+    if( !is_hit )
+    {
+        printf( "該当する候補がありませんでした\n" );
+        Util::WaitEnterKey( "Enterキーで元のメニューを表示します\n" );
+    }
+} // SearchMenu::show_search_result()
 
 void
 SearchMenu::menu_search()
@@ -83,6 +98,7 @@ SearchMenu::menu_search()
     bool isEnd = false;
     while( !isEnd )
     {
+        Clear();
         printf( "検索項目\n"
                 "s : 指定条件で検索\n"
                 "q : 終了\n"
@@ -138,29 +154,11 @@ SearchMenu::menu_search()
 
         case 'q':
             isEnd = true;
-            Clear();
             break;
 
         case 's':
             Clear();
-            printf( "[検索結果]\n"
-                    "%s\n", Util::separator );
-            bool is_hit = false;
-            for( auto r : recipe_->Search( &cond ) )
-            {
-                is_hit = true;
-                Clear();
-                printf( "[検索結果]\n"
-                        "%s\n", Util::separator );
-                puts( r.ToString() );
-                Util::WaitEnterKey( "Enterキーで次の検索結果もしくは元のメニューを表示します\n" );
-            }
-            if( !is_hit )
-            {
-                printf( "該当する候補がありませんでした\n" );
-                Util::WaitEnterKey( "Enterキーで元のメニューを表示します\n" );
-            }
-            Clear();
+            show_search_result( &cond );
             break;
         }
     }
@@ -302,6 +300,7 @@ void SearchMenu::Show( Recipe *recipe )
     bool isEnd = false;
     while( !isEnd )
     {
+        Clear();
         printf( "レシピ検索メニュー\n"
                 "%s\n"
                 "l : 料理一覧\n"
@@ -312,8 +311,9 @@ void SearchMenu::Show( Recipe *recipe )
         switch( input_buf[ 0 ] )
         {
         case 'l': // 料理一覧表示
-            menu_show_list();
             Clear();
+            recipe_->ShowDishList();
+            Util::WaitEnterKey( "Enterキーで検索メニューに戻ります\n" );
             break;
 
         case 'i': // 検索メニューへ

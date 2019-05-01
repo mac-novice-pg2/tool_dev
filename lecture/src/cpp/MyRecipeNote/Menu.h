@@ -27,7 +27,7 @@ public:
 
 class SearchMenu : public Menu {
     void cursor_key_proc( int key );
-    void menu_show_list();
+    void show_search_result( SearchCondition *cond );
     void menu_search();
 
     eFoodGenre input_genre( const char *message );
